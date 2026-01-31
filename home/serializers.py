@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Student
+from .models import Class, StudentClassMapping
 
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -13,3 +14,16 @@ class StudentSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
         return user
+    
+
+class ClassSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Class
+        fields = ['id', 'title', 'description', 'recorded_link', 'live_link', 'scheduled_time']
+
+class StudentClassMappingSerializer(serializers.ModelSerializer):
+    klass = ClassSerializer(read_only=True)  # <-- embed class details
+
+    class Meta:
+        model = StudentClassMapping
+        fields = ['id', 'klass']
