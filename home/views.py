@@ -5,12 +5,16 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 from home.models import User, Class, StudentClassMapping
+from django.views.decorators.csrf import csrf_exempt
+
 
 
 
 def index(request):
-    return render(request, 'main.html')  
+    return render(request, 'main.html') 
 
+ 
+@csrf_exempt
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def student_login(request):
