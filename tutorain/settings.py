@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure--n@&bppbz6%vs@&rgtp_ko!!+f6_v4kjp!lord6gq_*ak%=n%n
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ['tutoraindjnago-production.up.railway.app', '127.0.0.1', 'localhost']
 
 
 
@@ -149,4 +149,12 @@ CORS_ALLOW_ALL_ORIGINS = True  # for development only
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
+]
+
+
+
+CSRF_COOKIE_SECURE = True       # ensure cookie works with HTTPS
+SESSION_COOKIE_SECURE = True    # same for session
+CSRF_TRUSTED_ORIGINS = [
+    "https://tutoraindjnago-production.up.railway.app",
 ]
