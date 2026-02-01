@@ -13,10 +13,10 @@ from django.views.decorators.csrf import csrf_exempt
 def index(request):
     return render(request, 'main.html') 
 
- 
-@csrf_exempt
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
+@csrf_exempt
 def student_login(request):
     mobile = request.data.get('mobile')
     password = request.data.get('password')
