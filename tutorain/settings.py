@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure--n@&bppbz6%vs@&rgtp_ko!!+f6_v4kjp!lord6gq_*ak%=n%n'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['tutoraindjnago-production.up.railway.app', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['tutoraindjnago-production.up.railway.app', '127.0.0.1', 'localhost','192.168.1.5']
 
 
 
@@ -74,7 +74,7 @@ ROOT_URLCONF = 'tutorain.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [BASE_DIR / 'home/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -134,8 +134,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"
+import os
+
+STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'home', 'static'),
+]
 
 
 # Default primary key field type

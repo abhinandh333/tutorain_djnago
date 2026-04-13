@@ -1,0 +1,20 @@
+<h2>Welcome {{ request.user.mobile }}</h2>
+
+<h3>Your Classes</h3>
+
+{% for m in mappings %}
+    <div style="border:1px solid #ccc; padding:10px; margin:10px;">
+        <h4>{{ m.klass.title }}</h4>
+        <p>{{ m.klass.description }}</p>
+
+        <a href="{{ m.klass.recorded_link }}" target="_blank">
+            📺 Recorded Class
+        </a><br>
+
+        <a href="{{ m.klass.live_link }}" target="_blank">
+            🔴 Live Class
+        </a><br>
+
+        <p>{{ m.klass.scheduled_time }}</p>
+    </div>
+{% endfor %}

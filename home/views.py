@@ -6,12 +6,13 @@ from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 from home.models import User, Class, StudentClassMapping
 from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponse
 
 
 
 
 def index(request):
-    return render(request, 'main.html') 
+    return render(request, 'home/main.html') 
 
 
 @api_view(['POST'])
@@ -54,3 +55,36 @@ def student_classes(request):
             'scheduled_time': m.klass.scheduled_time
         })
     return Response(data)
+
+def contact(request):
+    return render(request, 'home/contact.html')
+
+
+from django.contrib.auth import authenticate, login
+from django.shortcuts import render, redirect
+from home.models import User
+
+def student_login_web(request):
+    if request.method == "POST":
+        mobile = request.POST.get("mobile")
+        password = request.POST.get("password")
+
+        user = authenticate(request, mobile=mobile, password=password)
+
+        if user is not None and user.is_student:
+            login(request, user)
+            return redirect('dashboard')
+        else:
+            return render(request, 'home/login.html', {'error': 'Invalid credentials'})
+
+    return render(request, 'home/login.html')
+
+from django.contrib.auth.decorators import login_required
+from home.models import StudentClassMapping
+
+@login_required
+def dashboard(request):
+    student = request.user
+    mappings = StudentClassMapping.objects.filter(student=student)
+
+    return render(request, 'home/dashboard.html', {'mappings': mappings})

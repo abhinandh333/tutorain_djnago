@@ -1,0 +1,860 @@
+{% load static %}
+<!doctype html>
+<html class="no-js" lang="zxx">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+         
+<title>Skill π Earn – skillpiearn.com</title>
+<meta name="description" content="Skill π Earn (Skill pi earn) is a platform that connects local shops, workers, and micro businesses online through skillpiearn.com.">
+        <meta property="og:title" content="Skill π Earn – Discover Local workers, Shops & Services on skillpiearn.com">
+            <meta property="og:description" content="Skillpiearn connects workers, shops, micro enterprises, and skilled workers to customers online. Search for services, shop deals, and professionals near you.">
+            <meta property="og:image" content="https://skillpiearn.com/static/images/og-preview.jpg"> <!-- Replace with actual image URL -->
+            <meta property="og:url" content="https://skillpiearn.com">
+            <meta property="og:type" content="website">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="manifest" href="site.webmanifest">
+    
+		<link rel="shortcut icon" type="image/x-icon" href="{% static '/website/img/favicon.ico' %}">
+
+<!-- seo boosting -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "Skill π Earn",
+  "url": "https://skillpiearn.com",
+  "description": "An online platform to connect local businesses and skilled workers.",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Kerala",
+    "addressCountry": "India"
+  }
+}
+</script>
+
+		<!-- CSS here -->
+            <link rel="stylesheet" href="{% static 'website/css/bootstrap.min.css' %}">
+            <link rel="stylesheet" href="{% static 'website/css/owl.carousel.min.css' %}">
+            <link rel="stylesheet" href="{% static 'website/css/flaticon.css' %}">
+            <link rel="stylesheet" href="{% static 'website/css/price_rangs.css' %}">
+            <link rel="stylesheet" href="{% static 'website/css/slicknav.css' %}">
+            <link rel="stylesheet" href="{% static 'website/css/animate.min.css' %}">
+            <link rel="stylesheet" href="{% static 'website/css/magnific-popup.css' %}">
+            <link rel="stylesheet" href="{% static 'website/css/fontawesome-all.min.css' %}">
+            <link rel="stylesheet" href="{% static 'website/css/themify-icons.css' %}">
+            <link rel="stylesheet" href="{% static 'website/css/slick.css' %}">
+            <link rel="stylesheet" href="{% static 'website/css/nice-select.css' %}">
+            <link rel="stylesheet" href="{% static 'website/css/style.css' %}">
+            <link rel="stylesheet" href="{% static 'style.css' %}">
+            <!-- Add these in your <head> -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+   </head>
+
+   <body>
+    <!-- Preloader Start -->
+    <div id="preloader-active">
+        <div class="preloader d-flex align-items-center justify-content-center">
+            <div class="preloader-inner position-relative">
+                <div class="preloader-circle"></div>
+                <div class="preloader-img pere-text">
+                    <img src="{% static '\home\static\logo.png' %}" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Preloader Start -->
+    <header>
+    <!-- Header Start -->
+
+
+
+
+             <!-- Include jQuery and Bootstrap JS -->
+<script src="{% static 'website/js/vendor/jquery-1.12.4.min.js' %}"></script>
+<script src="{% static 'website/js/popper.min.js' %}"></script>
+<script src="{% static 'website/js/bootstrap.min.js' %}"></script>
+
+<!-- Collapse mobile navbar on link click -->
+<script>
+  $(document).ready(function () {
+    $('.navbar-nav .nav-link').on('click', function () {
+      $('.navbar-collapse').collapse('hide');
+    });
+  });
+</script>
+
+
+
+    <!-- Wrap inside header -->
+<div class="container">
+  <div class="row align-items-center py-2">  <!-- Use py-2 for padding -->
+    <div class="col-6 col-lg-3">
+      <a class="navbar-brand" href="{% url 'home' %}">
+        <img src="{% static 'website/img/logo/logo1.png' %}" alt="Skill π Earn" style="height: 45px;">
+      </a>
+    </div>
+    <div class="col-6 col-lg-9">
+      <nav class="navbar navbar-expand-lg navbar-light bg-light p-0">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNavbar"
+          aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
+          <ul class="navbar-nav">
+            <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Find Employee</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Find Shop or Enterprises</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact Us</a></li>
+            <li class="nav-item"><a class="btn btn-outline-primary btn-sm m-1" href="#">Join Tutorain</a></li>
+            <li class="nav-item"><a class="btn btn-outline-primary btn-sm m-1" href="#">Login</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+  </div>
+</div>
+
+    <!-- Header End -->
+</header>
+
+
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-info alert-dismissible fade show mt-3" role="alert">
+           <center> {{ message }}..</center>
+            
+        </div>
+    {% endfor %}
+{% endif %}
+
+
+
+
+    <main><div style="height: 20px;"></div>
+      
+
+        <!-- slider Area Start-->
+        <div class="slider-area ">
+            <!-- Mobile Menu -->
+            <div class="slider-active">
+                <div class="single-slider slider-height d-flex align-items-center" data-background="{% static 'website/img/hero/h1_hero.png' %}">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-xl-6 col-lg-9 col-md-10">
+                                <div class="hero__caption">
+                                   <!-- <h1 style="font-size: 2.7rem; margin: 0;">Where Skill Meets Opportunity</h1> -->
+                                    <!-- <h1 style="font-size: 3.0rem; margin: 0;">The Perfect Fit Starts Here.</h1> -->
+                                </div>
+                            </div>
+                        </div>
+                        
+
+                        <div style="height: 350px;"></div>
+
+
+                        <!-- sliding baner -->
+
+
+<div class="hero">
+    
+    <!-- Slider Container (Top Left) -->
+<div class="banner-slider">
+    <img src="{% static 'banner1.png' %}" class="slide active">
+    <img src="{% static 'banner2.png' %}" class="slide">
+    <img src="{% static 'banner3.png' %}" class="slide">
+    <img src="{% static 'banner7.png' %}" class="slide">
+    <img src="{% static 'banner5.png' %}" class="slide">
+    <img src="{% static 'banner6.png' %}" class="slide">
+    <img src="{% static 'banner4.png' %}" class="slide">
+    <img src="{% static 'banner8.png' %}" class="slide">
+</div>
+
+<!-- ✅ DOTS -->
+<div class="dots">
+    <span class="dot active"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+</div>
+<div class="hero-content">
+    <h1 class="hero-title">
+        Join <span>Tutorain</span>
+    </h1>
+
+    <p class="hero-subtitle">
+        Study Anytime, Anywhere — with Tutorain
+    </p>
+
+    <div class="hero-buttons">
+        <a href="https://forms.gle/5akN6VzaM3pEEUWn9" class="btn-primary">🚀 Get Started</a>
+        <a href="https://youtube.com/@tutorain333?si=h4PkYuY6BadNCubl" class="btn-secondary">▶ Watch Demo</a>
+    </div>
+</div>
+
+</div>
+
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    let slides = document.querySelectorAll(".banner-slider img");
+    let dots = document.querySelectorAll(".dot");
+    let index = 0;
+
+    function changeSlide() {
+        slides[index].classList.remove("active");
+        dots[index].classList.remove("active");
+
+        index = (index + 1) % slides.length;
+
+        slides[index].classList.add("active");
+        dots[index].classList.add("active");
+    }
+
+    setInterval(changeSlide, 2000);
+
+});
+</script>
+                       
+<!-- Search Box -->
+                        <div class="row">
+                            <div class="col-xl-8">
+                                <!-- form -->
+                                <center> 
+                                        <form action="#" class="search-box">
+                                        
+                                       <div class="container my-5">
+    <div class="card shadow-lg border-0 rounded-lg bg-white text-center p-5 animate__animated animate__fadeIn">
+        <h2 class="mb-3 animate__animated animate__fadeInDown" style="color: #2c3e50; font-weight: bold;">
+            Limited Seats!
+        </h2>
+        <p class="mb-4 text-muted animate__animated animate__fadeInUp animate__delay-1s" style="font-size: 1.1rem;">
+            Join Tutorain Today — Admissions Open for School to College Level Excellence...
+        <a href="https://forms.gle/5akN6VzaM3pEEUWn9" 
+           class="btn btn-lg px-5 py-3 animate__animated animate__bounceIn animate__delay-2s"
+           style="
+                background: #0a6107;
+                color: #f5e4e4;
+                font-size: 1.8rem;
+                border-radius: 50px;
+                box-shadow: 0 0 100px rgba(11, 100, 19, 0.4);
+           ">
+             Apply Now!
+        </a>
+    </div>
+</div>
+
+
+
+                                     </center>
+                                    </div>	
+                                </form>	
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- whatsapp and call -->
+
+        <section class="contact-admission">
+
+    <h2>Need Help with Admission?</h2>
+
+    <p>
+        Talk to our team directly and secure your seat instantly.  
+        Call or WhatsApp us for quick admission support.
+    </p>
+
+    <div class="contact-buttons">
+        
+        <!-- CALL -->
+        <a href="tel:+919497200270" class="call-btn">
+            📞 Call Now
+        </a>
+
+        <!-- WHATSAPP -->
+        <a href="https://wa.me/919497200270" target="_blank" class="whatsapp-btn">
+            💬 WhatsApp
+        </a>
+
+    </div>
+
+    <p class="contact-number">+91 94972 00270</p>
+
+</section>
+
+
+        <!-- slider Area End-->
+                                    </div>	
+                                </form>	
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- slider Area End-->
+        <center> <a class="btn btn-outline-primary btn-sm m-1" href="#">Search Now🔎</a></center>
+
+        <center>  <a class="btn btn-outline-primary btn-sm m-1" href="#">Signup</a>
+              <a class="btn btn-outline-primary btn-sm m-1" href="#">Login</a>  </center>
+
+
+ <!-- download the app now -->
+        <section class="app-section">
+
+    <!-- LEFT IMAGE -->
+    <div class="app-image">
+        <img src="{% static 'app-preview.png' %}" alt="Tutorain App">
+    </div>
+
+    <!-- RIGHT CONTENT -->
+    <div class="app-content">
+        <h2>Learn Anytime, Anywhere</h2>
+
+        <p>
+            Experience the power of Tutorain in your pocket.  
+            Access courses, live classes, and study materials from school to college level — all in one app.
+        </p>
+
+        <a href="https://play.google.com/store/apps/details?id=com.tutorain.app" 
+           target="_blank" class="download-btn">
+            📲 Download App
+        </a>
+    </div>
+
+</section>
+
+
+       
+            <!-- Our Services Start -->
+        <div class="our-services section-pad-t30">
+            <div class="container">
+
+
+<div class="slider-area ">
+            <!-- Mobile Menu -->
+            <div class="slider-active">
+               <!-- <div class="single-slider slider-height d-flex align-items-center" data-background="{% static 'website/img/hero/h1_hero.jpg' %}"> -->
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-xl-6 col-lg-9 col-md-10">
+                                <div class="hero__caption">
+                                    <h1 style="font-size: 2.7rem; margin: 0;"></h1>
+                                    <!-- <h1 style="font-size: 3.0rem; margin: 0;">The Perfect Fit Starts Here.</h1> -->
+                                </div>
+                            </div>
+                        </div>
+                
+
+                
+                <!-- Section Tittle -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="section-tittle text-center">
+                            <span> <! text which i hide  --> </span>
+                            <h2>Browse Top Categories </h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="row d-flex justify-contnet-center">
+                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
+                        <div class="single-services text-center mb-30">
+                            <div class="services-ion">
+                                <span class="flaticon-tour"></span>
+                            </div>
+                            <div class="services-cap">
+                               <h5><a href="#}">Design & Creative</a></h5>
+                                <span>(processing...)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
+                        <div class="single-services text-center mb-30">
+                            <div class="services-ion">
+                                <span class="flaticon-cms"></span>
+                            </div>
+                            <div class="services-cap">
+                               <h5><a href="#">Design & Development</a></h5>
+                                <span>(processing...)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
+                        <div class="single-services text-center mb-30">
+                            <div class="services-ion">
+                                <span class="flaticon-report"></span>
+                            </div>
+                            <div class="services-cap">
+                               <h5><a href="#">Sales & Marketing</a></h5>
+                                <span>(processing...)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
+                        <div class="single-services text-center mb-30">
+                            <div class="services-ion">
+                                <span class="flaticon-app"></span>
+                            </div>
+                            <div class="services-cap">
+                               <h5><a href="#">Mobile Application</a></h5>
+                                <span>(processing...)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
+                        <div class="single-services text-center mb-30">
+                            <div class="services-ion">
+                                <span class="flaticon-helmet"></span>
+                            </div>
+                            <div class="services-cap">
+                               <h5><a href="#">Construction</a></h5>
+                                <span>(processing...)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
+                        <div class="single-services text-center mb-30">
+                            <div class="services-ion">
+                                <span class="flaticon-high-tech"></span>
+                            </div>
+                            <div class="services-cap">
+                               <h5><a href="#">Information Technology</a></h5>
+                                <span>(processing...)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
+                        <div class="single-services text-center mb-30">
+                            <div class="services-ion">
+                                <span class="flaticon-real-estate"></span>
+                            </div>
+                            <div class="services-cap">
+                               <h5><a href="#">Real Estate</a></h5>
+                                <span>(processing...)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
+                        <div class="single-services text-center mb-30">
+                            <div class="services-ion">
+                                <span class="flaticon-content"></span>
+                            </div>
+                            <div class="services-cap">
+                               <h5><a href="#">Content Writer</a></h5>
+                                <span>(processing...)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- More Btn -->
+                <!-- Section Button -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="browse-btn2 text-center mt-50">
+                            <a href="#" class="border-btn2">Browse All Sectors</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Our Services End -->
+        <!-- Online CV Area Start -->
+<div class="online-cv cv-bg section-overly pt-90 pb-120" data-background="{% static 'website/img/gallery/cv_bg.jpg' %}">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-xl-10">
+                        <div class="cv-caption text-center">
+                            <h1 class="pera1">Skill π Earn</h1>
+                            <p class="pera2"> Where Skill Meets Opportunity </p>
+                            <h1 class="pera1">a MA Product</h1>
+                            <a href="https://www.youtube.com/playlist?list=PLFhbPt_nHHPcB-LG1B-QNGz7184bYyyes" class="border-btn2 border-btn4" target="_blank" rel="noopener noreferrer"> For More Details Visit MA </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Online CV Area End-->
+        <!-- Featured_job_start -->
+       <!-- <section class="featured-job-area feature-padding">
+            <div class="container">
+                 Section Tittle -->
+               <!-- <div class="row">
+                    <div class="col-lg-12">
+                        <div class="section-tittle text-center">
+                            
+                            <h2>In-App Features</h2>
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-xl-10">
+                         single-job-content -->
+                        <!--<div class="single-job-items mb-30">
+                            <div class="job-items">
+                                <div class="company-img">
+                                    <a href="job_details.html"><img src="{% static 'website/img/icon/job-list1.png' %}" alt=""></a>
+                                </div>
+                                <div class="job-tittle">
+                                    <a href="job_details.html"><h4>Digital Marketer</h4></a>
+                                    <ul>
+                                        <li>Creative Agency</li>
+                                        <li><i class="fas fa-map-marker-alt"></i>Athens, Greece</li>
+                                        <li>$3500 - $4000</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="items-link f-right">
+                                <a href="job_details.html">Full Time</a>
+                                <span>7 hours ago</span>
+                            </div>  
+                        </div>
+                         single-job-content -->
+                       <!-- <div class="single-job-items mb-30">
+                            <div class="job-items">
+                                <div class="company-img">
+                                    <a href="job_details.html"><img src="{% static 'website/img/icon/job-list2.png' %}" alt=""></a>
+                                </div>
+                                <div class="job-tittle">
+                                    <a href="job_details.html"><h4>Digital Marketer</h4></a>
+                                    <ul>
+                                        <li>Creative Agency</li>
+                                        <li><i class="fas fa-map-marker-alt"></i>Athens, Greece</li>
+                                        <li>$3500 - $4000</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="items-link f-right">
+                                <a href="job_details.html">Full Time</a>
+                                <span>7 hours ago</span>
+                            </div>
+                        </div> -->
+                         <!-- single-job-content -->
+                       <!-- <div class="single-job-items mb-30">
+                            <div class="job-items">
+                                <div class="company-img">
+                                    <a href="job_details.html"><img src="{% static 'website/img/icon/job-list3.png' %}" alt=""></a>
+                                </div>
+                                <div class="job-tittle">
+                                    <a href="job_details.html"><h4>Digital Marketer</h4></a>
+                                    <ul>
+                                        <li>Creative Agency</li>
+                                        <li><i class="fas fa-map-marker-alt"></i>Athens, Greece</li>
+                                        <li>$3500 - $4000</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="items-link f-right">
+                                <a href="job_details.html">Full Time</a>
+                                <span>7 hours ago</span>
+                            </div>
+                        </div>
+                          single-job-content -->
+                       <!--  <div class="single-job-items mb-30">
+                            <div class="job-items">
+                                <div class="company-img">
+                                    <a href="job_details.html"><img src="{% static 'website/img/icon/job-list4.png' %}" alt=""></a>
+                                </div>
+                                <div class="job-tittle">
+                                    <a href="job_details.html"><h4>Digital Marketer</h4></a>
+                                    <ul>
+                                        <li>Creative Agency</li>
+                                        <li><i class="fas fa-map-marker-alt"></i>Athens, Greece</li>
+                                        <li>$3500 - $4000</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="items-link f-right">
+                                <a href="job_details.html">Full Time</a>
+                                <span>7 hours ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section> -->
+        <!-- Featured_job_end -->
+        <!-- How  Apply Process Start--> 
+        
+        <div class="apply-process-area apply-bg pt-150 pb-150" data-background="{% static 'website/img/gallery/how-applybg.png' %}">
+            <div class="container">
+                <!-- Section Tittle -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="section-tittle white-text text-center">
+                            <h1 style="font-size: 2.5rem; margin: 0;"><span>MAAI – AI Watchdog Powered by MA</span></h1>
+                            <h2> How it works</h2>
+                        </div>
+                    </div>
+                </div>
+                <!-- Apply Process Caption -->
+                <div class="row">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="single-process text-center mb-30">
+                            <div class="process-ion">
+                                <span class="flaticon-search"></span>
+                            </div>
+                            <div class="process-cap">
+                               <h5>1. Continuous Observation</h5>
+                               <p>The MAAI system uses AI to continuously monitor each user's behavior by analyzing all metadata, capturing every activity in real time.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="single-process text-center mb-30">
+                            <div class="process-ion">
+                                <span class="flaticon-curriculum-vitae"></span>
+                            </div>
+                            <div class="process-cap">
+                               <h5>2. Verification with AI</h5>
+                               <p>Advanced AI models verify whether the user is a bot, engaging in malpractice, or behaving in an unfair or biased manner.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="single-process text-center mb-30">
+                            <div class="process-ion">
+                                <span class="flaticon-tour"></span>
+                            </div>
+                            <div class="process-cap">
+                               <h5>3. Action Against Malpractice</h5>
+                               <p>If malpractice or suspicious behavior is detected, the user is permanently blocked from the site to maintain a fair and secure environment.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             </div>
+        </div>
+        
+
+
+
+   
+
+
+
+
+
+    </main>
+   <footer>
+        <!-- Footer Start-->
+        <div class="footer-area footer-bg footer-padding">
+            <div class="container">
+                <div class="row d-flex justify-content-between">
+                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
+                       <div class="single-footer-caption mb-50">
+                         <div class="single-footer-caption mb-30">
+                             <div class="footer-tittle">
+                                 <h4>About Us</h4>
+                                 <div class="footer-pera">
+                                     <p>Skill π Earn.</p>
+                                </div>
+                             </div>
+                         </div>
+
+                       </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-5">
+                        <div class="single-footer-caption mb-50">
+                            <div class="footer-tittle">
+                                <h4>Contact Info</h4>
+                                <ul>
+                                    
+                                    <li><a href="#">Phone : +91 9497200270</a></li>
+                                    <li><a href="#">Email : ma.ceo@skillpiearn.com</a></li>
+                                </ul>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-5">
+                        <div class="single-footer-caption mb-50">
+                            <div class="footer-tittle">
+                                <h4>Important Link</h4>
+                                <ul>
+                                    <li><a href="#"> Home</a></li>
+                                    <li><a href="#">Contact Us</a></li>
+                                    <li><a href="#">Testimonial</a></li>
+                                    <li><a href="#">Proparties</a></li>
+                                    <li><a href="#">Support</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-5">
+                        <div class="single-footer-caption mb-50">
+                            <div class="footer-tittle">
+                                <h4>Newsletter</h4>
+                                <div class="footer-pera footer-pera2">
+                                 <p>Feedback Here</p>
+                             </div>
+                             <!-- Form -->
+                             <div class="footer-form" >
+                                 <div id="mc_embed_signup">
+                                     <form target="_blank" action="https://spondonit.us12.list-manage.com/subscribe/post?u=1462626880ade1ac87bd9c93a&amp;id=92a4423d01"
+                                     method="get" class="subscribe_form relative mail_part">
+                                         <input type="email" name="email" id="newsletter-form-email" placeholder="Email Address"
+                                         class="placeholder hide-on-focus" onfocus="this.placeholder = ''"
+                                         onblur="this.placeholder = ' Email Address '">
+                                         <div class="form-icon">
+                                             <button type="submit" name="submit" id="newsletter-submit"
+                                             class="email_icon newsletter-submit button-contactForm"><img src="{% static 'website/img/icon/form.png' %}" alt=""></button>
+                                         </div>
+                                         <div class="mt-10 info"></div>
+                                     </form>
+                                 </div>
+                             </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+               <!--  -->
+               <div class="row footer-wejed justify-content-between">
+                       <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
+                          <!-- logo -->
+                          <div class="footer-logo mb-20">
+                            <a href=""{% url 'home' %}""><img src="{% static 'website/img/logo/logo1.png' %}" alt=""></a>
+                          </div>
+                       </div>
+                      <!-- <div class="col-xl-3 col-lg-3 col-md-4 col-sm-5">
+                        <div class="footer-tittle-bottom">
+                            <span>5000+</span>
+                            <p>Talented Hunter</p>
+                        </div>
+                       </div>
+                       <div class="col-xl-3 col-lg-3 col-md-4 col-sm-5">
+                            <div class="footer-tittle-bottom">
+                                <span>451</span>
+                                <p>Talented Hunter</p>
+                            </div>
+                       </div>
+                       <div class="col-xl-3 col-lg-3 col-md-4 col-sm-5"> -->
+                            <!-- Footer Bottom Tittle -->
+                            <!--<div class="footer-tittle-bottom">
+                                <span>568</span>
+                                <p>Talented Hunter</p>
+                            </div>
+                       </div>
+               </div>
+            </div>
+        </div> -->
+        <!-- footer-bottom area -->
+        <div class="footer-bottom-area footer-bg">
+            <div class="container">
+                <div class="footer-border">
+                     <div class="row d-flex justify-content-between align-items-center">
+                         <div class="col-xl-10 col-lg-10 ">
+                             <div class="footer-copy-right">
+                                 <p><!-- Link back to Colorlib caπt be removed. Template is licensed under CC BY 3.0. -->
+  Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+  <!-- Link back to Colorlib caπt be removed. Template is licensed under CC BY 3.0. --></p>
+                             </div>
+                         </div>
+                         <div class="col-xl-2 col-lg-2">
+                             <div class="footer-social f-right">
+                                 <a href="#"><i class="fab fa-facebook-f"></i></a>
+                                 <a href="#"><i class="fab fa-twitter"></i></a>
+                                 <a href="#}"><i class="fas fa-globe"></i></a>
+                                 <a href="#"><i class="fab fa-behance"></i></a>
+                             </div>
+                         </div>
+                     </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer End-->
+    </footer>
+
+
+
+
+
+
+
+
+
+
+
+  <!-- JS here -->
+	
+		<!-- All JS Custom Plugins Link Here here -->
+        
+		<!-- Jquery, Popper, Bootstrap -->
+	
+
+<script src="{% static 'website/js/vendor/jquery-1.12.4.min.js' %}"></script>
+<script src="{% static 'website/js/popper.min.js' %}"></script>
+<script src="{% static 'website/js/bootstrap.min.js' %}"></script>
+
+<!-- Jquery Mobile Menu -->
+<script src="{% static 'website/js/jquery.slicknav.min.js' %}"></script>
+
+<!-- Jquery Slick , Owl-Carousel Plugins -->
+<script src="{% static 'website/js/owl.carousel.min.js' %}"></script>
+<script src="{% static 'website/js/slick.min.js' %}"></script>
+<script src="{% static 'website/js/price_rangs.js' %}"></script>
+<script src="{% static 'website/js/vendor/modernizr-3.5.0.min.js' %}"></script>
+
+<!-- One Page, Animated-HeadLine -->
+<script src="{% static 'website/js/wow.min.js' %}"></script>
+<script src="{% static 'website/js/animated.headline.js' %}"></script>
+<script src="{% static 'website/js/jquery.magnific-popup.js' %}"></script>
+
+<!-- Scrollup, nice-select, sticky -->
+<script src="{% static 'website/js/jquery.scrollUp.min.js' %}"></script>
+<script src="{% static 'website/js/jquery.nice-select.min.js' %}"></script>
+<script src="{% static 'website/js/jquery.sticky.js' %}"></script>
+
+<!-- Contact JS -->
+<script src="{% static 'website/js/contact.js' %}"></script>
+<script src="{% static 'website/js/jquery.form.js' %}"></script>
+<script src="{% static 'website/js/jquery.validate.min.js' %}"></script>
+<script src="{% static 'website/js/mail-script.js' %}"></script>
+<script src="{% static 'website/js/jquery.ajaxchimp.min.js' %}"></script>
+
+<!-- Jquery Plugins, Main Jquery -->
+<script src="{% static 'website/js/plugins.js' %}"></script>
+<script src="{% static 'website/js/main.js' %}"></script>
+
+
+<!-- extra for responsive view-->
+<script src="{% static 'website/js/vendor/jquery-1.12.4.min.js' %}"></script>
+<script src="{% static 'website/js/popper.min.js' %}"></script>
+<script src="{% static 'website/js/bootstrap.min.js' %}"></script>
+
+
+
+<!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/6851cd093779dc190d3062cf/1itvohrvu';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
+
+
+
+        
+    </body>
+</html>

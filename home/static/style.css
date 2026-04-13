@@ -1,0 +1,261 @@
+.banner-slider {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 500px;
+    height: 250px;
+    overflow: hidden;
+}
+
+.slide {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+.slide.active {
+    opacity: 1;
+}
+
+.dots {
+    position: absolute;
+    top: 290px; /* just below 250px banner */
+    left: 200px;
+    display: flex;
+    gap: 8px;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    background: #fffbfb;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.dot.active {
+    background: #0e5008;
+    transform: scale(1.2);
+}
+
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    color: white;
+    padding-top: 120px;
+}
+
+/* Title */
+.hero-title {
+    font-size: 48px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+}
+
+.hero-title span {
+    color: #13640b;
+}
+
+/* Subtitle */
+.hero-subtitle {
+    font-size: 18px;
+    color: #13702b;
+    margin-bottom: 30px;
+}
+
+/* Buttons */
+.hero-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+/* Primary Button */
+.btn-primary {
+    background: linear-gradient(45deg, #07570e, #00c3ff);
+    color: black;
+    padding: 12px 25px;
+    border-radius: 30px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.btn-primary:hover {
+    transform: scale(1.05);
+}
+
+/* Secondary Button */
+.btn-secondary {
+    border: 2px solid #00ffcc;
+    color: #00ffcc;
+    padding: 12px 25px;
+    border-radius: 30px;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.btn-secondary:hover {
+    background: #00ffcc;
+    color: black;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 30px;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+    }
+}
+
+
+
+/*download the app now */
+
+.app-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 80px 10%;
+    background: linear-gradient(to right, #080e00, #093316, #233b04);
+    color: white;
+    flex-wrap: wrap;
+}
+
+/* LEFT IMAGE */
+.app-image img {
+    width: 480px;
+    height: 800px;
+    object-fit: cover;
+    border-radius: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+/* RIGHT CONTENT */
+.app-content {
+    max-width: 500px;
+}
+
+.app-content h2 {
+    font-size: 36px;
+    margin-bottom: 15px;
+}
+
+.app-content p {
+    font-size: 18px;
+    color: #ccc;
+    margin-bottom: 25px;
+}
+
+/* BUTTON */
+.download-btn {
+    background: linear-gradient(45deg, #012710, #00c3ff);
+    color: black;
+    padding: 14px 28px;
+    border-radius: 30px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: 0.3s;
+    display: inline-block;
+}
+
+.download-btn:hover {
+    transform: scale(1.05);
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+    .app-section {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .app-image img {
+        margin-bottom: 20px;
+    }
+}
+
+/* whatapp or call */
+
+.contact-admission {
+    text-align: center;
+    padding: 70px 20px;
+    background: linear-gradient(135deg, #ffffff, #ffffff);
+    color: white;
+    border-radius: 20px;
+    margin: 50px 10%;
+}
+
+/* Heading */
+.contact-admission h2 {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+/* Sub text */
+.contact-admission p {
+    color: #105e09;
+    font-size: 16px;
+    margin-bottom: 25px;
+}
+
+/* Buttons container */
+.contact-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+/* Call button */
+.call-btn {
+    background: linear-gradient(45deg, #095806, #00c3ff);
+    color: black;
+    padding: 12px 25px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+/* WhatsApp button */
+.whatsapp-btn {
+    background: #25D366;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+/* Hover effect */
+.call-btn:hover,
+.whatsapp-btn:hover {
+    transform: scale(1.05);
+}
+
+/* Number style */
+.contact-number {
+    margin-top: 20px;
+    font-size: 18px;
+    letter-spacing: 1px;
+    color: #00ffcc;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .contact-admission {
+        margin: 30px 5%;
+    }
+}
