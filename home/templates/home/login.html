@@ -1,22 +1,157 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Student Login</title>
+    <title>Login - Tutorain</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 350px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 22px;
+            font-weight: 600;
+            color: #2a5298;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 25px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 12px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+
+        .password-box {
+            position: relative;
+        }
+
+        .toggle-eye {
+            position: absolute;
+            right: 12px;
+            top: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #555;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .options {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        .error {
+            color: red;
+            font-size: 13px;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+    </style>
 </head>
+
 <body>
 
-<h2>Login</h2>
+<div class="login-container">
 
-<form method="POST">
-    {% csrf_token %}
-    
-    <input type="text" name="mobile" placeholder="Enter Mobile"><br><br>
-    <input type="password" name="password" placeholder="Enter Password"><br><br>
-    
-    <button type="submit">Login</button>
-</form>
+    <div class="logo">Tutorain</div>
+    <div class="subtitle">Learn Smart • Learn Anywhere</div>
 
-<p style="color:red;">{{ error }}</p>
+    <form method="POST">
+        {% csrf_token %}
+
+        <input type="text" name="mobile" id="mobile" placeholder="📱 Mobile Number" required>
+
+        <div class="password-box">
+            <input type="password" name="password" id="password" placeholder="🔒 Password" required>
+            <span class="toggle-eye" onclick="togglePassword()">👁️‍🗨️</span>
+        </div>
+
+        <div class="options">
+            <label>
+                <input type="checkbox" id="remember"> Remember Me
+            </label>
+        </div>
+
+        <button type="submit">Login</button>
+    </form>
+
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% endif %}
+
+</div>
+
+<script>
+    // 👁️ Show/Hide Password
+    function togglePassword() {
+        const pass = document.getElementById("password");
+        pass.type = pass.type === "password" ? "text" : "password";
+    }
+
+    // ✅ Remember Mobile
+    const mobileInput = document.getElementById("mobile");
+    const rememberCheck = document.getElementById("remember");
+
+    // Load saved mobile
+    window.onload = function() {
+        const savedMobile = localStorage.getItem("mobile");
+        if (savedMobile) {
+            mobileInput.value = savedMobile;
+            rememberCheck.checked = true;
+        }
+    };
+
+    // Save on submit
+    document.querySelector("form").addEventListener("submit", function() {
+        if (rememberCheck.checked) {
+            localStorage.setItem("mobile", mobileInput.value);
+        } else {
+            localStorage.removeItem("mobile");
+        }
+    });
+</script>
 
 </body>
 </html>

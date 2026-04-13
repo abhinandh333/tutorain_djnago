@@ -1,20 +1,146 @@
-<h2>Welcome {{ request.user.mobile }}</h2>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Classes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<h3>Your Classes</h3>
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
-{% for m in mappings %}
-    <div style="border:1px solid #ccc; padding:10px; margin:10px;">
-        <h4>{{ m.klass.title }}</h4>
-        <p>{{ m.klass.description }}</p>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: white;
+        }
 
-        <a href="{{ m.klass.recorded_link }}" target="_blank">
-            📺 Recorded Class
-        </a><br>
+        .container {
+            padding: 20px;
+        }
 
-        <a href="{{ m.klass.live_link }}" target="_blank">
-            🔴 Live Class
-        </a><br>
+        /* HEADER */
+        .header {
+            padding: 25px;
+        }
 
-        <p>{{ m.klass.scheduled_time }}</p>
-    </div>
-{% endfor %}
+        .header h2 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .header p {
+            margin: 5px 0 0;
+            color: #ccc;
+        }
+
+        /* GLASS CARD */
+        .card {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 18px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .live-card {
+            border: 1px solid rgba(255, 0, 0, 0.5);
+        }
+
+        .section-title {
+            margin: 20px 0 10px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .badge {
+            background: red;
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        /* BUTTONS */
+        .btn {
+            display: inline-block;
+            padding: 10px 16px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 14px;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+
+        .btn-live {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            color: white;
+        }
+
+        .btn-recorded {
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* EMPTY TEXT */
+        .empty {
+            color: #aaa;
+            font-size: 14px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <h2>{{ student.name }}</h2>
+    <p>{{ student.subject }}</p>
+</div>
+
+<div class="container">
+
+    <!-- 🔴 LIVE -->
+    <div class="section-title">🔴 Live Class</div>
+
+    {% if live %}
+        <div class="card live-card">
+            <h3>
+                {{ live.title }}
+                <span class="badge">LIVE</span>
+            </h3>
+            <p>{{ live.time }}</p>
+
+            <a href="{{ live.live_link }}" target="_blank" class="btn btn-live">
+                Join Now 🚀
+            </a>
+        </div>
+    {% else %}
+        <p class="empty">No live class available</p>
+    {% endif %}
+
+    <!-- 📺 RECORDED -->
+    <div class="section-title">📺 Recorded Classes</div>
+
+    {% for c in recorded %}
+        <div class="card">
+            <h3>{{ c.title }}</h3>
+            <p>📅 {{ c.duration }}</p>
+
+            <a href="{{ c.video_link }}" target="_blank" class="btn btn-recorded">
+                Watch ▶
+            </a>
+        </div>
+    {% empty %}
+        <p class="empty">No recorded classes</p>
+    {% endfor %}
+
+</div>
+
+</body>
+</html>

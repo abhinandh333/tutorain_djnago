@@ -79,12 +79,77 @@ def student_login_web(request):
 
     return render(request, 'home/login.html')
 
-from django.contrib.auth.decorators import login_required
-from home.models import StudentClassMapping
 
+
+
+
+
+
+from django.contrib.auth.decorators import login_required
 @login_required
 def dashboard(request):
-    student = request.user
-    mappings = StudentClassMapping.objects.filter(student=student)
+    mobile = request.user.mobile
 
-    return render(request, 'home/dashboard.html', {'mappings': mappings})
+    students = fetch_students()
+
+    # find student
+    student = next(
+        (s for s in students if s.get('mobile') == mobile),
+        None
+    )
+
+    if not student:
+        return render(request, 'home/no_access.html')
+
+    recorded = fetch_recorded(mobile)
+    live = fetch_live(mobile)
+
+    return render(request, 'home/dashboard.html', {
+        'student': student,
+        'recorded': recorded,
+        'live': live
+    })
+
+
+
+
+
+
+
+import requests
+
+SHEET_ID = "1bSH1WySBYYHDFROKOhxIib4296Wr_WVC_zbtXZ6fL7o"
+
+def fetch_students():
+    url = f"https://opensheet.elk.sh/{SHEET_ID}/students"
+    res = requests.get(url)
+    
+    if res.status_code != 200:
+        return []
+
+    return res.json()
+
+
+def fetch_recorded(mobile):
+    url = f"https://opensheet.elk.sh/{SHEET_ID}/recorded_classes"
+    res = requests.get(url)
+
+    if res.status_code != 200:
+        return []
+
+    data = res.json()
+    return [row for row in data if row.get('mobile') == mobile]
+
+
+def fetch_live(mobile):
+    url = f"https://opensheet.elk.sh/{SHEET_ID}/live_class"
+    res = requests.get(url)
+
+    if res.status_code != 200:
+        return None
+
+    data = res.json()
+    for row in data:
+        if row.get('mobile') == mobile:
+            return row
+    return None
