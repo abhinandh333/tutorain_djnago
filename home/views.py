@@ -60,6 +60,13 @@ def contact(request):
     return render(request, 'home/contact.html')
 
 
+def comingsoon(request):
+    return render(request, 'home/comingsoon.html')
+
+
+def findsub(request):
+    return render(request, 'home/findsub.html')
+
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from home.models import User

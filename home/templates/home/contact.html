@@ -5,11 +5,70 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-     <title> Skill π Earn </title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" type="image/x-icon" href="{% static '/website/img/favicon.ico' %}">
+    <title>Tutorain - contact us</title>
 
+<meta name="description" content="Tutorain – Learn anything, anywhere, anytime with MA AI. Discover smart learning, live classes, and skill-based education designed for students of all levels.">
+
+<meta name="keywords" content="Tutorain, online learning, MA AI, smart education, live classes, skill learning, e-learning platform, study anywhere, learn online">
+
+<meta name="author" content="Tutorain Team">
+
+<!-- Open Graph (Facebook, WhatsApp, LinkedIn) -->
+<meta property="og:title" content="Tutorain – Learn Anything, Anywhere, Anytime with MA's AI">
+<meta property="og:description" content="Join Tutorain and experience next-gen learning powered by MA's AI. Study smarter with live classes, expert guidance, and skill-based education.">
+<meta property="og:image" content="https://tutorain.live/static/images/og-preview.jpg"> <!-- Replace with your image -->
+<meta property="og:url" content="https://tutorain.live">
+<meta property="og:type" content="website">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Tutorain – Learn Anything, Anywhere, Anytime">
+<meta name="twitter:description" content="Smart learning powered by MA AI. Join Tutorain and upgrade your skills anytime, anywhere.">
+<meta name="twitter:image" content="https://tutorain.live/static/images/og-preview.jpg">
+
+<!-- Mobile Optimization -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- PWA -->
+<link rel="manifest" href="{% static 'site.webmanifest' %}">
+
+<!-- Favicon -->
+<link rel="shortcut icon" type="image/x-icon" href="{% static 'website/img/favicon.png' %}">
+
+<!-- seo boosting -->
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "EducationalOrganization",
+  "name": "Tutorain",
+  "url": "https://tutorain.live",
+  "logo": "https://tutorain.live/static/images/logo.png",
+  "description": "Tutorain – Learn anything, anywhere, anytime with MA's AI. A smart learning platform offering live classes, skill-based education, and personalized learning experiences.",
+  
+  "founder": {
+    "@type": "Person",
+    "name": "Abhinandh R Nair"
+  },
+
+  "sameAs": [
+    "https://www.instagram.com/tutorain",
+    "https://www.facebook.com/tutorain",
+    "https://www.linkedin.com/company/tutorain"
+  ],
+
+  "areaServed": {
+    "@type": "Country",
+    "name": "India"
+  },
+
+  "offers": {
+    "@type": "Offer",
+    "category": "Online Courses",
+    "description": "Live classes, recorded sessions, and AI-powered learning tools"
+  }
+}
+</script>
 
    <!-- CSS here -->
         <link rel="stylesheet" href= "{% static 'website/css/bootstrap.min.css' %}">
@@ -36,7 +95,7 @@
             <div class="preloader-inner position-relative">
                 <div class="preloader-circle"></div>
                 <div class="preloader-img pere-text">
-                    <img src="{% static 'website/img/logo/logo.png' %}" alt="">
+                    <img src="{% static 'logo.png' %}" alt="">
                     
                 </div>
             </div>
@@ -52,7 +111,7 @@
                         <div class="col-lg-3 col-md-2">
                             <!-- Logo -->
                             <div class="logo">
-                                <a href="{% url 'home' %}"><img src="{% static 'website/img/logo/logo.png'%}" alt=""></a>
+                                <a href="{% url 'home' %}"><img src="{% static 'website/img/logo/logo0.png'%}" alt=""></a>
                             </div>  
                         </div>
                         <div class="col-lg-9 col-md-9">
@@ -62,9 +121,9 @@
                                     <nav class="d-none d-lg-block">
                                         <ul id="navigation">
                                             <li><a href="{% url 'home' %}">Home</a></li>
-                                            <li><a href="#">Find  Employee </a></li>
-                                            <li><a href="#">Find Shop or Enterprises</a></li>
-                                            <li><a href="#">contact us</a> 
+                                           
+                                            <li><a href="{% url 'findsub' %}">Find Your Subjects or Tutor</a></li>
+                                            <li><a href="{% url 'contact' %}">contact us</a> 
                                                <!-- <ul class="submenu"> -->
                                                    <!-- <li><a href="contact.html">contact</a></li> 
                                                     <li><a href="single-blog.html"></a></li>
@@ -78,8 +137,8 @@
                                 </div>          
                                 <!-- Header-btn -->
                                 <div class="header-btn d-none f-right d-lg-block">
-                                    <a href="#" class="btn head-btn1">Signup</a>
-                                    <a href="#" class="btn head-btn2">Login</a>
+                                    <a href="{% url 'findsub' %}"  class="btn head-btn1">join Tutorain</a>
+                                    <a href="{% url 'login' %}" class="btn head-btn2">Login</a>
                                 </div>
                             </div>
                         </div>
@@ -95,7 +154,7 @@
     </header>
     <!-- Hero Area Start-->
     <div class="slider-area ">
-        <div class="single-slider section-overly slider-height2 d-flex align-items-center" data-background="{% static 'website/img/hero/about2.png' %}">
+        <div class="single-slider section-overly slider-height2 d-flex align-items-center" data-background="{% static 'website/img/logo/logo1.png' %}">
             <div class="container">
                 <div class="row">
                     <div class="col-xl-12">
@@ -176,21 +235,21 @@
                         <div class="media contact-info">
                             <span class="contact-info__icon"><i class="ti-home"></i></span>
                             <div class="media-body">
-                                <h3>Skill π earn</h3>
-                               <!-- <p>Kerala,india</p>-->
+                                <h3>Tutorain</h3>
+                                <p>MA product</p>
                             </div>
                         </div>
                         <div class="media contact-info">
                             <span class="contact-info__icon"><i class="ti-tablet"></i></span>
                             <div class="media-body">
                                 <h3>+91 9497200270</h3>
-                                <p>Message Only Format</p>
+                                <!--<p>Message Only Format</p> -->
                             </div>
                         </div>
                         <div class="media contact-info">
                             <span class="contact-info__icon"><i class="ti-email"></i></span>
                             <div class="media-body">
-                                <h3>ma.ceo@skillpiearn.com</h3>
+                                <h3>tutorain333@gmail.com</h3>
                                 
                                 <p>Send us your query anytime!</p>
                             </div>
@@ -220,8 +279,10 @@
                                         </div>
                                     </div>
                                     <div class="testimonial-top-cap">
-                                        <p>“MA is the personal brand of Abhinandh R Nair, founder of Skill π Earn, focused on empowering local workers, shops, and entrepreneurs. It uses AI to enhance connectivity, security, and privacy. 3.33% of profits go to charity, reflecting its commitment to community impact.”</p>
-                                    </div>
+
+<p>
+“MA is more than a name—it is the personal vision of Abhinandh R Nair. It symbolizes intelligence, innovation, and responsibility, forming the foundation of Tutorain. Through AI-driven solutions, MA aims to empower people while dedicating 3.33% of profits to building a better society.”
+</p>                                   </div>
                                 </div>
                             </div>
                             <!-- Single Testimonial -->
@@ -237,8 +298,9 @@
                                         </div>
                                     </div>
                                     <div class="testimonial-top-cap">
-                                        <p>“MAAi is the AI assistant of MA, powering all intelligent systems within the Skill π Earn platform. It actively monitors user behavior to ensure safety and integrity. If any bots or malpractice are detected, the system will automatically ban those users permanently from the platform, maintaining a secure and trustworthy environment.”</p>
-                                    </div>
+<p>
+“MAAI is the intelligent AI system of Tutorain, designed to personalize learning, enhance user experience, and create smarter connections. Built under the vision of MA, MAAI adapts to individual needs—making education more accessible, efficient, and impactful. It powers Tutorain with automation, insights, and innovation, shaping the future of learning.”
+</p>                                    </div>
                                 </div>
                             </div>
                             <!-- Single Testimonial -->
@@ -254,8 +316,9 @@
                                         </div>
                                     </div>
                                     <div class="testimonial-top-cap">
-                                        <p>“MACA (MA’s Charity Association) is the charitable wing of MA, currently under development for official registration as a Public Charitable Trust. Once launched, anyone will be able to join and contribute. All revenue from MA's social media presence and 3.33% of profits from MA products will be dedicated to charitable causes through MACA, reinforcing its mission of giving back to the community.”</p>
-                                    </div>
+<p>
+“MACA (MA’s Charity Association) is the social impact initiative of Tutorain, founded under the vision of MA by Abhinandh R Nair. It is dedicated to supporting education, empowering underprivileged communities, and creating equal opportunities for growth. As part of this mission, 3.33% of Tutorain’s profits are contributed to MACA—driving meaningful and lasting change in society.”
+</p>                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -275,12 +338,13 @@
                             <!-- Section Tittle -->
                             <div class="section-tittle section-tittle2">
                                 <span>What we are doing</span>
-                                <h2>Skill π Earn</h2>
+                                <h2>Tutorain</h2>
+                                
                             </div>
                             <div class="support-caption">
-                                <p class="pera-top">Skill π Earn, built to empower local workers, shops, and entrepreneurs by enhancing grassroots connectivity through digital solutions. The platform integrates MAAi, an AI assistant that manages all intelligent operations, monitors user behavior, and ensures security by permanently banning bots or users involved in malpractice. As part of its social commitment, 3.33% of all MA profits are allocated to charity. This vision is further extended through MACA (MA’s Charity Association), currently under development for registration as a Public Charitable Trust, where everyone will soon be able to participate. Additionally, all revenue from MA’s social media activities is directed towards charitable causes through MACA, reinforcing MA’s mission of community upliftment and social impact.</p>
+                                <p class="pera-top">Tutorain is an advanced AI-powered online learning platform founded by Abhinandh R Nair (MA), designed to help students, skilled workers, and entrepreneurs learn anything, anywhere, anytime. Powered by its intelligent system MAAI (MA Artificial Intelligence), Tutorain delivers personalized learning, live classes, and skill-based education to enhance career growth and real-world opportunities. The platform focuses on smart education, digital learning, and empowering individuals through technology while maintaining strong values of security, innovation, and accessibility. Through its social initiative MACA (MA’s Charity Association), Tutorain also contributes 3.33% of its profits to support education and community development, making it not just an e-learning platform but a mission-driven ecosystem for growth, success, and social impact.</p>
                                 <p>For detailed tutorials, feature explanations, and more AI-related content, tap below.</p>
-                                <a href="https://www.youtube.com/playlist?list=PLFhbPt_nHHPcB-LG1B-QNGz7184bYyyes" class="border-btn2 border-btn4" target="_blank" rel="noopener noreferrer">For More</a>
+                                <a href="{% url 'findsub' %}" class="border-btn2 border-btn4" target="_blank" rel="noopener noreferrer">For More</a>
                             </div>
                         </div>
                     </div>
@@ -307,7 +371,7 @@
                              <div class="footer-tittle">
                                  <h4>About Us</h4>
                                  <div class="footer-pera">
-                                     <p>Skill π Earn</p>
+                                     <p>Tutorain</p>
                                 </div>
                              </div>
                          </div>

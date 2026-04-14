@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html>
+<head>
+    
+    <!-- Favicon -->
+<link rel="shortcut icon" type="image/x-icon" href="{% static 'website/img/favicon.png' %}">
+
+    <title>Connect with Tutorain</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: #f5f7fb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .box {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 16px;
+            text-align: center;
+            max-width: 420px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        .icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            margin: 10px 0;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        p {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .highlight {
+            color: #2a5298;
+            font-weight: 500;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 20px;
+            border-radius: 10px;
+            background: #25D366;
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: #1ebe5d;
+        }
+
+        .footer {
+            margin-top: 15px;
+            font-size: 12px;
+            color: #aaa;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="box">
+
+    <div class="icon" style="color:#25D366;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5A8.38 8.38 0 0 1 4 18l-3 1 1-3a8.38 8.38 0 0 1-1.5-4.5A8.38 8.38 0 0 1 12.5 3 8.5 8.5 0 0 1 21 11.5z"/>
+        </svg>
+    </div>
+
+    <h2>Need Help? Chat with Tutorain  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-square-lock-icon lucide-message-square-lock"><path d="M22 8.5V5a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v16.286a.71.71 0 0 0 1.212.502l2.202-2.202A2 2 0 0 1 6.828 19H10"/><path d="M20 15v-2a2 2 0 0 0-4 0v2"/><rect x="14" y="15" width="8" height="5" rx="1"/></svg></h2>
+
+    <p style="font-size:15px; color:#444;">
+        Click the button below — it will open <b>WhatsApp directly</b> and connect you with our team instantly.
+    </p>
+
+    <p style="font-size:14px; color:#666;">
+        Just send your <span style="color:#25D366; font-weight:600;">subject, class, or doubt</span> and we will guide you.
+    </p>
+
+    <!-- MAIN CTA -->
+    <a href="https://wa.me/919497200270?text=Hi%20Tutorain%20team,%20I%20want%20details%20about%20a%20subject.%20Please%20guide%20me."
+       target="_blank"
+       style="
+           display:inline-block;
+           background:#25D366;
+           color:white;
+           padding:14px 25px;
+           border-radius:12px;
+           text-decoration:none;
+           font-size:15px;
+           font-weight:600;
+           margin-top:15px;
+           box-shadow:0 8px 20px rgba(0,0,0,0.12);
+       ">
+       👉 Click to Chat on WhatsApp
+    </a>
+
+    <p style="font-size:13px; color:#777; margin-top:12px;">
+        ✔ Instant response • ✔ Easy communication • ✔ No login required
+    </p>
+
+    <div class="footer">
+        Fast response • Trusted support • Tutorain Team
+    </div>
+
+</div>
+
+
+</body>
+</html>
