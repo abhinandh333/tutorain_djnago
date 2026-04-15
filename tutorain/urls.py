@@ -17,6 +17,17 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from home.views import index
+from django.http import HttpResponse
+
+
+
+def robots_txt(request):
+    return HttpResponse(
+        "User-agent: *\nAllow: /\nSitemap: https://tutorain.com/sitemap.xml",
+        content_type="text/plain"
+    )
+
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
