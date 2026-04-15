@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure--n@&bppbz6%vs@&rgtp_ko!!+f6_v4kjp!lord6gq_*ak%=n%n'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['tutoraindjnago-production.up.railway.app', '127.0.0.1', 'localhost','192.168.1.5']
+ALLOWED_HOSTS = ['tutoraindjnago-production.up.railway.app', '127.0.0.1', 'localhost','192.168.1.5',"tutorain.com","www.tutorain.com"]
 
 
 
@@ -151,7 +151,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'home.user'
 
 
-CORS_ALLOW_ALL_ORIGINS = True  # for development only
+CORS_ALLOW_ALL_ORIGINS = False
+
+CORS_ALLOWED_ORIGINS = [
+    "https://tutorain.com",
+    "https://www.tutorain.com"
+]  # for development only
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
