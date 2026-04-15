@@ -37,4 +37,7 @@ urlpatterns = [
 
     # 📱 API
     path('api/', include('api.urls')),
+
+        # 🤖 robots.txt
+    path('robots.txt', robots_txt),
 ]
