@@ -56,9 +56,9 @@ REST_FRAMEWORK = {
 
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # 👈 must be right after SecurityMiddleware
+    'corsheaders.middleware.CorsMiddleware',
     
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -140,7 +140,10 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'home', 'static'),
+    
 ]
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 # Default primary key field type
@@ -168,5 +171,7 @@ CSRF_COOKIE_SECURE = True       # ensure cookie works with HTTPS
 SESSION_COOKIE_SECURE = True    # same for session
 CSRF_TRUSTED_ORIGINS = [
     "https://tutoraindjnago-production.up.railway.app",
+    "https://tutorain.com",
+    "https://www.tutorain.com"
 ]
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
