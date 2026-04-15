@@ -168,10 +168,17 @@ AUTHENTICATION_BACKENDS = [
 
 
 CSRF_COOKIE_SECURE = True       # ensure cookie works with HTTPS
-SESSION_COOKIE_SECURE = True    # same for session
+SESSION_COOKIE_SECURE = True  
+
+CSRF_COOKIE_DOMAIN = ".tutorain.com"
+SESSION_COOKIE_DOMAIN = ".tutorain.com"
+
+  # same for session
 CSRF_TRUSTED_ORIGINS = [
     "https://tutoraindjnago-production.up.railway.app",
     "https://tutorain.com",
     "https://www.tutorain.com"
 ]
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
