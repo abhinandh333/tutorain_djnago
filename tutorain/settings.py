@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'home',
     'api',
     'corsheaders',
+    'django.contrib.sitemaps',
 ]
 
 REST_FRAMEWORK = {

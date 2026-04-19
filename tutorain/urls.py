@@ -27,7 +27,12 @@ def robots_txt(request):
         content_type="text/plain"
     )
 
+from django.contrib.sitemaps.views import sitemap
+from .sitemaps import StaticViewSitemap
 
+sitemaps = {
+    'static': StaticViewSitemap,
+}
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -40,4 +45,7 @@ urlpatterns = [
 
         # 🤖 robots.txt
     path('robots.xml', robots_txt),
+
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='sitemap'),
+
 ]
