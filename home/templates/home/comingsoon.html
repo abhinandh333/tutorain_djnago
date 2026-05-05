@@ -84,7 +84,7 @@
                         <div class="col-lg-3 col-md-2">
                             <!-- Logo -->
                             <div class="logo">
-                                <a href="{% url 'home' %}"><img src="{% static 'website/img/logo/logo0.png'%}" alt=""></a>
+                                <a href="{% url 'home' %}"><img src="{% static 'website/img/logo/logo.png'%}" alt=""></a>
                             </div>  
                         </div>
                         <div class="col-lg-9 col-md-9">
@@ -97,6 +97,17 @@
                                            
                                             <li><a href="{% url 'findsub' %}">Find Your Subjects or Tutor</a></li>
                                             <li><a href="{% url 'contact' %}">contact us</a> 
+
+                    <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="MoreDropdown" role="button" data-toggle="dropdown">                        More
+                    </a>
+
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="{% url 'maca' %}">MACA</a>
+                        <a class="dropdown-item" href="{% url 'comingsoon' %}">MAAI</a>
+                        <a class="dropdown-item" href="{% url 'comingsoon' %}">Feedback</a>
+                    </div>
+                    </li>
                                                <!-- <ul class="submenu"> -->
                                                    <!-- <li><a href="contact.html">contact</a></li> 
                                                     <li><a href="single-blog.html"></a></li>

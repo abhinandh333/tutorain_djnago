@@ -64,6 +64,10 @@ def comingsoon(request):
     return render(request, 'home/comingsoon.html')
 
 
+def maca(request):
+    return render(request, 'home/maca.html')
+
+
 def findsub(request):
     return render(request, 'home/findsub.html')
 

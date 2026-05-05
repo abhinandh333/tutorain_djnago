@@ -331,3 +331,17 @@
     width: 32px;
     height: 32px;
 }
+
+
+/* FIX DROPDOWN HOVER */
+.navbar .dropdown-menu {
+    display: none;
+}
+
+.navbar .dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.navbar .dropdown-menu {
+    margin-top: 0;
+}

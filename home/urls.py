@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import index, contact, student_login_web, dashboard,comingsoon,findsub
+from .views import index, contact, student_login_web, dashboard,comingsoon,findsub,maca
 
 urlpatterns = [
     path('', index, name='home'),
@@ -8,4 +8,6 @@ urlpatterns = [
     path('contact/', contact, name='contact'),
     path('comingsoon/', comingsoon, name='comingsoon'),
     path('findsub/', findsub, name='findsub'),
+    path('maca/', maca, name='maca'),
+
 ]
