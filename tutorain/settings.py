@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure--n@&bppbz6%vs@&rgtp_ko!!+f6_v4kjp!lord6gq_*ak%=n%n'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+
 
 ALLOWED_HOSTS = ['tutoraindjnago-production.up.railway.app', '127.0.0.1', 'localhost','192.168.1.5','tutorain.com','www.tutorain.com']
 
@@ -171,8 +171,7 @@ AUTHENTICATION_BACKENDS = [
 CSRF_COOKIE_SECURE = True       # ensure cookie works with HTTPS
 SESSION_COOKIE_SECURE = True  
 
-CSRF_COOKIE_DOMAIN = ".tutorain.com"
-SESSION_COOKIE_DOMAIN = ".tutorain.com"
+
 
   # same for session
 CSRF_TRUSTED_ORIGINS = [
@@ -184,3 +183,8 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 SECURE_SSL_REDIRECT = True
+
+CSRF_COOKIE_SAMESITE = None
+SESSION_COOKIE_SAMESITE = None
+
+DEBUG = False
