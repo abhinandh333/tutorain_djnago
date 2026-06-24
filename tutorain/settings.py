@@ -186,7 +186,7 @@ CSRF_TRUSTED_ORIGINS = [
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-DEBUG = True
+DEBUG = False
 SECURE_SSL_REDIRECT =True
 
 CSRF_COOKIE_SAMESITE = None
