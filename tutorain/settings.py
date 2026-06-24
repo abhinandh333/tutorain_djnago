@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'api',
     'corsheaders',
     'django.contrib.sitemaps',
-    'django_extensions',
+    
 ]
 
 REST_FRAMEWORK = {
