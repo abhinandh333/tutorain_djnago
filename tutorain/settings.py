@@ -25,7 +25,8 @@ SECRET_KEY = 'django-insecure--n@&bppbz6%vs@&rgtp_ko!!+f6_v4kjp!lord6gq_*ak%=n%n
 # SECURITY WARNING: don't run with debug turned on in production!
 
 
-ALLOWED_HOSTS = ['tutoraindjnago-production.up.railway.app', '127.0.0.1', 'localhost','192.168.1.5','tutorain.com','www.tutorain.com']
+ALLOWED_HOSTS = ['tutoraindjnago-production.up.railway.app', '127.0.0.1', 'localhost','192.168.1.5','tutorain.com','www.tutorain.com','.ngrok-free.app',
+'.ngrok-free.dev','.ngrok-free.de']
 
 
 
@@ -44,6 +45,7 @@ INSTALLED_APPS = [
     'api',
     'corsheaders',
     'django.contrib.sitemaps',
+    'django_extensions',
 ]
 
 REST_FRAMEWORK = {
@@ -159,7 +161,8 @@ CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOWED_ORIGINS = [
     "https://tutorain.com",
-    "https://www.tutorain.com"
+    "https://www.tutorain.com",
+
 ]  # for development only
 
 AUTHENTICATION_BACKENDS = [
@@ -177,14 +180,15 @@ SESSION_COOKIE_SECURE = True
 CSRF_TRUSTED_ORIGINS = [
     "https://tutoraindjnago-production.up.railway.app",
     "https://tutorain.com",
-    "https://www.tutorain.com"
+    "https://www.tutorain.com",
+     "https://heftiness-overrule-pureness.ngrok-free.de",
 ]
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-SECURE_SSL_REDIRECT = True
+DEBUG = True
+SECURE_SSL_REDIRECT =False
 
 CSRF_COOKIE_SAMESITE = None
 SESSION_COOKIE_SAMESITE = None
 
-DEBUG = True
