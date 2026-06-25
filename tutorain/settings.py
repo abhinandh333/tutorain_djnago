@@ -191,7 +191,7 @@ LOGIN_REDIRECT_URL = '/dashboard/'
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-DEBUG = False
+DEBUG = True
 SECURE_SSL_REDIRECT =True
 
 CSRF_COOKIE_SAMESITE = None
