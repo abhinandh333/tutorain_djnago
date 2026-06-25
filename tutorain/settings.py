@@ -171,8 +171,7 @@ AUTHENTICATION_BACKENDS = [
 
 
 
-CSRF_COOKIE_SECURE = True       # ensure cookie works with HTTPS
-SESSION_COOKIE_SECURE = True  
+ 
 
 
 
@@ -196,4 +195,6 @@ SECURE_SSL_REDIRECT =True
 USE_X_FORWARDED_HOST = True
 CSRF_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SECURE = True       # ensure cookie works with HTTPS
+SESSION_COOKIE_SECURE = True 
 

@@ -7,6 +7,8 @@ from rest_framework.permissions import IsAuthenticated
 from home.models import User, Class, StudentClassMapping
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
+from django.views.decorators.cache import never_cache
+from django.views.decorators.cache import cache_control
 
 
 
@@ -75,6 +77,12 @@ from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 from home.models import User
 
+@never_cache
+@cache_control(
+    no_cache=True,
+    must_revalidate=True,
+    no_store=True
+)
 def student_login_web(request):
     if request.method == "POST":
         mobile = request.POST.get("mobile")
