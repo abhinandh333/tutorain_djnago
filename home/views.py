@@ -164,3 +164,9 @@ def fetch_live(mobile):
         if row.get('mobile') == mobile:
             return row
     return None
+
+
+from django.shortcuts import redirect
+
+def accounts_login_redirect(request):
+    return redirect('/login/')
