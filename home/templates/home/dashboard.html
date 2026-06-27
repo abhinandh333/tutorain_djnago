@@ -5,6 +5,7 @@
     <title>My Classes</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
     <style>
@@ -63,10 +64,6 @@
             padding: 20px;
             background: white;
             border-bottom: 1px solid #e5e7eb;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
         }
 
         .hero h2 {
@@ -74,7 +71,8 @@
             font-size: 20px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
         .hero p {
@@ -83,7 +81,24 @@
             font-size: 14px;
         }
 
-        /* MINIMAL LOGOUT BUTTON */
+        /* ICON BUTTON (REFRESH) */
+        .icon-btn {
+            border: 1px solid #e5e7eb;
+            background: transparent;
+            color: #6b7280;
+            font-size: 14px;
+            padding: 4px 9px;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .icon-btn:hover {
+            border-color: #111827;
+            color: #111827;
+        }
+
+        /* LOGOUT BUTTON */
         .logout-form {
             display: inline;
         }
@@ -222,7 +237,12 @@
         <h2>
             {{ student.name }}
 
-            <!-- MINIMAL LOGOUT -->
+            <!-- REFRESH -->
+            <button class="icon-btn" onclick="location.reload()" title="Refresh">
+                ⟳
+            </button>
+
+            <!-- LOGOUT -->
             <form action="{% url 'logout' %}" method="post" class="logout-form">
                 {% csrf_token %}
                 <button type="submit" class="logout-btn">Logout</button>
