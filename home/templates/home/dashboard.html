@@ -5,7 +5,6 @@
     <title>My Classes</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
     <style>
@@ -59,22 +58,50 @@
             color: white;
         }
 
-        /* PAGE HEADER */
+        /* HERO */
         .hero {
             padding: 20px;
             background: white;
             border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
         .hero h2 {
             margin: 0;
             font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .hero p {
             margin: 5px 0 0;
             color: #6b7280;
             font-size: 14px;
+        }
+
+        /* MINIMAL LOGOUT BUTTON */
+        .logout-form {
+            display: inline;
+        }
+
+        .logout-btn {
+            border: 1px solid #e5e7eb;
+            background: transparent;
+            color: #6b7280;
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .logout-btn:hover {
+            border-color: #111827;
+            color: #111827;
         }
 
         /* CONTENT */
@@ -93,7 +120,7 @@
             letter-spacing: 0.5px;
         }
 
-        /* CARD GRID */
+        /* CARD */
         .card {
             background: white;
             border: 1px solid #e5e7eb;
@@ -119,7 +146,6 @@
             margin-top: 4px;
         }
 
-        /* LIVE TAG */
         .live-tag {
             display: inline-block;
             font-size: 11px;
@@ -130,7 +156,6 @@
             margin-left: 8px;
         }
 
-        /* BUTTONS */
         .btn {
             display: inline-block;
             margin-top: 10px;
@@ -171,37 +196,47 @@
 
 <!-- HEADER -->
 <header>
-<div class="topbar">
+    <div class="topbar">
 
-    <div class="logo">
-        <a href="{% url 'home' %}">
-            <img src="{% static 'website/img/logo/logo1.png' %}">
-        </a>
+        <div class="logo">
+            <a href="{% url 'home' %}">
+                <img src="{% static 'website/img/logo/logo1.png' %}">
+            </a>
+        </div>
+
+        <div class="menu">
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'findsub' %}">Find Tutor</a>
+            <a href="{% url 'contact' %}">Contact</a>
+            <a class="btn" href="{% url 'findsub' %}">Join</a>
+            <a class="btn" href="{% url 'login' %}">Login</a>
+        </div>
+
     </div>
-
-    <div class="menu">
-        <a href="{% url 'home' %}">Home</a>
-        <a href="{% url 'findsub' %}">Find Tutor</a>
-        <a href="{% url 'contact' %}">Contact</a>
-        <a class="btn" href="{% url 'findsub' %}">Join</a>
-        <a class="btn" href="{% url 'login' %}">Login</a>
-    </div>
-
-</div>
 </header>
-
 
 <!-- HERO -->
 <div class="hero">
-    <h2>{{ student.name }}</h2>
-    <p>{{ student.subject }}</p>
-</div>
 
+    <div>
+        <h2>
+            {{ student.name }}
+
+            <!-- MINIMAL LOGOUT -->
+            <form action="{% url 'logout' %}" method="post" class="logout-form">
+                {% csrf_token %}
+                <button type="submit" class="logout-btn">Logout</button>
+            </form>
+        </h2>
+
+        <p>{{ student.subject }}</p>
+    </div>
+
+</div>
 
 <!-- CONTENT -->
 <div class="container">
 
-    <!-- LIVE -->
     <div class="section-title">Live Class</div>
 
     {% if live %}
@@ -221,8 +256,6 @@
         <p class="empty">No live class available</p>
     {% endif %}
 
-
-    <!-- RECORDED -->
     <div class="section-title">Recorded Classes</div>
 
     {% for c in recorded %}
