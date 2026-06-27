@@ -182,3 +182,24 @@ def accounts_login_redirect(request):
 
 def download(request):
     return render(request, 'home/download.html')
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def auto_login(request):
+    token_key = request.data.get("token")
+
+    if not token_key:
+        return Response({"success": False}, status=400)
+
+    try:
+        token = Token.objects.get(key=token_key)
+
+        return Response({
+            "success": True,
+            "mobile": token.user.mobile,
+            "name": token.user.name
+        })
+
+    except Token.DoesNotExist:
+        return Response({"success": False}, status=401)
