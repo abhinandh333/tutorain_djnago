@@ -1,0 +1,320 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Download Tutorain</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Segoe UI,Arial,sans-serif;
+}
+
+body{
+    background:#f8fafc;
+    color:#111827;
+}
+
+/* Header */
+
+header{
+    background:#fff;
+    border-bottom:1px solid #e5e7eb;
+    position:sticky;
+    top:0;
+    z-index:1000;
+}
+
+.navbar{
+    max-width:1150px;
+    margin:auto;
+    padding:15px 20px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logo img{
+    height:42px;
+}
+
+.nav-links{
+    display:flex;
+    gap:25px;
+    align-items:center;
+}
+
+.nav-links a{
+    text-decoration:none;
+    color:#374151;
+    font-weight:500;
+    transition:.3s;
+}
+
+.nav-links a:hover{
+    color:#2563eb;
+}
+
+.login-btn{
+
+    border:1px solid #2563eb;
+    color:#2563eb;
+    padding:9px 18px;
+    border-radius:8px;
+
+}
+
+.login-btn:hover{
+
+    background:#2563eb;
+    color:white;
+
+}
+
+/* Download Card */
+
+.wrapper{
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+padding:70px 20px;
+
+}
+
+.card{
+
+width:100%;
+max-width:620px;
+
+background:white;
+
+border:1px solid #e5e7eb;
+
+border-radius:18px;
+
+padding:45px;
+
+text-align:center;
+
+box-shadow:0 10px 30px rgba(0,0,0,.06);
+
+}
+
+.icon{
+
+width:75px;
+height:75px;
+
+margin:auto;
+
+background:#eff6ff;
+
+border-radius:18px;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+font-size:35px;
+color:#2563eb;
+
+}
+
+h1{
+
+margin-top:20px;
+
+font-size:34px;
+
+}
+
+.subtitle{
+
+margin-top:12px;
+
+color:#6b7280;
+
+line-height:1.7;
+
+}
+
+.meta{
+
+margin-top:25px;
+
+color:#6b7280;
+
+}
+
+.meta span{
+
+margin:0 10px;
+
+}
+
+.download-btn{
+
+display:inline-block;
+
+margin-top:35px;
+
+padding:15px 35px;
+
+background:#2563eb;
+
+color:white;
+
+text-decoration:none;
+
+border-radius:10px;
+
+font-weight:600;
+
+transition:.3s;
+
+}
+
+.download-btn:hover{
+
+background:#1d4ed8;
+
+transform:translateY(-2px);
+
+}
+
+.note{
+
+margin-top:30px;
+
+color:#6b7280;
+
+font-size:14px;
+
+line-height:1.7;
+
+}
+
+.footer{
+
+text-align:center;
+
+padding:25px;
+
+color:#9ca3af;
+
+font-size:14px;
+
+}
+
+@media(max-width:768px){
+
+.nav-links{
+
+display:none;
+
+}
+
+.card{
+
+padding:30px;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div class="navbar">
+
+<a href="{% url 'home' %}" class="logo">
+<img src="{% static 'website/img/logo/logo1.png' %}" alt="Tutorain">
+</a>
+
+<div class="nav-links">
+
+<a href="{% url 'home' %}">Home</a>
+
+<a href="{% url 'findsub' %}">Find Tutor</a>
+
+<a href="{% url 'contact' %}">Contact</a>
+
+<a href="{% url 'login' %}" class="login-btn">
+Login
+</a>
+
+</div>
+
+</div>
+
+</header>
+
+<div class="wrapper">
+
+<div class="card">
+
+<div class="icon">
+<i class="fa-brands fa-windows"></i>
+</div>
+
+<h1>Tutorain Desktop</h1>
+
+<p class="subtitle">
+Download the official Windows application for a faster and smoother learning experience powered by AI.
+</p>
+
+<div class="meta">
+
+<span>🪟 Windows 10 & 11</span>
+
+<span>📦 Version 1.0.0</span>
+
+<span>🆓 Free</span>
+
+</div>
+
+<a href="https://github.com/tutorain333/tutorain/releases/download/v1.0.0/Tutorain.Setup.1.0.0.exe"
+class="download-btn">
+
+<i class="fa-solid fa-download"></i>
+
+Download for Windows
+
+</a>
+
+<p class="note">
+
+Official installer from the Tutorain Team.<br>
+
+Latest Stable Release
+
+</p>
+
+</div>
+
+</div>
+
+<div class="footer">
+
+© 2026 Tutorain. All Rights Reserved.
+
+</div>
+
+</body>
+</html>

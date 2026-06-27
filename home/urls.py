@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import index, contact, student_login_web, dashboard,comingsoon,findsub,maca,accounts_login_redirect
+from .views import index, contact, student_login_web, dashboard,comingsoon,findsub,maca,accounts_login_redirect,download
 
 urlpatterns = [
     path('', index, name='home'),
@@ -10,5 +10,6 @@ urlpatterns = [
     path('findsub/', findsub, name='findsub'),
     path('maca/', maca, name='maca'),
     path('accounts/login/', accounts_login_redirect),
+    path('download/', download, name="download"),
 
 ]

@@ -9,6 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from django.views.decorators.cache import never_cache
 from django.views.decorators.cache import cache_control
+from django.shortcuts import render
 
 
 
@@ -178,3 +179,6 @@ from django.shortcuts import redirect
 
 def accounts_login_redirect(request):
     return redirect('/login/')
+
+def download(request):
+    return render(request, 'home/download.html')
