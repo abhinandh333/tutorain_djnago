@@ -1,22 +1,29 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html>
 <head>
     <title>Login - Tutorain</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    
-
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap CSS (IMPORTANT for navbar) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
 
     <style>
         body {
             margin: 0;
             font-family: 'Poppins', sans-serif;
             background: linear-gradient(135deg, #1e3c72, #2a5298);
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .login-wrapper{
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            height: calc(100vh - 80px);
         }
 
         .login-container {
@@ -90,10 +97,69 @@
             margin-top: 10px;
         }
 
+        /* navbar fix */
+        header {
+            background: white;
+        }
     </style>
 </head>
 
 <body>
+
+<!-- HEADER START -->
+<header>
+<div class="container">
+  <div class="row align-items-center py-2">
+    <div class="col-6 col-lg-3">
+      <a class="navbar-brand" href="{% url 'home' %}">
+        <img src="{% static 'website/img/logo/logo1.png' %}" alt="Tutorain" style="height: 45px;">
+      </a>
+    </div>
+
+    <div class="col-6 col-lg-9">
+      <nav class="navbar navbar-expand-lg navbar-light p-0">
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNavbar">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
+          <ul class="navbar-nav">
+
+            <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'findsub' %}">Find Tutor</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact Us</a></li>
+
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">More</a>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" href="{% url 'maca' %}">MACA</a>
+                <a class="dropdown-item" href="{% url 'comingsoon' %}">MAAI</a>
+                <a class="dropdown-item" href="{% url 'comingsoon' %}">Feedback</a>
+              </div>
+            </li>
+
+            <li class="nav-item">
+              <a class="btn btn-outline-primary btn-sm m-1" href="{% url 'findsub' %}">Join Tutorain</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="btn btn-outline-primary btn-sm m-1" href="{% url 'login' %}">Login</a>
+            </li>
+
+          </ul>
+        </div>
+
+      </nav>
+    </div>
+  </div>
+</div>
+</header>
+<!-- HEADER END -->
+
+
+<!-- LOGIN -->
+<div class="login-wrapper">
 
 <div class="login-container">
 
@@ -125,34 +191,36 @@
 
 </div>
 
+</div>
+
+<!-- JS -->
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
-    // 👁️ Show/Hide Password
-    function togglePassword() {
-        const pass = document.getElementById("password");
-        pass.type = pass.type === "password" ? "text" : "password";
+function togglePassword() {
+    const pass = document.getElementById("password");
+    pass.type = pass.type === "password" ? "text" : "password";
+}
+
+const mobileInput = document.getElementById("mobile");
+const rememberCheck = document.getElementById("remember");
+
+window.onload = function() {
+    const savedMobile = localStorage.getItem("mobile");
+    if (savedMobile) {
+        mobileInput.value = savedMobile;
+        rememberCheck.checked = true;
     }
+};
 
-    // ✅ Remember Mobile
-    const mobileInput = document.getElementById("mobile");
-    const rememberCheck = document.getElementById("remember");
-
-    // Load saved mobile
-    window.onload = function() {
-        const savedMobile = localStorage.getItem("mobile");
-        if (savedMobile) {
-            mobileInput.value = savedMobile;
-            rememberCheck.checked = true;
-        }
-    };
-
-    // Save on submit
-    document.querySelector("form").addEventListener("submit", function() {
-        if (rememberCheck.checked) {
-            localStorage.setItem("mobile", mobileInput.value);
-        } else {
-            localStorage.removeItem("mobile");
-        }
-    });
+document.querySelector("form").addEventListener("submit", function() {
+    if (rememberCheck.checked) {
+        localStorage.setItem("mobile", mobileInput.value);
+    } else {
+        localStorage.removeItem("mobile");
+    }
+});
 </script>
 
 </body>

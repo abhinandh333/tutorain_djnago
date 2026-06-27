@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -5,135 +6,232 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
     <style>
         body {
             margin: 0;
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-            color: white;
-        }
-
-        .container {
-            padding: 20px;
+            background: #f4f6f9;
+            color: #111827;
         }
 
         /* HEADER */
-        .header {
-            padding: 25px;
+        header {
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .header h2 {
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 18px;
+        }
+
+        .logo img {
+            height: 40px;
+        }
+
+        .menu a {
+            text-decoration: none;
+            margin: 0 6px;
+            padding: 7px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #374151;
+            transition: 0.2s;
+        }
+
+        .menu a:hover {
+            background: #f3f4f6;
+        }
+
+        .menu .btn {
+            border: 1px solid #d1d5db;
+        }
+
+        .menu .btn:hover {
+            background: #111827;
+            color: white;
+        }
+
+        /* PAGE HEADER */
+        .hero {
+            padding: 20px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .hero h2 {
             margin: 0;
-            font-size: 24px;
+            font-size: 20px;
         }
 
-        .header p {
+        .hero p {
             margin: 5px 0 0;
-            color: #ccc;
+            color: #6b7280;
+            font-size: 14px;
         }
 
-        /* GLASS CARD */
-        .card {
-            backdrop-filter: blur(12px);
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 18px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-        }
-
-        .live-card {
-            border: 1px solid rgba(255, 0, 0, 0.5);
+        /* CONTENT */
+        .container {
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
         }
 
         .section-title {
-            margin: 20px 0 10px;
-            font-size: 18px;
+            font-size: 14px;
+            font-weight: 600;
+            margin: 18px 0 10px;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* CARD GRID */
+        .card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.06);
+        }
+
+        .title {
+            font-size: 16px;
             font-weight: 600;
         }
 
-        .badge {
-            background: red;
-            padding: 4px 10px;
-            border-radius: 10px;
-            font-size: 12px;
-            margin-left: 10px;
+        .meta {
+            font-size: 13px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        /* LIVE TAG */
+        .live-tag {
+            display: inline-block;
+            font-size: 11px;
+            background: #fee2e2;
+            color: #b91c1c;
+            padding: 3px 8px;
+            border-radius: 6px;
+            margin-left: 8px;
         }
 
         /* BUTTONS */
         .btn {
             display: inline-block;
-            padding: 10px 16px;
-            border-radius: 10px;
-            text-decoration: none;
-            font-size: 14px;
             margin-top: 10px;
-            transition: 0.3s;
+            padding: 8px 14px;
+            font-size: 13px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.2s;
         }
 
         .btn-live {
-            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            background: #ef4444;
             color: white;
         }
 
-        .btn-recorded {
-            background: linear-gradient(135deg, #00c6ff, #0072ff);
+        .btn-live:hover {
+            background: #dc2626;
+        }
+
+        .btn-watch {
+            background: #2563eb;
             color: white;
         }
 
-        .btn:hover {
-            transform: scale(1.05);
+        .btn-watch:hover {
+            background: #1d4ed8;
         }
 
-        /* EMPTY TEXT */
         .empty {
-            color: #aaa;
+            color: #9ca3af;
             font-size: 14px;
         }
-
     </style>
 </head>
 
 <body>
 
-<div class="header">
+<!-- HEADER -->
+<header>
+<div class="topbar">
+
+    <div class="logo">
+        <a href="{% url 'home' %}">
+            <img src="{% static 'website/img/logo/logo1.png' %}">
+        </a>
+    </div>
+
+    <div class="menu">
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'findsub' %}">Find Tutor</a>
+        <a href="{% url 'contact' %}">Contact</a>
+        <a class="btn" href="{% url 'findsub' %}">Join</a>
+        <a class="btn" href="{% url 'login' %}">Login</a>
+    </div>
+
+</div>
+</header>
+
+
+<!-- HERO -->
+<div class="hero">
     <h2>{{ student.name }}</h2>
     <p>{{ student.subject }}</p>
 </div>
 
+
+<!-- CONTENT -->
 <div class="container">
 
-    <!-- 🔴 LIVE -->
-    <div class="section-title">🔴 Live Class</div>
+    <!-- LIVE -->
+    <div class="section-title">Live Class</div>
 
     {% if live %}
-        <div class="card live-card">
-            <h3>
+        <div class="card">
+            <div class="title">
                 {{ live.title }}
-                <span class="badge">LIVE</span>
-            </h3>
-            <p>{{ live.time }}</p>
+                <span class="live-tag">LIVE</span>
+            </div>
 
-            <a href="{{ live.live_link }}" target="_blank" class="btn btn-live">
-                Join Now 
+            <div class="meta">{{ live.time }}</div>
+
+            <a href="{{ live.live_link }}" class="btn btn-live" target="_blank">
+                Join Class
             </a>
         </div>
     {% else %}
         <p class="empty">No live class available</p>
     {% endif %}
 
-    <!-- 📺 RECORDED -->
-    <div class="section-title">📺 Recorded Classes</div>
+
+    <!-- RECORDED -->
+    <div class="section-title">Recorded Classes</div>
 
     {% for c in recorded %}
         <div class="card">
-            <h3>{{ c.title }}</h3>
-            <p>📅 {{ c.duration }}</p>
+            <div class="title">{{ c.title }}</div>
+            <div class="meta">Duration: {{ c.duration }}</div>
 
-            <a href="{{ c.video_link }}" target="_blank" class="btn btn-recorded">
-                Watch ▶
+            <a href="{{ c.video_link }}" class="btn btn-watch" target="_blank">
+                Watch Video
             </a>
         </div>
     {% empty %}
