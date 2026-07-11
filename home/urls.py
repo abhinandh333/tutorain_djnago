@@ -1,4 +1,5 @@
 from django.urls import path
+from . import views
 from .views import index, contact, student_login_web, dashboard,comingsoon,findsub,maca,accounts_login_redirect,download,auto_login
 from django.contrib.auth import views as auth_views
 
@@ -14,5 +15,6 @@ urlpatterns = [
     path('download/', download, name='download'),
     path('logout/', auth_views.LogoutView.as_view(next_page='home'), name='logout'),
     path('auto-login', auto_login, name='auto_login'),
+    path("meet/<str:username>/", views.meet_redirect),
 
 ]

@@ -203,3 +203,19 @@ def auto_login(request):
 
     except Token.DoesNotExist:
         return Response({"success": False}, status=401)
+    
+
+
+from django.shortcuts import redirect
+
+def meet_redirect(request, username):
+
+    links = {
+        "abhinandh": "https://meet.google.com/orw-acbx-sta",
+
+    }
+
+    if username in links:
+        return redirect(links[username])
+
+    return redirect("/")
