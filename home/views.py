@@ -183,6 +183,10 @@ def accounts_login_redirect(request):
 def download(request):
     return render(request, 'home/download.html')
 
+def free_classes(request):
+    return render(request, 'home/free_classes.html')
+
+
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -219,3 +223,113 @@ def meet_redirect(request, username):
         return redirect(links[username])
 
     return redirect("/")
+
+
+
+
+import csv
+import requests
+from django.shortcuts import render
+
+CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTyiO8zG1Y6IAtZPSpR1_e6Jq4cy09GrhYOSx5uI-Zw1taFu5LwoxmrZIPDKHhAJ7TBBzQ6-K5pYeKK/pub?output=csv"
+
+def free_classes(request):
+    response = requests.get(CSV_URL)
+    response.raise_for_status()  # Shows an error if the sheet can't be downloaded
+    response.encoding = "utf-8"
+
+    rows = list(csv.DictReader(response.text.splitlines()))
+
+    classes = []
+
+    for row in rows:
+        class_name = row["Class"].strip()
+
+        if class_name not in classes:
+            classes.append(class_name)
+
+    classes.sort()  # Sorts as 1,2,3...9 instead of 1,10,2
+
+    return render(request, "home/free_classes.html", {
+        "classes": classes
+    })
+
+
+import csv
+import requests
+from django.shortcuts import render
+
+CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTyiO8zG1Y6IAtZPSpR1_e6Jq4cy09GrhYOSx5uI-Zw1taFu5LwoxmrZIPDKHhAJ7TBBzQ6-K5pYeKK/pub?output=csv"
+
+def class_subjects(request, class_name):
+
+    response = requests.get(CSV_URL)
+    response.encoding = "utf-8"
+
+    rows = list(csv.DictReader(response.text.splitlines()))
+
+    subjects = []
+
+    for row in rows:
+
+        if row["Class"].strip() == class_name:
+
+            subject = row["Subject"].strip()
+
+            if subject not in subjects:
+                subjects.append(subject)
+
+    return render(request, "home/class_subjects.html", {
+        "class_name": class_name,
+        "subjects": subjects,
+    })
+
+def get_sheet_data():
+
+    response = requests.get(CSV_URL)
+
+    response.encoding = "utf-8"
+
+    return list(csv.DictReader(response.text.splitlines()))
+
+def subject_details(request, class_name, subject):
+
+    rows = get_sheet_data()
+
+    playlist = ""
+    chapters = []
+
+    for row in rows:
+
+        if (
+            row["Class"].strip() == class_name
+            and
+            row["Subject"].strip() == subject
+        ):
+
+            if row["Chapter"].strip().lower() == "playlist":
+
+                playlist = row["Playlist URL"]
+
+            else:
+
+                chapters.append({
+
+                    "chapter": row["Chapter"],
+
+                    "video": row["Video URL"],
+
+                    "status": row["Status"]
+
+                })
+
+    return render(
+        request,
+        "home/subject_details.html",
+        {
+            "class_name": class_name,
+            "subject": subject,
+            "playlist": playlist,
+            "chapters": chapters,
+        }
+    )

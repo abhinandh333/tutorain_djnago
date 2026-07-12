@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ class_name }} Free Classes | Tutorain</title>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'website/img/favicon.png' %}">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="{% static 'website/css/bootstrap.min.css' %}">
+
+    <style>
+body{
+    font-family:Arial, Helvetica, sans-serif;
+    background:#f4f7f4;
+    color:#333;
+}
+
+/* Hero */
+
+.hero{
+    background:linear-gradient(135deg,#14532d,#166534,#15803d);
+    color:#fff;
+    text-align:center;
+    padding:65px 20px;
+    margin-bottom:45px;
+    box-shadow:0 8px 20px rgba(0,0,0,.15);
+}
+
+.hero h1{
+    font-size:42px;
+    font-weight:700;
+    margin-bottom:10px;
+}
+
+.hero p{
+    font-size:18px;
+    opacity:.95;
+}
+
+/* Main */
+
+.subject-container{
+    max-width:950px;
+    margin:auto;
+    padding:0 15px 70px;
+}
+
+/* Back Button */
+
+.back-btn{
+    margin-bottom:25px;
+    border-radius:30px;
+    padding:10px 22px;
+    font-weight:600;
+    border:2px solid #166534;
+    color:#166534;
+    transition:.3s;
+}
+
+.back-btn:hover{
+    background:#166534;
+    color:white;
+}
+
+/* Subject Card */
+
+.subject-card{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    background:white;
+
+    border-radius:16px;
+
+    padding:25px;
+
+    margin-bottom:20px;
+
+    text-decoration:none;
+
+    color:#222;
+
+    border-left:6px solid #166534;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+    transition:.35s;
+
+}
+
+.subject-card:hover{
+
+    background:#166534;
+
+    color:white;
+
+    text-decoration:none;
+
+    transform:translateY(-6px);
+
+    box-shadow:0 15px 30px rgba(22,101,52,.30);
+
+}
+
+.subject-left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+}
+
+.subject-icon{
+
+    width:65px;
+
+    height:65px;
+
+    border-radius:50%;
+
+    background:#e8f5e9;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:30px;
+
+    transition:.3s;
+
+}
+
+.subject-card:hover .subject-icon{
+
+    background:rgba(255,255,255,.18);
+
+}
+
+.subject-name{
+
+    font-size:22px;
+
+    font-weight:700;
+
+}
+
+.subject-desc{
+
+    font-size:14px;
+
+    color:#666;
+
+    margin-top:6px;
+
+    transition:.3s;
+
+}
+
+.subject-card:hover .subject-desc{
+
+    color:#eef7ef;
+
+}
+
+.arrow{
+
+    font-size:32px;
+
+    font-weight:bold;
+
+}
+
+/* Empty */
+
+.empty-box{
+
+    background:white;
+
+    border-radius:16px;
+
+    padding:45px;
+
+    text-align:center;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+/* Mobile */
+
+@media(max-width:768px){
+
+.hero h1{
+
+font-size:32px;
+
+}
+
+.hero p{
+
+font-size:16px;
+
+}
+
+.subject-card{
+
+padding:18px;
+
+}
+
+.subject-name{
+
+font-size:18px;
+
+}
+
+.subject-icon{
+
+width:55px;
+height:55px;
+font-size:24px;
+
+}
+
+.arrow{
+
+font-size:26px;
+
+}
+
+}
+
+    </style>
+</head>
+
+<body>
+
+<div class="hero">
+
+    <h1>📚 {{ class_name }}</h1>
+
+    <p>Select a subject to access free YouTube classes.</p>
+
+</div>
+
+<div class="subject-container">
+
+    <a href="{% url 'free_classes' %}" class="btn btn-outline-primary back-btn">
+        ← Back to Classes
+    </a>
+
+    {% for subject in subjects %}
+
+    <a href="{% url 'subject_details' class_name subject %}" class="subject-card">
+
+        <div class="subject-left">
+
+            <div class="subject-icon">
+                📘
+            </div>
+
+            <div>
+
+                <div class="subject-name">
+                    {{ subject }}
+                </div>
+
+                <div class="subject-desc">
+                    Free chapter-wise video lessons
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="arrow">
+            →
+        </div>
+
+    </a>
+
+    {% empty %}
+
+    <div class="empty-box">
+
+        <h3>😔 No Subjects Available</h3>
+
+        <p>Our team is preparing free classes for this category.</p>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+<script src="{% static 'website/js/vendor/jquery-1.12.4.min.js' %}"></script>
+<script src="{% static 'website/js/popper.min.js' %}"></script>
+<script src="{% static 'website/js/bootstrap.min.js' %}"></script>
+
+</body>
+</html>

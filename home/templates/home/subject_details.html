@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ subject }} | Tutorain Free Classes</title>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'website/img/favicon.png' %}">
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="{% static 'website/css/bootstrap.min.css' %}">
+
+    <style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial, Helvetica, sans-serif;
+    background:#f4f7f4;
+    color:#333;
+}
+
+/* Hero */
+
+.hero{
+
+    background:linear-gradient(135deg,#14532d,#166534,#15803d);
+    color:white;
+    text-align:center;
+    padding:70px 20px;
+    box-shadow:0 10px 25px rgba(0,0,0,.15);
+
+}
+
+.hero h1{
+
+    font-size:42px;
+    font-weight:700;
+    margin-bottom:10px;
+
+}
+
+.hero p{
+
+    font-size:18px;
+    opacity:.95;
+
+}
+
+/* Container */
+
+.container{
+
+    max-width:950px;
+    margin:50px auto;
+    padding:0 15px;
+
+}
+
+/* Back Button */
+
+.back-btn{
+
+    margin-bottom:30px;
+    border-radius:30px;
+    border:2px solid #166534;
+    color:#166534;
+    font-weight:600;
+    padding:10px 24px;
+    transition:.3s;
+
+}
+
+.back-btn:hover{
+
+    background:#166534;
+    color:white;
+
+}
+
+/* Playlist Card */
+
+.playlist-card{
+
+    background:white;
+
+    border-radius:18px;
+
+    padding:30px;
+
+    text-align:center;
+
+    margin-bottom:35px;
+
+    border-top:6px solid #166534;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+.playlist-card h2{
+
+    margin-bottom:12px;
+
+}
+
+.playlist-card p{
+
+    color:#666;
+
+}
+
+/* Playlist Button */
+
+.playlist-btn{
+
+    display:inline-block;
+
+    margin-top:18px;
+
+    background:#166534;
+
+    color:white;
+
+    padding:14px 28px;
+
+    border-radius:8px;
+
+    text-decoration:none;
+
+    font-weight:bold;
+
+    transition:.3s;
+
+}
+
+.playlist-btn:hover{
+
+    background:#14532d;
+
+    color:white;
+
+    text-decoration:none;
+
+}
+
+/* Title */
+
+.section-title{
+
+    font-size:30px;
+
+    margin-bottom:25px;
+
+    font-weight:bold;
+
+}
+
+/* Chapter Card */
+
+.chapter-card{
+
+    background:white;
+
+    border-left:6px solid #166534;
+
+    border-radius:15px;
+
+    padding:24px;
+
+    margin-bottom:20px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+    transition:.3s;
+
+}
+
+.chapter-card:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:0 16px 30px rgba(22,101,52,.18);
+
+}
+
+.chapter-title{
+
+    font-size:22px;
+
+    font-weight:700;
+
+    margin-bottom:15px;
+
+}
+
+/* Watch Button */
+
+.watch-btn{
+
+    display:inline-block;
+
+    background:#166534;
+
+    color:white;
+
+    padding:12px 22px;
+
+    border-radius:8px;
+
+    text-decoration:none;
+
+    transition:.3s;
+
+}
+
+.watch-btn:hover{
+
+    background:#14532d;
+
+    color:white;
+
+}
+
+/* Coming Soon */
+
+.coming{
+
+    background:#edf8ef;
+
+    color:#166534;
+
+    border-left:5px solid #166534;
+
+    padding:14px;
+
+    border-radius:8px;
+
+    font-weight:600;
+
+}
+
+/* Empty */
+
+.empty-box{
+
+    background:white;
+
+    border-radius:16px;
+
+    padding:45px;
+
+    text-align:center;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+/* Mobile */
+
+@media(max-width:768px){
+
+.hero{
+
+padding:55px 15px;
+
+}
+
+.hero h1{
+
+font-size:32px;
+
+}
+
+.hero p{
+
+font-size:16px;
+
+}
+
+.chapter-title{
+
+font-size:18px;
+
+}
+
+.playlist-card{
+
+padding:22px;
+
+}
+
+}
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="hero">
+
+    <h1>📘 {{ subject }}</h1>
+
+    <p>
+        Learn chapter by chapter with Tutorain's free YouTube classes.
+    </p>
+
+</div>
+
+<div class="container">
+
+    <a href="javascript:history.back()" class="btn btn-outline-primary back-btn">
+        ← Back
+    </a>
+
+    {% if playlist %}
+
+    <div class="playlist-card">
+
+        <h2>🎬 Complete Playlist</h2>
+
+<p>
+Watch the complete YouTube playlist and cover every chapter in order.
+</p>
+
+        <a href="{{ playlist }}" target="_blank" class="playlist-btn">
+
+            ▶ Start Full Playlist
+
+        </a>
+
+    </div>
+
+    {% endif %}
+
+    <h2 class="section-title">
+
+        📚 Chapters
+
+    </h2>
+
+    {% for item in chapters %}
+
+    <div class="chapter-card">
+
+        <div class="chapter-title">
+
+            {{ item.chapter }}
+
+        </div>
+
+        {% if item.status == "available" %}
+
+            <a href="{{ item.video }}" target="_blank" class="watch-btn">
+
+                ▶ Start Learning
+
+            </a>
+
+        {% else %}
+
+            <div class="coming">
+
+                ⏳ Our team is preparing this lesson. Please check back soon.
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+    {% empty %}
+
+    <div class="chapter-card">
+
+        <h4>No Chapters Available</h4>
+
+        <p>Our team is working on adding free content for this subject.</p>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+<script src="{% static 'website/js/vendor/jquery-1.12.4.min.js' %}"></script>
+<script src="{% static 'website/js/popper.min.js' %}"></script>
+<script src="{% static 'website/js/bootstrap.min.js' %}"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Classes | Tutorain</title>
+{% load static %}
+<link rel="shortcut icon" type="image/x-icon" href="{% static 'website/img/favicon.png' %}">
+<link rel="stylesheet" href="{% static 'website/css/bootstrap.min.css' %}">
+<style>
+body{
+    font-family:Arial,sans-serif;
+    background:#f4f7f4;
+    color:#333;
+}
+
+/* Hero Section */
+
+.hero{
+    background:linear-gradient(135deg,#14532d,#166534,#15803d);
+    color:#fff;
+    padding:60px 20px;
+    text-align:center;
+    box-shadow:0 8px 20px rgba(0,0,0,.15);
+}
+
+.hero h1{
+    font-weight:700;
+    font-size:42px;
+    margin-bottom:10px;
+}
+
+.hero p{
+    font-size:18px;
+    opacity:.95;
+}
+
+/* Container */
+
+.container-custom{
+    max-width:1100px;
+    margin:50px auto;
+    padding:0 15px;
+}
+
+/* Grid */
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+    gap:22px;
+}
+
+/* Card */
+
+.card-box{
+
+    background:#fff;
+    border-radius:16px;
+    padding:28px;
+
+    text-decoration:none;
+    color:#222;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+    transition:.35s;
+
+    border-top:5px solid #166534;
+
+}
+
+.card-box:hover{
+
+    background:#166534;
+
+    color:#fff;
+
+    transform:translateY(-8px);
+
+    box-shadow:0 18px 35px rgba(22,101,52,.30);
+
+}
+
+.card-box h4{
+
+    margin:15px 0 10px;
+
+    font-weight:700;
+
+}
+
+.card-box p{
+
+    margin:0;
+
+    color:#666;
+
+    transition:.3s;
+
+}
+
+.card-box:hover p{
+
+    color:#e8f5e9;
+
+}
+
+/* Icon */
+
+.icon{
+
+    width:70px;
+    height:70px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:#e8f5e9;
+
+    color:#166534;
+
+    font-size:34px;
+
+    border-radius:50%;
+
+    transition:.3s;
+
+}
+
+.card-box:hover .icon{
+
+    background:rgba(255,255,255,.15);
+
+    color:#fff;
+
+}
+
+/* Footer */
+
+.footer{
+
+    text-align:center;
+
+    padding:35px;
+
+    color:#777;
+
+    font-size:15px;
+
+}
+</style>
+</head>
+<body>
+
+<!-- Header Start -->
+
+<script src="{% static 'website/js/vendor/jquery-1.12.4.min.js' %}"></script>
+<script src="{% static 'website/js/popper.min.js' %}"></script>
+<script src="{% static 'website/js/bootstrap.min.js' %}"></script>
+
+<script>
+$(document).ready(function(){
+ $('.navbar-nav .nav-link').on('click',function(){
+   $('.navbar-collapse').collapse('hide');
+ });
+});
+</script>
+
+<div class="container">
+<div class="row align-items-center py-2">
+<div class="col-6 col-lg-3">
+<a class="navbar-brand" href="{% url 'home' %}">
+<img src="{% static 'website/img/logo/logo1.png' %}" alt="Tutorain" style="height:45px;">
+</a>
+</div>
+
+<div class="col-6 col-lg-9">
+<nav class="navbar navbar-expand-lg navbar-light bg-light p-0">
+<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNavbar">
+<span class="navbar-toggler-icon"></span>
+</button>
+
+<div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
+<ul class="navbar-nav">
+<li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+<li class="nav-item"><a class="nav-link" href="{% url 'findsub' %}">Find Your Subject & Tutor</a></li>
+<li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact Us</a></li>
+<li class="nav-item dropdown">
+<a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">More</a>
+<div class="dropdown-menu">
+<a class="dropdown-item" href="{% url 'maca' %}">MACA</a>
+<a class="dropdown-item" href="{% url 'comingsoon' %}">MAAI</a>
+<a class="dropdown-item" href="{% url 'comingsoon' %}">Feedback</a>
+</div>
+</li>
+<li class="nav-item"><a class="btn btn-outline-primary btn-sm m-1" href="{% url 'findsub' %}">Join Tutorain</a></li>
+<li class="nav-item"><a class="btn btn-primary btn-sm m-1" href="{% url 'login' %}">Login</a></li>
+</ul>
+</div>
+</nav>
+</div>
+</div>
+</div>
+
+<section class="hero">
+<h1>📚 Free Classes</h1>
+<p>Choose your class and start learning through free YouTube lessons curated by Tutorain.</p>
+</section>
+
+<div class="container-custom">
+<div class="grid">
+{% for class in classes %}
+<a href="{% url 'class_subjects' class %}" class="card-box">
+<div class="icon">📖</div>
+<h4>Class {{ class }}</h4>
+<p>Open subjects and chapter-wise free video lessons.</p>
+</a>
+{% endfor %}
+</div>
+</div>
+
+<div class="footer">
+© {% now "Y" %} Tutorain 
+</div>
+
+</body>
+</html>
