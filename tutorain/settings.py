@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure--n@&bppbz6%vs@&rgtp_ko!!+f6_v4kjp!lord6gq_*ak%=n%n
 
 
 ALLOWED_HOSTS = ['tutoraindjnago-production.up.railway.app', '127.0.0.1', 'localhost','192.168.1.5','tutorain.com','www.tutorain.com','.ngrok-free.app',
-'.ngrok-free.dev','.ngrok-free.de','https://tutorain-616034968498.europe-west1.run.app']
+'.ngrok-free.dev','.ngrok-free.de','tutorain-616034968498.europe-west1.run.app']
 
 
 
