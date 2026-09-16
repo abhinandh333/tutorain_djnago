@@ -1,0 +1,1535 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <!-- =========================
+         SEO
+    ========================== -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Abhinandh R Nair | Assistant Professor & Founder of Tutorain</title>
+
+    <meta name="description"
+          content="Abhinandh R Nair — Assistant Professor, UGC-NET Qualified academician, M.Tech graduate and Founder of Tutorain – The Future of Learning.">
+
+    <meta name="author" content="Abhinandh R Nair">
+
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph -->
+    <meta property="og:title"
+          content="Abhinandh R Nair | Assistant Professor & Founder of Tutorain">
+
+    <meta property="og:description"
+          content="Abhinandh R Nair — Assistant Professor, educator, technology enthusiast and Founder of Tutorain – The Future of Learning.">
+
+    <meta property="og:type" content="profile">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+
+
+    <style>
+
+        /* =====================================================
+           RESET
+        ====================================================== */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: "DM Sans", sans-serif;
+            background: #07090d;
+            color: #f5f7fa;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        img {
+            max-width: 100%;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+
+        /* =====================================================
+           BACKGROUND
+        ====================================================== */
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: -1;
+
+            background:
+                radial-gradient(
+                    circle at 15% 20%,
+                    rgba(82, 110, 255, 0.14),
+                    transparent 32%
+                ),
+
+                radial-gradient(
+                    circle at 85% 75%,
+                    rgba(0, 210, 190, 0.10),
+                    transparent 30%
+                );
+        }
+
+
+        /* =====================================================
+           NAVIGATION
+        ====================================================== */
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+
+            z-index: 1000;
+
+            padding: 20px 6%;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            background: rgba(7, 9, 13, 0.72);
+            backdrop-filter: blur(18px);
+
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .logo {
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .logo span {
+            opacity: 0.45;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-size: 14px;
+            color: #aeb4c0;
+            transition: 0.25s ease;
+        }
+
+        .nav-links a:hover {
+            color: white;
+        }
+
+
+        /* =====================================================
+           HERO
+        ====================================================== */
+
+        .hero {
+            min-height: 100vh;
+
+            display: flex;
+            align-items: center;
+
+            padding: 140px 8% 100px;
+
+            position: relative;
+        }
+
+        .hero-container {
+            max-width: 1150px;
+            width: 100%;
+
+            margin: auto;
+
+            display: grid;
+            grid-template-columns: 1.25fr 0.75fr;
+
+            gap: 70px;
+
+            align-items: center;
+        }
+
+
+        /* =====================================================
+           EYEBROW
+        ====================================================== */
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+
+            gap: 10px;
+
+            padding: 8px 14px;
+
+            border: 1px solid rgba(255,255,255,0.10);
+            border-radius: 50px;
+
+            background: rgba(255,255,255,0.035);
+
+            color: #b8c0cc;
+
+            font-size: 13px;
+
+            margin-bottom: 25px;
+        }
+
+        .eyebrow::before {
+            content: "";
+
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: #7ee7d5;
+
+            box-shadow: 0 0 15px #7ee7d5;
+        }
+
+
+        /* =====================================================
+           MAIN NAME
+        ====================================================== */
+
+        h1 {
+            font-family: "Space Grotesk", sans-serif;
+
+            font-size: clamp(52px, 7vw, 96px);
+
+            line-height: 0.95;
+
+            letter-spacing: -5px;
+
+            margin-bottom: 25px;
+        }
+
+        h1 span {
+            color: #8792a6;
+        }
+
+
+        /* =====================================================
+           BRAND
+        ====================================================== */
+
+        .also-known {
+            display: flex;
+            align-items: center;
+
+            gap: 10px;
+
+            margin-bottom: 25px;
+
+            color: #747d8d;
+
+            font-size: 14px;
+        }
+
+        .also-known strong {
+            color: #d9dee7;
+
+            font-family: "Space Grotesk", sans-serif;
+
+            font-size: 17px;
+
+            letter-spacing: 1px;
+        }
+
+        .also-known .separator {
+            color: #515968;
+        }
+
+
+        /* =====================================================
+           HERO DESCRIPTION
+        ====================================================== */
+
+        .hero-description {
+            max-width: 680px;
+
+            color: #aeb5c1;
+
+            font-size: 18px;
+
+            margin-bottom: 35px;
+        }
+
+        .hero-description strong {
+            color: #e5e8ee;
+        }
+
+
+        /* =====================================================
+           BUTTONS
+        ====================================================== */
+
+        .hero-buttons {
+            display: flex;
+
+            gap: 14px;
+
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 13px 21px;
+
+            border-radius: 10px;
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            transition: 0.25s ease;
+        }
+
+        .btn-primary {
+            background: white;
+            color: #080a0f;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            background: #e8ecf3;
+        }
+
+        .btn-secondary {
+            border: 1px solid rgba(255,255,255,0.12);
+
+            background: rgba(255,255,255,0.035);
+
+            color: #e3e7ee;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.08);
+        }
+
+
+        /* =====================================================
+           PROFILE CARD
+        ====================================================== */
+
+        .profile-card {
+            position: relative;
+
+            width: 100%;
+
+            padding: 24px;
+
+            border-radius: 25px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255,255,255,0.08),
+                    rgba(255,255,255,0.025)
+                );
+
+            border: 1px solid rgba(255,255,255,0.10);
+
+            backdrop-filter: blur(20px);
+
+            box-shadow:
+                0 30px 100px rgba(0,0,0,0.35);
+        }
+
+
+        /* =====================================================
+           PROFILE IMAGE
+           
+           Your original image is portrait.
+           4:5 keeps it professional and responsive.
+        ====================================================== */
+
+        .profile-image {
+            width: 100%;
+
+            aspect-ratio: 4 / 5;
+
+            display: block;
+
+            object-fit: cover;
+
+            object-position: center 30%;
+
+            border-radius: 18px;
+
+            margin-bottom: 22px;
+
+            background: #151922;
+        }
+
+
+        .profile-card h3 {
+            font-family: "Space Grotesk", sans-serif;
+
+            font-size: 25px;
+
+            margin-bottom: 3px;
+        }
+
+        .profile-card p {
+            color: #9299a7;
+
+            font-size: 14px;
+        }
+
+        .profile-role {
+            margin-top: 10px;
+
+            color: #6f7785;
+
+            font-size: 12px;
+
+            letter-spacing: 0.2px;
+        }
+
+
+        /* =====================================================
+           SECTIONS
+        ====================================================== */
+
+        section {
+            padding: 110px 8%;
+        }
+
+        .section-container {
+            max-width: 1150px;
+
+            margin: auto;
+        }
+
+        .section-label {
+            color: #7ee7d5;
+
+            text-transform: uppercase;
+
+            letter-spacing: 2px;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            margin-bottom: 18px;
+        }
+
+        .section-title {
+            font-family: "Space Grotesk", sans-serif;
+
+            font-size: clamp(35px, 5vw, 60px);
+
+            line-height: 1.05;
+
+            letter-spacing: -2px;
+
+            max-width: 800px;
+
+            margin-bottom: 55px;
+        }
+
+
+        /* =====================================================
+           ABOUT
+        ====================================================== */
+
+        .about-grid {
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            gap: 25px;
+        }
+
+        .glass-card {
+            padding: 35px;
+
+            border-radius: 20px;
+
+            background: rgba(255,255,255,0.035);
+
+            border: 1px solid rgba(255,255,255,0.08);
+
+            transition: 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-4px);
+
+            border-color: rgba(255,255,255,0.15);
+
+            background: rgba(255,255,255,0.05);
+        }
+
+        .glass-card h3 {
+            font-family: "Space Grotesk", sans-serif;
+
+            font-size: 23px;
+
+            margin-bottom: 15px;
+        }
+
+        .glass-card p {
+            color: #9da5b2;
+        }
+
+
+        /* =====================================================
+           IDENTITY
+        ====================================================== */
+
+        #identity {
+            padding-top: 30px;
+        }
+
+        .identity-mark {
+            width: 48px;
+            height: 48px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            margin-bottom: 25px;
+
+            border-radius: 12px;
+
+            background: rgba(255,255,255,0.06);
+
+            border: 1px solid rgba(255,255,255,0.08);
+
+            font-family: "Space Grotesk", sans-serif;
+
+            font-size: 20px;
+
+            font-weight: 700;
+        }
+
+        .brand-names {
+            display: flex;
+
+            gap: 10px;
+
+            margin-bottom: 25px;
+        }
+
+        .brand-names span {
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            width: 55px;
+            height: 48px;
+
+            border-radius: 12px;
+
+            background: rgba(255,255,255,0.06);
+
+            border: 1px solid rgba(255,255,255,0.08);
+
+            font-family: "Space Grotesk", sans-serif;
+
+            font-size: 15px;
+
+            font-weight: 700;
+
+            letter-spacing: 1px;
+        }
+
+
+        /* =====================================================
+           CREDENTIALS
+        ====================================================== */
+
+        .credentials {
+            display: grid;
+
+            grid-template-columns: repeat(3, 1fr);
+
+            gap: 18px;
+        }
+
+        .credential {
+            padding: 30px;
+
+            border-radius: 18px;
+
+            border: 1px solid rgba(255,255,255,0.08);
+
+            background: rgba(255,255,255,0.025);
+        }
+
+        .credential-number {
+            font-family: "Space Grotesk", sans-serif;
+
+            font-size: 13px;
+
+            color: #6f7785;
+
+            margin-bottom: 30px;
+        }
+
+        .credential h3 {
+            font-size: 22px;
+
+            margin-bottom: 8px;
+        }
+
+        .credential p {
+            color: #9098a6;
+
+            font-size: 14px;
+        }
+
+
+        /* =====================================================
+           TUTORAIN
+        ====================================================== */
+
+        .tutorain {
+            position: relative;
+
+            padding: 70px;
+
+            border-radius: 30px;
+
+            overflow: hidden;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(255,255,255,0.09),
+                    rgba(255,255,255,0.025)
+                );
+
+            border: 1px solid rgba(255,255,255,0.10);
+        }
+
+        .tutorain::after {
+            content: "T";
+
+            position: absolute;
+
+            right: -30px;
+            bottom: -100px;
+
+            font-family: "Space Grotesk";
+
+            font-size: 420px;
+
+            font-weight: 700;
+
+            color: rgba(255,255,255,0.025);
+
+            pointer-events: none;
+        }
+
+        .tutorain h2 {
+            font-family: "Space Grotesk";
+
+            font-size: clamp(40px, 6vw, 75px);
+
+            letter-spacing: -3px;
+
+            margin-bottom: 20px;
+        }
+
+        .tutorain h2 span {
+            color: #8792a6;
+        }
+
+        .tutorain p {
+            max-width: 700px;
+
+            color: #a7afbc;
+
+            font-size: 17px;
+
+            margin-bottom: 30px;
+        }
+
+
+        /* =====================================================
+           INTERESTS
+        ====================================================== */
+
+        .tags {
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 10px;
+        }
+
+        .tag {
+            padding: 10px 16px;
+
+            border-radius: 50px;
+
+            background: rgba(255,255,255,0.045);
+
+            border: 1px solid rgba(255,255,255,0.08);
+
+            color: #c1c7d0;
+
+            font-size: 13px;
+        }
+
+
+        /* =====================================================
+           CONTACT
+        ====================================================== */
+
+        .contact {
+            text-align: center;
+
+            padding-bottom: 120px;
+        }
+
+        .contact .section-title {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .contact-text {
+            color: #9ba3b0;
+
+            max-width: 600px;
+
+            margin: -25px auto 30px;
+        }
+
+        .social-links {
+            display: flex;
+
+            justify-content: center;
+
+            gap: 12px;
+
+            flex-wrap: wrap;
+        }
+
+        .social {
+            padding: 11px 18px;
+
+            border-radius: 9px;
+
+            border: 1px solid rgba(255,255,255,0.09);
+
+            background: rgba(255,255,255,0.035);
+
+            color: #b9c0cb;
+
+            font-size: 13px;
+
+            transition: 0.25s ease;
+        }
+
+        .social:hover {
+            color: white;
+
+            background: rgba(255,255,255,0.08);
+        }
+
+
+        /* =====================================================
+           FOOTER
+        ====================================================== */
+
+        footer {
+            padding: 30px 8%;
+
+            border-top: 1px solid rgba(255,255,255,0.06);
+
+            color: #686f7c;
+
+            font-size: 12px;
+
+            text-align: center;
+        }
+
+
+        /* =====================================================
+           TABLET
+        ====================================================== */
+
+        @media (max-width: 900px) {
+
+            .hero-container {
+                grid-template-columns: 1fr;
+
+                gap: 55px;
+
+                max-width: 700px;
+            }
+
+            .hero {
+                padding-top: 130px;
+            }
+
+            .profile-card {
+                max-width: 500px;
+
+                margin: auto;
+            }
+
+            .credentials {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+
+        /* =====================================================
+           MOBILE
+        ====================================================== */
+
+        @media (max-width: 600px) {
+
+            nav {
+                padding: 17px 5%;
+            }
+
+            .logo {
+                font-size: 18px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                min-height: auto;
+
+                padding: 120px 5% 70px;
+            }
+
+            .hero-container {
+                gap: 45px;
+            }
+
+            h1 {
+                font-size: clamp(48px, 14vw, 68px);
+
+                letter-spacing: -3px;
+            }
+
+            .hero-description {
+                font-size: 16px;
+            }
+
+            .eyebrow {
+                font-size: 12px;
+            }
+
+            .also-known {
+                font-size: 13px;
+            }
+
+            .profile-card {
+                width: 100%;
+
+                padding: 16px;
+
+                border-radius: 20px;
+            }
+
+            /*
+               On mobile the photo remains portrait
+               and automatically fits the screen.
+            */
+
+            .profile-image {
+                width: 100%;
+
+                aspect-ratio: 4 / 5;
+
+                object-fit: cover;
+
+                object-position: center 30%;
+
+                border-radius: 15px;
+            }
+
+            section {
+                padding: 80px 5%;
+            }
+
+            .section-title {
+                font-size: 40px;
+
+                letter-spacing: -1.5px;
+
+                margin-bottom: 40px;
+            }
+
+            .about-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .credentials {
+                grid-template-columns: 1fr;
+            }
+
+            .glass-card {
+                padding: 25px;
+            }
+
+            .credential {
+                padding: 25px;
+            }
+
+            .tutorain {
+                padding: 40px 28px;
+            }
+
+            .tutorain h2 {
+                font-size: 48px;
+            }
+
+            .tutorain::after {
+                font-size: 250px;
+
+                right: -20px;
+
+                bottom: -50px;
+            }
+
+            .btn {
+                width: 100%;
+
+                text-align: center;
+            }
+        }
+
+
+        /* =====================================================
+           VERY SMALL PHONES
+        ====================================================== */
+
+        @media (max-width: 380px) {
+
+            h1 {
+                font-size: 45px;
+            }
+
+            .profile-card {
+                padding: 12px;
+            }
+
+            .profile-image {
+                border-radius: 13px;
+            }
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         NAVIGATION
+    ====================================================== -->
+
+    <nav>
+
+        <a href="#" class="logo">
+            Abhinandh R Nair<span>.</span>
+        </a>
+
+        <ul class="nav-links">
+
+            <li>
+                <a href="#identity">Identity</a>
+            </li>
+
+            <li>
+                <a href="#about">About</a>
+            </li>
+
+            <li>
+                <a href="#credentials">Credentials</a>
+            </li>
+
+            <li>
+                <a href="#tutorain">Tutorain</a>
+            </li>
+
+            <li>
+                <a href="#contact">Connect</a>
+            </li>
+
+        </ul>
+
+    </nav>
+
+
+
+    <!-- =====================================================
+         HERO
+    ====================================================== -->
+
+    <header class="hero">
+
+        <div class="hero-container">
+
+
+            <!-- LEFT -->
+
+            <div>
+
+                <div class="eyebrow">
+                    Assistant Professor · Founder · Educator
+                </div>
+
+
+                <h1>
+                    Abhinandh R Nair<span>.</span>
+                </h1>
+
+
+                <!-- ONLY BRAND: MA -->
+
+                <div class="also-known">
+
+                    <span>Also known as</span>
+
+                    <strong>MA</strong>
+
+                </div>
+
+
+                <p class="hero-description">
+
+                    Assistant Professor, UGC-NET qualified academician,
+                    M.Tech graduate, and Founder of
+                    <strong>Tutorain – The Future of Learning.</strong>
+
+                </p>
+
+
+                <div class="hero-buttons">
+
+                    <a href="#about"
+                       class="btn btn-primary">
+
+                        Explore Profile
+
+                    </a>
+
+
+                    <a href="#tutorain"
+                       class="btn btn-secondary">
+
+                        Discover Tutorain
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- RIGHT / PROFILE -->
+
+            <div class="profile-card">
+
+
+                <!-- Django static image -->
+
+                <img
+                    src="{% static 'abhinandh.png' %}"
+                    alt="Abhinandh R Nair — also known as MA"
+                    class="profile-image"
+                >
+
+
+                <h3>
+                    Abhinandh R Nair
+                </h3>
+
+
+                <p>
+                    Also known as MA
+                </p>
+
+
+                <div class="profile-role">
+                    Assistant Professor · Founder of Tutorain
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         IDENTITY
+    ====================================================== -->
+
+    <section id="identity">
+
+        <div class="section-container">
+
+            <div class="section-label">
+                01 / Identity
+            </div>
+
+
+            <h2 class="section-title">
+                One identity.<br>
+                One personal brand.
+            </h2>
+
+
+            <div class="about-grid">
+
+
+                <div class="glass-card">
+
+                    <div class="identity-mark">
+                        A
+                    </div>
+
+                    <h3>
+                        Abhinandh R Nair
+                    </h3>
+
+                    <p>
+
+                        Abhinandh R Nair is the primary professional
+                        identity associated with his academic,
+                        educational, entrepreneurial, and
+                        technology-related work.
+
+                    </p>
+
+                </div>
+
+
+
+                <div class="glass-card">
+
+                    <div class="brand-names">
+
+                        <span>
+                            MA
+                        </span>
+
+                    </div>
+
+                    <h3>
+                        Personal Brand
+                    </h3>
+
+                    <p>
+
+                        MA is the personal brand name used by
+                        Abhinandh R Nair across his digital and
+                        personal branding presence.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         ABOUT
+    ====================================================== -->
+
+    <section id="about">
+
+        <div class="section-container">
+
+            <div class="section-label">
+                02 / About
+            </div>
+
+
+            <h2 class="section-title">
+                Education meets technology.
+            </h2>
+
+
+            <div class="about-grid">
+
+
+                <div class="glass-card">
+
+                    <h3>
+                        Academic
+                    </h3>
+
+                    <p>
+
+                        Abhinandh R Nair is an Assistant Professor
+                        and UGC-NET qualified academician with an
+                        M.Tech qualification.
+
+                    </p>
+
+                </div>
+
+
+
+                <div class="glass-card">
+
+                    <h3>
+                        Entrepreneurial
+                    </h3>
+
+                    <p>
+
+                        Alongside his academic career,
+                        Abhinandh R Nair is the founder of
+                        Tutorain – The Future of Learning,
+                        an education technology initiative
+                        focused on modern learning.
+
+                    </p>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         CREDENTIALS
+    ====================================================== -->
+
+    <section id="credentials">
+
+        <div class="section-container">
+
+            <div class="section-label">
+                03 / Credentials
+            </div>
+
+
+            <h2 class="section-title">
+                Academic foundation.
+            </h2>
+
+
+            <div class="credentials">
+
+
+                <div class="credential">
+
+                    <div class="credential-number">
+                        01
+                    </div>
+
+                    <h3>
+                        M.Tech
+                    </h3>
+
+                    <p>
+                        Postgraduate qualification in technology.
+                    </p>
+
+                </div>
+
+
+
+                <div class="credential">
+
+                    <div class="credential-number">
+                        02
+                    </div>
+
+                    <h3>
+                        UGC-NET
+                    </h3>
+
+                    <p>
+                        UGC-NET qualified academic professional.
+                    </p>
+
+                </div>
+
+
+
+                <div class="credential">
+
+                    <div class="credential-number">
+                        03
+                    </div>
+
+                    <h3>
+                        Assistant Professor
+                    </h3>
+
+                    <p>
+                        Academic teaching and higher-education
+                        professional.
+                    </p>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         TUTORAIN
+    ====================================================== -->
+
+    <section id="tutorain">
+
+        <div class="section-container">
+
+            <div class="section-label">
+                04 / Founder
+            </div>
+
+
+            <div class="tutorain">
+
+                <h2>
+                    Tutorain<span>.</span>
+                </h2>
+
+
+                <p>
+
+                    <strong>The Future of Learning.</strong>
+
+                    Tutorain is an education technology initiative
+                    founded by Abhinandh R Nair, focused on combining
+                    education, technology, digital learning,
+                    and modern educational experiences.
+
+                </p>
+
+
+                <a
+                    href="https://tutorain.com"
+                    class="btn btn-primary"
+                    target="_blank"
+                    rel="noopener"
+                >
+
+                    Visit Tutorain
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         INTERESTS
+    ====================================================== -->
+
+    <section>
+
+        <div class="section-container">
+
+            <div class="section-label">
+                05 / Interests
+            </div>
+
+
+            <h2 class="section-title">
+                Areas of interest.
+            </h2>
+
+
+            <div class="tags">
+
+                <span class="tag">
+                    Education
+                </span>
+
+                <span class="tag">
+                    Educational Technology
+                </span>
+
+                <span class="tag">
+                    Artificial Intelligence
+                </span>
+
+                <span class="tag">
+                    Machine Learning
+                </span>
+
+                <span class="tag">
+                    Natural Language Processing
+                </span>
+
+                <span class="tag">
+                    Digital Learning
+                </span>
+
+                <span class="tag">
+                    Online Education
+                </span>
+
+                <span class="tag">
+                    Technology
+                </span>
+
+                <span class="tag">
+                    Entrepreneurship
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         CONTACT
+    ====================================================== -->
+
+    <section id="contact" class="contact">
+
+        <div class="section-container">
+
+            <div class="section-label">
+                06 / Connect
+            </div>
+
+
+            <h2 class="section-title">
+                Find Abhinandh R Nair online.
+            </h2>
+
+
+            <p class="contact-text">
+
+                Connect through the official professional
+                and social profiles.
+
+            </p>
+
+
+            <div class="social-links">
+
+
+                <!-- Replace # with your real profiles -->
+
+                <a href="#"
+                   class="social">
+
+                    LinkedIn
+
+                </a>
+
+
+                <a href="https://www.instagram.com/abhinandh_abhi_nandhan_"
+                class="social"
+                target="_blank"
+                rel="noopener noreferrer">
+
+                    Instagram
+
+                </a>
+
+
+                <a href="#"
+                   class="social">
+
+                    YouTube
+
+                </a>
+
+
+                <a
+                    href="https://tutorain.com"
+                    class="social"
+                    target="_blank"
+                    rel="noopener"
+                >
+
+                    Tutorain
+
+                </a>
+
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer>
+
+        © 2026 Abhinandh R Nair · Tutorain – The Future of Learning
+
+    </footer>
+
+
+</body>
+
+</html>

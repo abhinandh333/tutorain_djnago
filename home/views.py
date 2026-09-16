@@ -187,6 +187,10 @@ def free_classes(request):
     return render(request, 'home/free_classes.html')
 
 
+def abhinandh(request):
+    return render(request, 'home/abhinandh.html')
+
+
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
