@@ -1,1 +1,1 @@
-web: gunicorn tutorain.tutorain.wsgi:application
+web: gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 tutorain.wsgi:application
