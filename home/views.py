@@ -190,6 +190,9 @@ def free_classes(request):
 def abhinandh(request):
     return render(request, 'home/abhinandh.html')
 
+def ceo(request):
+    return render(request, 'home/ceo.html')
+
 
 
 @api_view(['POST'])
