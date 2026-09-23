@@ -1,327 +1,648 @@
 {% load static %}
 
 <!DOCTYPE html>
-
-<html>
+<html lang="en">
 
 <head>
 
+    <meta charset="UTF-8">
+
     <title>My Classes</title>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
 
-    <!-- Font -->
+    <!-- =====================================================
+         FONT
+    ====================================================== -->
+
     <link
         href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
         rel="stylesheet"
     >
 
+
     <style>
 
         /* =====================================================
+           THEME VARIABLES
+        ====================================================== */
+
+        :root {
+
+            --bg: #f4f6f9;
+
+            --surface: #ffffff;
+
+            --surface-secondary: #f9fafb;
+
+            --text: #111827;
+
+            --text-secondary: #6b7280;
+
+            --border: #e5e7eb;
+
+            --hover: #f3f4f6;
+
+        }
+
+
+        /* =====================================================
+           DARK THEME VARIABLES
+        ====================================================== */
+
+        body.dark-theme {
+
+            --bg: #0f172a;
+
+            --surface: #1e293b;
+
+            --surface-secondary: #172033;
+
+            --text: #f8fafc;
+
+            --text-secondary: #94a3b8;
+
+            --border: #334155;
+
+            --hover: #334155;
+
+        }
+
+
+        /* =====================================================
            GLOBAL
-        ===================================================== */
+        ====================================================== */
+
+        * {
+            box-sizing: border-box;
+        }
+
 
         body {
+
             margin: 0;
+
             font-family: 'Poppins', sans-serif;
-            background: #f4f6f9;
-            color: #111827;
+
+            background: var(--bg);
+
+            color: var(--text);
+
+            transition:
+                background 0.25s ease,
+                color 0.25s ease;
+
         }
 
 
         /* =====================================================
            HEADER
-        ===================================================== */
+        ====================================================== */
 
         header {
-            background: #ffffff;
-            border-bottom: 1px solid #e5e7eb;
+
+            background: var(--surface);
+
+            border-bottom: 1px solid var(--border);
+
             position: sticky;
+
             top: 0;
+
             z-index: 100;
+
+            transition:
+                background 0.25s ease,
+                border-color 0.25s ease;
+
         }
+
 
         .topbar {
+
             display: flex;
+
             justify-content: space-between;
+
             align-items: center;
+
             padding: 10px 18px;
+
         }
+
 
         .logo img {
+
             height: 40px;
+
             display: block;
+
         }
+
+
+        /* =====================================================
+           MENU
+        ====================================================== */
+
+        .menu {
+
+            display: flex;
+
+            align-items: center;
+
+        }
+
 
         .menu a {
+
             text-decoration: none;
-            margin: 0 6px;
+
+            margin: 0 4px;
+
             padding: 7px 12px;
+
             border-radius: 8px;
+
             font-size: 14px;
-            color: #374151;
+
+            color: var(--text);
+
             transition: 0.2s;
+
         }
+
 
         .menu a:hover {
-            background: #f3f4f6;
+
+            background: var(--hover);
+
         }
+
 
         .menu .btn {
-            border: 1px solid #d1d5db;
+
+            border: 1px solid var(--border);
+
         }
 
+
         .menu .btn:hover {
-            background: #111827;
-            color: white;
+
+            background: var(--text);
+
+            color: var(--surface);
+
+        }
+
+
+        /* =====================================================
+           THEME TOGGLE
+        ====================================================== */
+
+        .theme-toggle {
+
+            width: 38px;
+
+            height: 38px;
+
+            border-radius: 50%;
+
+            border: 1px solid var(--border);
+
+            background: var(--surface);
+
+            color: var(--text);
+
+            cursor: pointer;
+
+            font-size: 17px;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            margin-right: 7px;
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease,
+                border-color 0.2s ease;
+
+        }
+
+
+        .theme-toggle:hover {
+
+            background: var(--hover);
+
+            transform: rotate(12deg);
+
         }
 
 
         /* =====================================================
            HERO
-        ===================================================== */
+        ====================================================== */
 
         .hero {
+
             padding: 20px;
-            background: white;
-            border-bottom: 1px solid #e5e7eb;
+
+            background: var(--surface);
+
+            border-bottom: 1px solid var(--border);
+
+            transition:
+                background 0.25s ease,
+                border-color 0.25s ease;
+
         }
+
 
         .hero h2 {
+
             margin: 0;
+
             font-size: 20px;
+
             display: flex;
+
             align-items: center;
+
             gap: 8px;
+
             flex-wrap: wrap;
+
+            color: var(--text);
+
         }
 
+
         .hero p {
+
             margin: 5px 0 0;
-            color: #6b7280;
+
+            color: var(--text-secondary);
+
             font-size: 14px;
+
         }
 
 
         /* =====================================================
            REFRESH BUTTON
-        ===================================================== */
+        ====================================================== */
 
         .icon-btn {
-            border: 1px solid #e5e7eb;
+
+            border: 1px solid var(--border);
+
             background: transparent;
-            color: #6b7280;
+
+            color: var(--text-secondary);
+
             font-size: 14px;
+
             padding: 4px 9px;
+
             border-radius: 999px;
+
             cursor: pointer;
+
             transition: 0.2s;
+
         }
 
+
         .icon-btn:hover {
-            border-color: #111827;
-            color: #111827;
+
+            border-color: var(--text);
+
+            color: var(--text);
+
         }
 
 
         /* =====================================================
-           LOGOUT BUTTON
-        ===================================================== */
+           LOGOUT
+        ====================================================== */
 
         .logout-form {
+
             display: inline;
+
         }
+
 
         .logout-btn {
-            border: 1px solid #e5e7eb;
+
+            border: 1px solid var(--border);
+
             background: transparent;
-            color: #6b7280;
+
+            color: var(--text-secondary);
+
             font-size: 12px;
+
             padding: 4px 10px;
+
             border-radius: 999px;
+
             cursor: pointer;
+
             transition: 0.2s;
+
         }
 
+
         .logout-btn:hover {
-            border-color: #111827;
-            color: #111827;
+
+            border-color: var(--text);
+
+            color: var(--text);
+
         }
 
 
         /* =====================================================
            CONTENT
-        ===================================================== */
+        ====================================================== */
 
         .container {
+
             max-width: 900px;
+
             margin: auto;
+
             padding: 20px;
+
         }
 
+
         .section-title {
+
             font-size: 14px;
+
             font-weight: 600;
+
             margin: 18px 0 10px;
-            color: #6b7280;
+
+            color: var(--text-secondary);
+
             text-transform: uppercase;
+
             letter-spacing: 0.5px;
+
         }
 
 
         /* =====================================================
-           NORMAL CLASS CARD
-        ===================================================== */
+           NORMAL CARD
+        ====================================================== */
 
         .card {
-            background: white;
-            border: 1px solid #e5e7eb;
+
+            background: var(--surface);
+
+            border: 1px solid var(--border);
+
             border-radius: 12px;
+
             padding: 16px;
+
             margin-bottom: 12px;
-            transition: 0.2s;
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease,
+                background 0.25s ease,
+                border-color 0.25s ease;
+
         }
+
 
         .card:hover {
+
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.06);
+
+            box-shadow:
+                0 10px 20px rgba(0, 0, 0, 0.08);
+
         }
+
+
+        body.dark-theme .card:hover {
+
+            box-shadow:
+                0 10px 25px rgba(0, 0, 0, 0.25);
+
+        }
+
 
         .title {
+
             font-size: 16px;
+
             font-weight: 600;
+
+            color: var(--text);
+
         }
 
+
         .meta {
+
             font-size: 13px;
-            color: #6b7280;
+
+            color: var(--text-secondary);
+
             margin-top: 4px;
+
         }
 
 
         /* =====================================================
            LIVE TAG
-        ===================================================== */
+        ====================================================== */
 
         .live-tag {
+
             display: inline-block;
+
             font-size: 11px;
+
             background: #fee2e2;
+
             color: #b91c1c;
+
             padding: 3px 8px;
+
             border-radius: 6px;
+
             margin-left: 8px;
+
         }
 
 
         /* =====================================================
-           NORMAL BUTTONS
-        ===================================================== */
+           BUTTONS
+        ====================================================== */
 
         .btn {
+
             display: inline-block;
+
             margin-top: 10px;
+
             padding: 8px 14px;
+
             font-size: 13px;
+
             border-radius: 8px;
+
             text-decoration: none;
+
             font-weight: 500;
+
             transition: 0.2s;
+
         }
+
 
         .btn-live {
+
             background: #ef4444;
+
             color: white;
+
         }
+
 
         .btn-live:hover {
+
             background: #dc2626;
+
         }
+
 
         .btn-watch {
+
             background: #2563eb;
+
             color: white;
+
         }
 
+
         .btn-watch:hover {
+
             background: #1d4ed8;
+
         }
 
 
         /* =====================================================
-           EMPTY MESSAGE
-        ===================================================== */
+           EMPTY
+        ====================================================== */
 
         .empty {
-            color: #9ca3af;
+
+            color: var(--text-secondary);
+
             font-size: 14px;
+
         }
 
 
         /* =====================================================
            TUTORAIN SPECIAL REVISION SECTION
-        ===================================================== */
+        ====================================================== */
 
         .special-section {
+
             margin-top: 30px;
+
             margin-bottom: 30px;
+
         }
 
 
-        /* Special heading */
+        /* =====================================================
+           SPECIAL HEADING
+        ====================================================== */
 
         .special-heading {
+
             display: flex;
+
             align-items: center;
+
             gap: 10px;
 
             margin-bottom: 12px;
 
             font-size: 14px;
+
             font-weight: 600;
 
             color: #7c3aed;
 
             text-transform: uppercase;
+
             letter-spacing: 0.6px;
+
         }
 
 
-        /* Star icon */
-
         .special-heading::before {
+
             content: "★";
 
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 29px;
 
-            width: 28px;
-            height: 28px;
+            height: 29px;
 
             border-radius: 8px;
 
             background: #f3e8ff;
+
             color: #7c3aed;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
 
             font-size: 13px;
 
-            box-shadow: 0 3px 8px rgba(124, 58, 237, 0.10);
+            box-shadow:
+                0 3px 8px rgba(124, 58, 237, 0.10);
+
         }
 
 
-        /* Special card */
+        /* =====================================================
+           SPECIAL CARD
+        ====================================================== */
 
         .special-card {
+
             position: relative;
+
             overflow: hidden;
 
-            background: linear-gradient(
-                135deg,
-                #ffffff 0%,
-                #faf5ff 100%
-            );
+            background:
+                linear-gradient(
+                    135deg,
+                    #ffffff 0%,
+                    #faf5ff 100%
+                );
 
             border: 1px solid #e9d5ff;
 
@@ -334,46 +655,58 @@
             box-shadow:
                 0 8px 24px rgba(124, 58, 237, 0.08);
 
-            transition: all 0.25s ease;
+            transition:
+                transform 0.25s ease,
+                box-shadow 0.25s ease,
+                border-color 0.25s ease;
+
         }
 
 
-        /* Purple left accent */
+        /* Purple vertical accent */
 
         .special-card::before {
+
             content: "";
 
             position: absolute;
 
             top: 0;
+
             left: 0;
 
             width: 5px;
+
             height: 100%;
 
-            background: linear-gradient(
-                180deg,
-                #7c3aed,
-                #a855f7
-            );
+            background:
+                linear-gradient(
+                    180deg,
+                    #7c3aed,
+                    #a855f7
+                );
+
         }
 
 
-        /* Hover effect */
-
         .special-card:hover {
+
             transform: translateY(-3px);
+
+            border-color: #d8b4fe;
 
             box-shadow:
                 0 14px 30px rgba(124, 58, 237, 0.14);
 
-            border-color: #d8b4fe;
         }
 
 
-        /* Special badge */
+        /* =====================================================
+           SPECIAL BADGE
+        ====================================================== */
 
         .special-badge {
+
             display: inline-flex;
 
             align-items: center;
@@ -399,12 +732,16 @@
             letter-spacing: 0.4px;
 
             margin-bottom: 9px;
+
         }
 
 
-        /* Special title */
+        /* =====================================================
+           SPECIAL TITLE
+        ====================================================== */
 
         .special-title {
+
             font-size: 17px;
 
             font-weight: 600;
@@ -412,26 +749,36 @@
             color: #1f2937;
 
             line-height: 1.4;
+
         }
 
 
-        /* Special description */
+        /* =====================================================
+           SPECIAL DESCRIPTION
+        ====================================================== */
 
         .special-meta {
+
             font-size: 13px;
 
             color: #6b7280;
 
             margin-top: 5px;
+
         }
 
 
-        /* Special watch button */
+        /* =====================================================
+           SPECIAL BUTTON
+        ====================================================== */
 
         .special-btn {
+
             display: inline-flex;
 
             align-items: center;
+
+            justify-content: center;
 
             gap: 7px;
 
@@ -441,11 +788,12 @@
 
             border-radius: 9px;
 
-            background: linear-gradient(
-                135deg,
-                #7c3aed,
-                #9333ea
-            );
+            background:
+                linear-gradient(
+                    135deg,
+                    #7c3aed,
+                    #9333ea
+                );
 
             color: white;
 
@@ -458,77 +806,194 @@
             box-shadow:
                 0 5px 12px rgba(124, 58, 237, 0.20);
 
-            transition: all 0.2s ease;
+            transition: 0.2s;
+
         }
 
 
         .special-btn:hover {
+
             transform: translateY(-1px);
 
             box-shadow:
                 0 7px 16px rgba(124, 58, 237, 0.28);
+
         }
 
 
         .play-icon {
+
             font-size: 12px;
+
         }
 
 
         /* =====================================================
-           MOBILE RESPONSIVE
-        ===================================================== */
+           DARK MODE - SPECIAL SECTION
+        ====================================================== */
+
+        body.dark-theme .special-card {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #1e293b 0%,
+                    #25163d 100%
+                );
+
+            border-color: #5b21b6;
+
+            box-shadow:
+                0 8px 24px rgba(0, 0, 0, 0.25);
+
+        }
+
+
+        body.dark-theme .special-card:hover {
+
+            border-color: #7c3aed;
+
+            box-shadow:
+                0 14px 30px rgba(0, 0, 0, 0.35);
+
+        }
+
+
+        body.dark-theme .special-heading {
+
+            color: #c4b5fd;
+
+        }
+
+
+        body.dark-theme .special-heading::before {
+
+            background: #312e81;
+
+            color: #c4b5fd;
+
+        }
+
+
+        body.dark-theme .special-badge {
+
+            background: #312e81;
+
+            border-color: #4c1d95;
+
+            color: #ddd6fe;
+
+        }
+
+
+        body.dark-theme .special-title {
+
+            color: #f8fafc;
+
+        }
+
+
+        body.dark-theme .special-meta {
+
+            color: #a1a1aa;
+
+        }
+
+
+        /* =====================================================
+           MOBILE
+        ====================================================== */
 
         @media (max-width: 600px) {
 
             .topbar {
+
                 padding: 10px 12px;
+
             }
+
 
             .logo img {
+
                 height: 36px;
+
             }
+
 
             .menu a {
+
                 margin: 0 2px;
+
                 padding: 6px 7px;
+
                 font-size: 12px;
+
             }
 
-            .menu a:nth-child(1),
+
+            /* Hide navigation links on small screens */
+
             .menu a:nth-child(2),
-            .menu a:nth-child(3) {
+            .menu a:nth-child(3),
+            .menu a:nth-child(4) {
+
                 display: none;
+
             }
+
 
             .hero {
+
                 padding: 16px;
+
             }
+
 
             .hero h2 {
+
                 font-size: 18px;
+
             }
+
 
             .container {
+
                 padding: 14px;
+
             }
+
 
             .card {
+
                 padding: 14px;
+
             }
+
 
             .special-card {
+
                 padding: 17px;
+
             }
+
 
             .special-title {
+
                 font-size: 16px;
+
             }
 
+
             .special-btn {
+
                 width: 100%;
-                box-sizing: border-box;
+
+                display: flex;
+
                 justify-content: center;
+
+                box-sizing: border-box;
+
             }
 
         }
@@ -543,11 +1008,14 @@
 
 <!-- =====================================================
      HEADER
-===================================================== -->
+====================================================== -->
 
 <header>
 
     <div class="topbar">
+
+
+        <!-- LOGO -->
 
         <div class="logo">
 
@@ -563,25 +1031,51 @@
         </div>
 
 
+        <!-- MENU -->
+
         <div class="menu">
+
+
+            <!-- THEME SWITCH -->
+
+            <button
+                type="button"
+                class="theme-toggle"
+                id="themeToggle"
+                title="Switch theme"
+                aria-label="Switch theme"
+            >
+                🌙
+            </button>
+
 
             <a href="{% url 'home' %}">
                 Home
             </a>
 
+
             <a href="{% url 'findsub' %}">
                 Find Tutor
             </a>
+
 
             <a href="{% url 'contact' %}">
                 Contact
             </a>
 
-            <a class="btn" href="{% url 'findsub' %}">
+
+            <a
+                class="btn"
+                href="{% url 'findsub' %}"
+            >
                 Join
             </a>
 
-            <a class="btn" href="{% url 'login' %}">
+
+            <a
+                class="btn"
+                href="{% url 'login' %}"
+            >
                 Login
             </a>
 
@@ -594,12 +1088,13 @@
 
 
 <!-- =====================================================
-     HERO / STUDENT INFORMATION
-===================================================== -->
+     HERO
+====================================================== -->
 
 <div class="hero">
 
     <div>
+
 
         <h2>
 
@@ -640,7 +1135,9 @@
 
 
         <p>
+
             {{ student.subject }}
+
         </p>
 
     </div>
@@ -650,8 +1147,8 @@
 
 
 <!-- =====================================================
-     CONTENT
-===================================================== -->
+     MAIN CONTENT
+====================================================== -->
 
 <div class="container">
 
@@ -661,7 +1158,9 @@
     ================================================== -->
 
     <div class="section-title">
+
         Live Class
+
     </div>
 
 
@@ -669,12 +1168,15 @@
 
         <div class="card">
 
+
             <div class="title">
 
                 {{ live.title }}
 
                 <span class="live-tag">
+
                     LIVE
+
                 </span>
 
             </div>
@@ -693,15 +1195,20 @@
                 target="_blank"
                 rel="noopener noreferrer"
             >
+
                 Join Class
+
             </a>
 
         </div>
 
+
     {% else %}
 
         <p class="empty">
+
             No live class available
+
         </p>
 
     {% endif %}
@@ -709,15 +1216,13 @@
 
 
     <!-- =================================================
-         TUTORAIN SPECIAL REVISION VIDEO
+         TUTORAIN SPECIAL REVISION
     ================================================== -->
 
     {% if revision_videos %}
 
         <div class="special-section">
 
-
-            <!-- Special heading -->
 
             <div class="special-heading">
 
@@ -726,14 +1231,12 @@
             </div>
 
 
-            <!-- Videos -->
-
             {% for video in revision_videos %}
 
                 <div class="special-card">
 
 
-                    <!-- Badge -->
+                    <!-- BADGE -->
 
                     <div class="special-badge">
 
@@ -742,7 +1245,7 @@
                     </div>
 
 
-                    <!-- Video title -->
+                    <!-- TITLE -->
 
                     <div class="special-title">
 
@@ -751,7 +1254,7 @@
                     </div>
 
 
-                    <!-- Description -->
+                    <!-- DESCRIPTION -->
 
                     <div class="special-meta">
 
@@ -760,7 +1263,7 @@
                     </div>
 
 
-                    <!-- Watch button -->
+                    <!-- WATCH -->
 
                     <a
                         href="{{ video.link }}"
@@ -792,7 +1295,9 @@
     ================================================== -->
 
     <div class="section-title">
+
         Recorded Classes
+
     </div>
 
 
@@ -841,6 +1346,75 @@
 
 
 </div>
+
+
+
+<!-- =====================================================
+     DARK / LIGHT THEME JAVASCRIPT
+====================================================== -->
+
+<script>
+
+    const themeToggle =
+        document.getElementById("themeToggle");
+
+
+    /*
+       Load previously selected theme
+    */
+
+    const savedTheme =
+        localStorage.getItem("tutorain-theme");
+
+
+    if (savedTheme === "dark") {
+
+        document.body.classList.add("dark-theme");
+
+        themeToggle.textContent = "☀️";
+
+    } else {
+
+        themeToggle.textContent = "🌙";
+
+    }
+
+
+    /*
+       Change theme
+    */
+
+    themeToggle.addEventListener("click", function () {
+
+
+        document.body.classList.toggle("dark-theme");
+
+
+        if (
+            document.body.classList.contains("dark-theme")
+        ) {
+
+            localStorage.setItem(
+                "tutorain-theme",
+                "dark"
+            );
+
+            themeToggle.textContent = "☀️";
+
+        } else {
+
+            localStorage.setItem(
+                "tutorain-theme",
+                "light"
+            );
+
+            themeToggle.textContent = "🌙";
+
+        }
+
+    });
+
+</script>
 
 
 </body>
