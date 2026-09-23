@@ -104,75 +104,272 @@ def student_login_web(request):
 
 
 
-
 from django.contrib.auth.decorators import login_required
-@login_required
-def dashboard(request):
-    mobile = request.user.mobile
-
-    students = fetch_students()
-
-    # find student
-    student = next(
-        (s for s in students if s.get('mobile') == mobile),
-        None
-    )
-
-    if not student:
-        return render(request, 'home/no_access.html')
-
-    recorded = fetch_recorded(mobile)
-    live = fetch_live(mobile)
-
-    return render(request, 'home/dashboard.html', {
-        'student': student,
-        'recorded': recorded,
-        'live': live
-    })
-
-
-
-
-
-
-
 import requests
+
+
+# =========================================================
+# GOOGLE SHEET
+# =========================================================
 
 SHEET_ID = "1bSH1WySBYYHDFROKOhxIib4296Wr_WVC_zbtXZ6fL7o"
 
+
+# =========================================================
+# MOBILE NUMBER NORMALIZATION
+# =========================================================
+
+def normalize_mobile(value):
+
+    if value is None:
+        return ""
+
+    value = str(value).strip()
+
+    # Google Sheets can sometimes return:
+    # 9567326701.0
+    if value.endswith(".0"):
+        value = value[:-2]
+
+    # Remove spaces and symbols
+    value = value.replace(" ", "")
+    value = value.replace("-", "")
+    value = value.replace("+", "")
+
+    # Convert Indian country-code format
+    # 919567326701 -> 9567326701
+    if value.startswith("91") and len(value) == 12:
+        value = value[2:]
+
+    return value
+
+
+# =========================================================
+# FETCH STUDENTS
+# =========================================================
+
 def fetch_students():
+
     url = f"https://opensheet.elk.sh/{SHEET_ID}/students"
-    res = requests.get(url)
-    
-    if res.status_code != 200:
+
+    try:
+        response = requests.get(url, timeout=10)
+    except requests.RequestException:
         return []
 
-    return res.json()
+    if response.status_code != 200:
+        return []
 
+    try:
+        data = response.json()
+    except ValueError:
+        return []
+
+    return data
+
+
+# =========================================================
+# FETCH RECORDED CLASSES
+# =========================================================
 
 def fetch_recorded(mobile):
-    url = f"https://opensheet.elk.sh/{SHEET_ID}/recorded_classes"
-    res = requests.get(url)
 
-    if res.status_code != 200:
+    url = f"https://opensheet.elk.sh/{SHEET_ID}/recorded_classes"
+
+    try:
+        response = requests.get(url, timeout=10)
+    except requests.RequestException:
         return []
 
-    data = res.json()
-    return [row for row in data if row.get('mobile') == mobile]
+    if response.status_code != 200:
+        return []
 
+    try:
+        data = response.json()
+    except ValueError:
+        return []
+
+    mobile = normalize_mobile(mobile)
+
+    return [
+        row
+        for row in data
+        if normalize_mobile(row.get("mobile")) == mobile
+    ]
+
+
+# =========================================================
+# FETCH LIVE CLASS
+# =========================================================
 
 def fetch_live(mobile):
-    url = f"https://opensheet.elk.sh/{SHEET_ID}/live_class"
-    res = requests.get(url)
 
-    if res.status_code != 200:
+    url = f"https://opensheet.elk.sh/{SHEET_ID}/live_class"
+
+    try:
+        response = requests.get(url, timeout=10)
+    except requests.RequestException:
         return None
 
-    data = res.json()
+    if response.status_code != 200:
+        return None
+
+    try:
+        data = response.json()
+    except ValueError:
+        return None
+
+    mobile = normalize_mobile(mobile)
+
     for row in data:
-        if row.get('mobile') == mobile:
+
+        if normalize_mobile(row.get("mobile")) == mobile:
             return row
+
     return None
+
+
+# =========================================================
+# FETCH TUTORAIN SPECIAL REVISION VIDEOS
+# =========================================================
+
+def fetch_revision_videos(mobile):
+
+    url = f"https://opensheet.elk.sh/{SHEET_ID}/link"
+
+    try:
+        response = requests.get(url, timeout=10)
+    except requests.RequestException:
+        return []
+
+    if response.status_code != 200:
+        return []
+
+    try:
+        data = response.json()
+    except ValueError:
+        return []
+
+    mobile = normalize_mobile(mobile)
+
+    revision_videos = []
+
+    for row in data:
+
+        row_mobile = normalize_mobile(
+            row.get("mobile")
+        )
+
+        # Only show this student's videos
+        if row_mobile != mobile:
+            continue
+
+        title = str(
+            row.get("Tutorain Special Revision Video", "")
+        ).strip()
+
+        link = str(
+            row.get("link", "")
+        ).strip()
+
+        # Ignore incomplete rows
+        if not title or not link:
+            continue
+
+        revision_videos.append({
+            "title": title,
+            "link": link,
+        })
+
+    return revision_videos
+
+
+# =========================================================
+# DASHBOARD
+# =========================================================
+
+@login_required
+def dashboard(request):
+
+    user_mobile_raw = request.user.mobile
+    user_mobile = normalize_mobile(user_mobile_raw)
+
+    students = fetch_students()
+
+    debug_data = []
+
+    for s in students:
+
+        sheet_mobile_raw = s.get("mobile", "")
+        sheet_mobile = normalize_mobile(sheet_mobile_raw)
+
+        debug_data.append({
+            "raw": sheet_mobile_raw,
+            "normalized": sheet_mobile,
+            "matches": sheet_mobile == user_mobile,
+            "student": s,
+        })
+
+    student = None
+
+    for item in debug_data:
+
+        if item["matches"]:
+            student = item["student"]
+            break
+
+    if not student:
+
+        return HttpResponse(
+            f"""
+            <html>
+            <body style="font-family:Arial;padding:30px">
+
+            <h2>Student matching failed</h2>
+
+           
+
+            <p>
+                Raw mobile:
+                <strong>{user_mobile_raw}</strong>
+            </p>
+
+            <p>
+                Normalized mobile:
+                <strong>{user_mobile}</strong>
+            </p>
+
+           
+
+            </body>
+            </html>
+            """
+        )
+
+    recorded = fetch_recorded(user_mobile)
+
+    live = fetch_live(user_mobile)
+
+    revision_videos = fetch_revision_videos(user_mobile)
+
+    return render(
+        request,
+        "home/dashboard.html",
+        {
+            "student": student,
+            "recorded": recorded,
+            "live": live,
+            "revision_videos": revision_videos,
+        }
+    )
+
+
+
+
+
+
+
+
 
 
 from django.shortcuts import redirect

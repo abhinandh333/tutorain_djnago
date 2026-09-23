@@ -1,14 +1,27 @@
 {% load static %}
+
 <!DOCTYPE html>
+
 <html>
+
 <head>
+
     <title>My Classes</title>
+
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
+        rel="stylesheet"
+    >
 
     <style>
+
+        /* =====================================================
+           GLOBAL
+        ===================================================== */
+
         body {
             margin: 0;
             font-family: 'Poppins', sans-serif;
@@ -16,7 +29,11 @@
             color: #111827;
         }
 
-        /* HEADER */
+
+        /* =====================================================
+           HEADER
+        ===================================================== */
+
         header {
             background: #ffffff;
             border-bottom: 1px solid #e5e7eb;
@@ -34,6 +51,7 @@
 
         .logo img {
             height: 40px;
+            display: block;
         }
 
         .menu a {
@@ -59,7 +77,11 @@
             color: white;
         }
 
-        /* HERO */
+
+        /* =====================================================
+           HERO
+        ===================================================== */
+
         .hero {
             padding: 20px;
             background: white;
@@ -81,7 +103,11 @@
             font-size: 14px;
         }
 
-        /* ICON BUTTON (REFRESH) */
+
+        /* =====================================================
+           REFRESH BUTTON
+        ===================================================== */
+
         .icon-btn {
             border: 1px solid #e5e7eb;
             background: transparent;
@@ -98,7 +124,11 @@
             color: #111827;
         }
 
-        /* LOGOUT BUTTON */
+
+        /* =====================================================
+           LOGOUT BUTTON
+        ===================================================== */
+
         .logout-form {
             display: inline;
         }
@@ -119,7 +149,11 @@
             color: #111827;
         }
 
-        /* CONTENT */
+
+        /* =====================================================
+           CONTENT
+        ===================================================== */
+
         .container {
             max-width: 900px;
             margin: auto;
@@ -135,7 +169,11 @@
             letter-spacing: 0.5px;
         }
 
-        /* CARD */
+
+        /* =====================================================
+           NORMAL CLASS CARD
+        ===================================================== */
+
         .card {
             background: white;
             border: 1px solid #e5e7eb;
@@ -147,7 +185,7 @@
 
         .card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.06);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.06);
         }
 
         .title {
@@ -161,6 +199,11 @@
             margin-top: 4px;
         }
 
+
+        /* =====================================================
+           LIVE TAG
+        ===================================================== */
+
         .live-tag {
             display: inline-block;
             font-size: 11px;
@@ -170,6 +213,11 @@
             border-radius: 6px;
             margin-left: 8px;
         }
+
+
+        /* =====================================================
+           NORMAL BUTTONS
+        ===================================================== */
 
         .btn {
             display: inline-block;
@@ -200,98 +248,601 @@
             background: #1d4ed8;
         }
 
+
+        /* =====================================================
+           EMPTY MESSAGE
+        ===================================================== */
+
         .empty {
             color: #9ca3af;
             font-size: 14px;
         }
+
+
+        /* =====================================================
+           TUTORAIN SPECIAL REVISION SECTION
+        ===================================================== */
+
+        .special-section {
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+
+
+        /* Special heading */
+
+        .special-heading {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            margin-bottom: 12px;
+
+            font-size: 14px;
+            font-weight: 600;
+
+            color: #7c3aed;
+
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+
+
+        /* Star icon */
+
+        .special-heading::before {
+            content: "★";
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 28px;
+            height: 28px;
+
+            border-radius: 8px;
+
+            background: #f3e8ff;
+            color: #7c3aed;
+
+            font-size: 13px;
+
+            box-shadow: 0 3px 8px rgba(124, 58, 237, 0.10);
+        }
+
+
+        /* Special card */
+
+        .special-card {
+            position: relative;
+            overflow: hidden;
+
+            background: linear-gradient(
+                135deg,
+                #ffffff 0%,
+                #faf5ff 100%
+            );
+
+            border: 1px solid #e9d5ff;
+
+            border-radius: 16px;
+
+            padding: 20px;
+
+            margin-bottom: 14px;
+
+            box-shadow:
+                0 8px 24px rgba(124, 58, 237, 0.08);
+
+            transition: all 0.25s ease;
+        }
+
+
+        /* Purple left accent */
+
+        .special-card::before {
+            content: "";
+
+            position: absolute;
+
+            top: 0;
+            left: 0;
+
+            width: 5px;
+            height: 100%;
+
+            background: linear-gradient(
+                180deg,
+                #7c3aed,
+                #a855f7
+            );
+        }
+
+
+        /* Hover effect */
+
+        .special-card:hover {
+            transform: translateY(-3px);
+
+            box-shadow:
+                0 14px 30px rgba(124, 58, 237, 0.14);
+
+            border-color: #d8b4fe;
+        }
+
+
+        /* Special badge */
+
+        .special-badge {
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 5px;
+
+            background: #f3e8ff;
+
+            color: #7c3aed;
+
+            border: 1px solid #e9d5ff;
+
+            padding: 4px 9px;
+
+            border-radius: 999px;
+
+            font-size: 10px;
+
+            font-weight: 600;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.4px;
+
+            margin-bottom: 9px;
+        }
+
+
+        /* Special title */
+
+        .special-title {
+            font-size: 17px;
+
+            font-weight: 600;
+
+            color: #1f2937;
+
+            line-height: 1.4;
+        }
+
+
+        /* Special description */
+
+        .special-meta {
+            font-size: 13px;
+
+            color: #6b7280;
+
+            margin-top: 5px;
+        }
+
+
+        /* Special watch button */
+
+        .special-btn {
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            margin-top: 14px;
+
+            padding: 9px 15px;
+
+            border-radius: 9px;
+
+            background: linear-gradient(
+                135deg,
+                #7c3aed,
+                #9333ea
+            );
+
+            color: white;
+
+            text-decoration: none;
+
+            font-size: 13px;
+
+            font-weight: 500;
+
+            box-shadow:
+                0 5px 12px rgba(124, 58, 237, 0.20);
+
+            transition: all 0.2s ease;
+        }
+
+
+        .special-btn:hover {
+            transform: translateY(-1px);
+
+            box-shadow:
+                0 7px 16px rgba(124, 58, 237, 0.28);
+        }
+
+
+        .play-icon {
+            font-size: 12px;
+        }
+
+
+        /* =====================================================
+           MOBILE RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 600px) {
+
+            .topbar {
+                padding: 10px 12px;
+            }
+
+            .logo img {
+                height: 36px;
+            }
+
+            .menu a {
+                margin: 0 2px;
+                padding: 6px 7px;
+                font-size: 12px;
+            }
+
+            .menu a:nth-child(1),
+            .menu a:nth-child(2),
+            .menu a:nth-child(3) {
+                display: none;
+            }
+
+            .hero {
+                padding: 16px;
+            }
+
+            .hero h2 {
+                font-size: 18px;
+            }
+
+            .container {
+                padding: 14px;
+            }
+
+            .card {
+                padding: 14px;
+            }
+
+            .special-card {
+                padding: 17px;
+            }
+
+            .special-title {
+                font-size: 16px;
+            }
+
+            .special-btn {
+                width: 100%;
+                box-sizing: border-box;
+                justify-content: center;
+            }
+
+        }
+
     </style>
+
 </head>
+
 
 <body>
 
-<!-- HEADER -->
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
 <header>
+
     <div class="topbar">
 
         <div class="logo">
+
             <a href="{% url 'home' %}">
-                <img src="{% static 'website/img/logo/logo1.png' %}">
+
+                <img
+                    src="{% static 'website/img/logo/logo1.png' %}"
+                    alt="Tutorain"
+                >
+
             </a>
+
         </div>
 
+
         <div class="menu">
-            <a href="{% url 'home' %}">Home</a>
-            <a href="{% url 'findsub' %}">Find Tutor</a>
-            <a href="{% url 'contact' %}">Contact</a>
-            <a class="btn" href="{% url 'findsub' %}">Join</a>
-            <a class="btn" href="{% url 'login' %}">Login</a>
+
+            <a href="{% url 'home' %}">
+                Home
+            </a>
+
+            <a href="{% url 'findsub' %}">
+                Find Tutor
+            </a>
+
+            <a href="{% url 'contact' %}">
+                Contact
+            </a>
+
+            <a class="btn" href="{% url 'findsub' %}">
+                Join
+            </a>
+
+            <a class="btn" href="{% url 'login' %}">
+                Login
+            </a>
+
         </div>
 
     </div>
+
 </header>
 
-<!-- HERO -->
+
+
+<!-- =====================================================
+     HERO / STUDENT INFORMATION
+===================================================== -->
+
 <div class="hero">
 
     <div>
+
         <h2>
+
             {{ student.name }}
 
+
             <!-- REFRESH -->
-            <button class="icon-btn" onclick="location.reload()" title="Refresh">
+
+            <button
+                class="icon-btn"
+                onclick="location.reload()"
+                title="Refresh"
+            >
                 ⟳
             </button>
 
+
             <!-- LOGOUT -->
-            <form action="{% url 'logout' %}" method="post" class="logout-form">
+
+            <form
+                action="{% url 'logout' %}"
+                method="post"
+                class="logout-form"
+            >
+
                 {% csrf_token %}
-                <button type="submit" class="logout-btn">Logout</button>
+
+                <button
+                    type="submit"
+                    class="logout-btn"
+                >
+                    Logout
+                </button>
+
             </form>
+
         </h2>
 
-        <p>{{ student.subject }}</p>
+
+        <p>
+            {{ student.subject }}
+        </p>
+
     </div>
 
 </div>
 
-<!-- CONTENT -->
+
+
+<!-- =====================================================
+     CONTENT
+===================================================== -->
+
 <div class="container">
 
-    <div class="section-title">Live Class</div>
+
+    <!-- =================================================
+         LIVE CLASS
+    ================================================== -->
+
+    <div class="section-title">
+        Live Class
+    </div>
+
 
     {% if live %}
+
         <div class="card">
+
             <div class="title">
+
                 {{ live.title }}
-                <span class="live-tag">LIVE</span>
+
+                <span class="live-tag">
+                    LIVE
+                </span>
+
             </div>
 
-            <div class="meta">{{ live.time }}</div>
 
-            <a href="{{ live.live_link }}" class="btn btn-live" target="_blank">
+            <div class="meta">
+
+                {{ live.time }}
+
+            </div>
+
+
+            <a
+                href="{{ live.live_link }}"
+                class="btn btn-live"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
                 Join Class
             </a>
+
         </div>
+
     {% else %}
-        <p class="empty">No live class available</p>
+
+        <p class="empty">
+            No live class available
+        </p>
+
     {% endif %}
 
-    <div class="section-title">Recorded Classes</div>
+
+
+    <!-- =================================================
+         TUTORAIN SPECIAL REVISION VIDEO
+    ================================================== -->
+
+    {% if revision_videos %}
+
+        <div class="special-section">
+
+
+            <!-- Special heading -->
+
+            <div class="special-heading">
+
+                Tutorain Special Revision
+
+            </div>
+
+
+            <!-- Videos -->
+
+            {% for video in revision_videos %}
+
+                <div class="special-card">
+
+
+                    <!-- Badge -->
+
+                    <div class="special-badge">
+
+                        ✦ Tutorain Special
+
+                    </div>
+
+
+                    <!-- Video title -->
+
+                    <div class="special-title">
+
+                        {{ video.title }}
+
+                    </div>
+
+
+                    <!-- Description -->
+
+                    <div class="special-meta">
+
+                        Special revision video by Tutorain
+
+                    </div>
+
+
+                    <!-- Watch button -->
+
+                    <a
+                        href="{{ video.link }}"
+                        class="special-btn"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+
+                        <span class="play-icon">
+                            ▶
+                        </span>
+
+                        Watch Masterclass Video
+
+                    </a>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+
+
+    <!-- =================================================
+         RECORDED CLASSES
+    ================================================== -->
+
+    <div class="section-title">
+        Recorded Classes
+    </div>
+
 
     {% for c in recorded %}
-        <div class="card">
-            <div class="title">{{ c.title }}</div>
-            <div class="meta">Date: {{ c.duration }}</div>
 
-            <a href="{{ c.video_link }}" class="btn btn-watch" target="_blank">
+        <div class="card">
+
+
+            <div class="title">
+
+                {{ c.title }}
+
+            </div>
+
+
+            <div class="meta">
+
+                Date: {{ c.duration }}
+
+            </div>
+
+
+            <a
+                href="{{ c.video_link }}"
+                class="btn btn-watch"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+
                 Watch Recorded Class
+
             </a>
+
         </div>
+
+
     {% empty %}
-        <p class="empty">No recorded classes</p>
+
+        <p class="empty">
+
+            No recorded classes
+
+        </p>
+
     {% endfor %}
+
 
 </div>
 
+
 </body>
+
 </html>
