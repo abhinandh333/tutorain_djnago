@@ -2833,209 +2833,408 @@ html[data-theme="dark"]
 <!-- =========================================================
      HERO
 ========================================================== -->
+```html
+<!-- =========================================================
+     TUTORAIN PROFESSIONAL HERO SECTION
+========================================================= -->
 
-<section class="hero">
+<section class="tutorain-hero">
 
-    <div class="container hero-grid">
+    <div class="container">
 
-
-        <div>
-
-            <h1>
-                Study anytime, anywhere with Tutorain
-            </h1>
-
-
-            <p class="lead">
-
-                One platform for students from LKG to college —
-                live classes, recorded sessions, doubt support and
-                personalised guidance across every subject.
-
-            </p>
+        <div class="tutorain-hero-grid">
 
 
-            <div class="hero-ctas">
+            <!-- =================================================
+                 LEFT CONTENT
+            ================================================== -->
 
-                <a
-                    href="{% url 'findsub' %}"
-                    class="btn btn-accent"
-                >
-                    Get Started
-                </a>
+            <div class="tutorain-hero-content">
 
-                <a
-                    href="https://youtube.com/@tutorain333?si=h4PkYuY6BadNCubl"
-                    class="btn btn-outline"
-                    target="_blank"
-                    rel="noopener"
-                >
-                    Watch Demo
-                </a>
+
+                <!-- SMALL BADGE -->
+
+                <div class="tutorain-hero-badge">
+
+                    <span class="badge-pulse"></span>
+
+                    <span>
+                        SMART LEARNING • BETTER FUTURE
+                    </span>
+
+                </div>
+
+
+                <!-- MAIN HEADING -->
+
+                <h1 class="tutorain-hero-title">
+
+                    Study smarter.
+                    <br>
+
+                    Learn
+                    <span>anytime.</span>
+
+                    <br>
+
+                    <strong>Anywhere.</strong>
+
+                </h1>
+
+
+                <!-- DESCRIPTION -->
+
+                <p class="tutorain-hero-description">
+
+                    One powerful learning platform for students from
+                    <strong>LKG to college</strong> — with live classes,
+                    recorded sessions, doubt support and personalised
+                    guidance.
+
+                </p>
+
+
+                <!-- CTA BUTTONS -->
+
+                <div class="tutorain-hero-actions">
+
+                    <a
+                        href="{% url 'findsub' %}"
+                        class="tutorain-primary-btn"
+                    >
+
+                        Get Started
+
+                        <span>→</span>
+
+                    </a>
+
+
+                    <a
+                        href="https://youtube.com/@tutorain333?si=h4PkYuY6BadNCubl"
+                        class="tutorain-secondary-btn"
+                        target="_blank"
+                        rel="noopener"
+                    >
+
+                        <span class="play-icon">
+                            ▶
+                        </span>
+
+                        Watch Demo
+
+                    </a>
+
+                </div>
+
+
+                <!-- =================================================
+                     MOBILE STUDENT LOGIN
+                ================================================== -->
+
+                <div class="tutorain-mobile-login">
+
+                    <div class="tutorain-login-icon">
+
+                        👤
+
+                    </div>
+
+
+                    <div class="tutorain-login-info">
+
+                        <strong>
+                            Already a Tutorain student?
+                        </strong>
+
+                        <span>
+                            Login to access your classes
+                        </span>
+
+                    </div>
+
+
+                    <a
+                        href="{% url 'login' %}"
+                        class="tutorain-login-btn"
+                    >
+
+                        Login
+
+                        <span>→</span>
+
+                    </a>
+
+                </div>
+
+
+                <!-- =================================================
+                     TRUST / STATS
+                ================================================== -->
+
+                <div class="tutorain-hero-stats">
+
+
+                    <div class="tutorain-stat">
+
+                        <strong>
+                            LKG–12
+                        </strong>
+
+                        <span>
+                            &amp; College
+                        </span>
+
+                    </div>
+
+
+                    <div class="tutorain-stat-divider"></div>
+
+
+                    <div class="tutorain-stat">
+
+                        <strong>
+                            Live +
+                        </strong>
+
+                        <span>
+                            Recorded
+                        </span>
+
+                    </div>
+
+
+                    <div class="tutorain-stat-divider"></div>
+
+
+                    <div class="tutorain-stat">
+
+                        <strong>
+                            1:1
+                        </strong>
+
+                        <span>
+                            Doubt Support
+                        </span>
+
+                    </div>
+
+
+                </div>
+
 
             </div>
 
 
-            <!-- MOBILE LOGIN -->
 
-            <div class="mobile-login-card">
+            <!-- =================================================
+                 RIGHT SIDE — LIVE CLASSES CARD
+            ================================================== -->
 
-                <div class="mobile-login-icon">
-                    👤
+            <div class="tutorain-hero-visual">
+
+
+                <!-- Decorative background -->
+
+                <div class="hero-glow hero-glow-one"></div>
+
+                <div class="hero-glow hero-glow-two"></div>
+
+
+                <!-- MAIN CARD -->
+
+                <div class="tutorain-live-card">
+
+
+                    <!-- CARD HEADER -->
+
+                    <div class="live-card-header">
+
+                        <div>
+
+                            <span class="live-small-label">
+
+                                <span class="live-dot"></span>
+
+                                LIVE CLASSES
+
+                            </span>
+
+
+                            <h3>
+                                Today's Classes
+                            </h3>
+
+                        </div>
+
+
+                        <div class="live-card-icon">
+                            ✦
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- CLASS 1 -->
+
+                    <div class="tutorain-class-item">
+
+
+                        <div class="class-icon math">
+                            Mt
+                        </div>
+
+
+                        <div class="class-details">
+
+                            <strong>
+                                Mathematics
+                            </strong>
+
+                            <span>
+                                Grade 12 · Algebra
+                            </span>
+
+                        </div>
+
+
+                        <div class="class-time">
+
+                            <strong>
+                                10:00
+                            </strong>
+
+                            <span>
+                                AM
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- CLASS 2 -->
+
+                    <div class="tutorain-class-item">
+
+
+                        <div class="class-icon science">
+                            Sc
+                        </div>
+
+
+                        <div class="class-details">
+
+                            <strong>
+                                Science
+                            </strong>
+
+                            <span>
+                                Grade 10 · Physics
+                            </span>
+
+                        </div>
+
+
+                        <div class="class-time">
+
+                            <strong>
+                                11:30
+                            </strong>
+
+                            <span>
+                                AM
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- CLASS 3 -->
+
+                    <div class="tutorain-class-item">
+
+
+                        <div class="class-icon python">
+                            Py
+                        </div>
+
+
+                        <div class="class-details">
+
+                            <strong>
+                                Python
+                            </strong>
+
+                            <span>
+                                College · AI &amp; ML
+                            </span>
+
+                        </div>
+
+
+                        <div class="class-time">
+
+                            <strong>
+                                1:00
+                            </strong>
+
+                            <span>
+                                PM
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- CARD FOOTER -->
+
+                    <div class="live-card-footer">
+
+                        <span class="footer-check">
+                            ✓
+                        </span>
+
+                        Learn from anywhere
+
+                        <span class="footer-arrow">
+                            →
+                        </span>
+
+                    </div>
+
+
                 </div>
 
-                <div class="mobile-login-text">
 
-                    <strong>
-                        Already a Tutorain student?
-                    </strong>
+                <!-- FLOATING ELEMENT -->
 
-                    <span>
-                        Login to access your classes
-                    </span>
+                <div class="hero-floating-card">
 
-                </div>
+                    <div class="floating-icon">
+                        ✓
+                    </div>
 
-                <a
-                    href="{% url 'login' %}"
-                    class="mobile-login-btn"
-                >
-                    Student Login
-                </a>
+                    <div>
 
-            </div>
+                        <strong>
+                            Learn with confidence
+                        </strong>
 
+                        <span>
+                            Your learning journey starts here
+                        </span>
 
-            <div class="hero-stats">
-
-                <div>
-
-                    <strong>LKG–12</strong>
-
-                    <span>
-                        &amp; college level
-                    </span>
+                    </div>
 
                 </div>
 
-                <div>
-
-                    <strong>Live</strong>
-
-                    <span>
-                        &amp; recorded classes
-                    </span>
-
-                </div>
-
-                <div>
-
-                    <strong>1:1</strong>
-
-                    <span>
-                        doubt support
-                    </span>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- SCHEDULE -->
-
-        <div class="schedule-card">
-
-            <span class="live-tag">
-                Live now
-            </span>
-
-            <h4>
-                Today's classes
-            </h4>
-
-
-            <div class="schedule-item">
-
-                <div
-                    class="dot"
-                    style="background:#2E9E8B;"
-                >
-                    Mt
-                </div>
-
-                <div class="info">
-
-                    <strong>
-                        Mathematics
-                    </strong>
-
-                    <span>
-                        Grade 12 · Algebra
-                    </span>
-
-                </div>
-
-                <div class="time">
-                    10:00
-                </div>
-
-            </div>
-
-
-            <div class="schedule-item">
-
-                <div
-                    class="dot"
-                    style="background:#E8A33D;"
-                >
-                    Sc
-                </div>
-
-                <div class="info">
-
-                    <strong>
-                        Science
-                    </strong>
-
-                    <span>
-                        Grade 10 · Physics
-                    </span>
-
-                </div>
-
-                <div class="time">
-                    11:30
-                </div>
-
-            </div>
-
-
-            <div class="schedule-item">
-
-                <div
-                    class="dot"
-                    style="background:#5E6AD2;"
-                >
-                    Py
-                </div>
-
-                <div class="info">
-
-                    <strong>
-                        Python
-                    </strong>
-
-                    <span>
-                        Grade college · AI and Machine Learning
-                    </span>
-
-                </div>
-
-                <div class="time">
-                    1:00
-                </div>
 
             </div>
 
@@ -3044,6 +3243,1466 @@ html[data-theme="dark"]
     </div>
 
 </section>
+
+
+
+<style>
+
+/* =========================================================
+   TUTORAIN HERO
+========================================================= */
+
+.tutorain-hero {
+
+    position: relative;
+
+    overflow: hidden;
+
+    padding: 90px 0 80px;
+
+    background:
+        radial-gradient(
+            circle at 85% 20%,
+            rgba(229,168,59,.10),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 10% 80%,
+            rgba(22,33,62,.07),
+            transparent 30%
+        );
+
+}
+
+
+/* =========================================================
+   GRID
+========================================================= */
+
+.tutorain-hero-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1.05fr)
+        minmax(400px, .95fr);
+
+    align-items: center;
+
+    gap: 75px;
+
+}
+
+
+/* =========================================================
+   LEFT CONTENT
+========================================================= */
+
+.tutorain-hero-content {
+
+    position: relative;
+
+    z-index: 2;
+
+}
+
+
+/* =========================================================
+   BADGE
+========================================================= */
+
+.tutorain-hero-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    padding: 8px 14px;
+
+    margin-bottom: 22px;
+
+    border: 1px solid rgba(22,33,62,.10);
+
+    border-radius: 50px;
+
+    background: rgba(255,255,255,.7);
+
+    color: #16213e;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.3px;
+
+    backdrop-filter: blur(10px);
+
+}
+
+
+.badge-pulse {
+
+    width: 7px;
+
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #e5a83b;
+
+    box-shadow:
+        0 0 0 5px rgba(229,168,59,.12);
+
+}
+
+
+/* =========================================================
+   MAIN TITLE
+========================================================= */
+
+.tutorain-hero-title {
+
+    margin: 0;
+
+    max-width: 760px;
+
+    color: #16213e;
+
+    font-size: clamp(48px, 5.5vw, 78px);
+
+    line-height: .98;
+
+    font-weight: 900;
+
+    letter-spacing: -3.5px;
+
+}
+
+
+.tutorain-hero-title span {
+
+    color: #e5a83b;
+
+}
+
+
+.tutorain-hero-title strong {
+
+    color: #16213e;
+
+    font-weight: 900;
+
+}
+
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
+
+.tutorain-hero-description {
+
+    max-width: 650px;
+
+    margin: 27px 0 30px;
+
+    color: #667085;
+
+    font-size: 17px;
+
+    line-height: 1.75;
+
+}
+
+
+.tutorain-hero-description strong {
+
+    color: #16213e;
+
+    font-weight: 750;
+
+}
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.tutorain-hero-actions {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    margin-bottom: 32px;
+
+}
+
+
+.tutorain-primary-btn {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 14px;
+
+    padding: 14px 22px;
+
+    border-radius: 11px;
+
+    background: #16213e;
+
+    color: white;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    font-weight: 750;
+
+    box-shadow:
+        0 10px 25px rgba(22,33,62,.16);
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease;
+
+}
+
+
+.tutorain-primary-btn span {
+
+    font-size: 19px;
+
+    transition: transform .25s ease;
+
+}
+
+
+.tutorain-primary-btn:hover {
+
+    color: white;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 14px 30px rgba(22,33,62,.22);
+
+}
+
+
+.tutorain-primary-btn:hover span {
+
+    transform: translateX(4px);
+
+}
+
+
+.tutorain-secondary-btn {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    padding: 13px 19px;
+
+    border: 1px solid #d9dee8;
+
+    border-radius: 11px;
+
+    background: rgba(255,255,255,.65);
+
+    color: #16213e;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    transition: .25s ease;
+
+}
+
+
+.tutorain-secondary-btn:hover {
+
+    color: #16213e;
+
+    border-color: #16213e;
+
+    transform: translateY(-2px);
+
+}
+
+
+.play-icon {
+
+    width: 25px;
+
+    height: 25px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #e5a83b;
+
+    color: white;
+
+    font-size: 9px;
+
+}
+
+
+/* =========================================================
+   MOBILE LOGIN
+========================================================= */
+
+.tutorain-mobile-login {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    max-width: 540px;
+
+    padding: 13px 14px;
+
+    margin-bottom: 30px;
+
+    border: 1px solid rgba(22,33,62,.08);
+
+    border-radius: 15px;
+
+    background: rgba(255,255,255,.8);
+
+    box-shadow:
+        0 8px 25px rgba(22,33,62,.06);
+
+}
+
+
+.tutorain-login-icon {
+
+    width: 40px;
+
+    height: 40px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background: #eef1f7;
+
+    font-size: 18px;
+
+}
+
+
+.tutorain-login-info {
+
+    flex: 1;
+
+    min-width: 0;
+
+}
+
+
+.tutorain-login-info strong {
+
+    display: block;
+
+    color: #16213e;
+
+    font-size: 13px;
+
+}
+
+
+.tutorain-login-info span {
+
+    display: block;
+
+    margin-top: 3px;
+
+    color: #7b8494;
+
+    font-size: 11px;
+
+}
+
+
+.tutorain-login-btn {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    padding: 9px 13px;
+
+    border-radius: 9px;
+
+    background: #e5a83b;
+
+    color: #16213e;
+
+    text-decoration: none;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+
+}
+
+
+/* =========================================================
+   STATS
+========================================================= */
+
+.tutorain-hero-stats {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 24px;
+
+}
+
+
+.tutorain-stat {
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+
+.tutorain-stat strong {
+
+    color: #16213e;
+
+    font-size: 17px;
+
+    font-weight: 850;
+
+}
+
+
+.tutorain-stat span {
+
+    margin-top: 2px;
+
+    color: #8991a0;
+
+    font-size: 11px;
+
+}
+
+
+.tutorain-stat-divider {
+
+    width: 1px;
+
+    height: 32px;
+
+    background: #dce1e9;
+
+}
+
+
+/* =========================================================
+   RIGHT VISUAL
+========================================================= */
+
+.tutorain-hero-visual {
+
+    position: relative;
+
+    min-height: 480px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+
+/* =========================================================
+   BACKGROUND GLOW
+========================================================= */
+
+.hero-glow {
+
+    position: absolute;
+
+    border-radius: 50%;
+
+    filter: blur(1px);
+
+    pointer-events: none;
+
+}
+
+
+.hero-glow-one {
+
+    width: 340px;
+
+    height: 340px;
+
+    background: rgba(229,168,59,.12);
+
+    top: 30px;
+
+    right: 20px;
+
+}
+
+
+.hero-glow-two {
+
+    width: 220px;
+
+    height: 220px;
+
+    background: rgba(22,33,62,.07);
+
+    bottom: 20px;
+
+    left: 20px;
+
+}
+
+
+/* =========================================================
+   LIVE CARD
+========================================================= */
+
+.tutorain-live-card {
+
+    position: relative;
+
+    z-index: 2;
+
+    width: 100%;
+
+    max-width: 475px;
+
+    padding: 25px;
+
+    border: 1px solid rgba(255,255,255,.8);
+
+    border-radius: 25px;
+
+    background: rgba(255,255,255,.88);
+
+    box-shadow:
+        0 30px 70px rgba(22,33,62,.13);
+
+    backdrop-filter: blur(18px);
+
+}
+
+
+/* =========================================================
+   CARD HEADER
+========================================================= */
+
+.live-card-header {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: space-between;
+
+    padding-bottom: 20px;
+
+}
+
+
+.live-small-label {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    color: #e5a83b;
+
+    font-size: 10px;
+
+    font-weight: 850;
+
+    letter-spacing: 1.2px;
+
+}
+
+
+.live-dot {
+
+    width: 7px;
+
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #2e9e8b;
+
+    box-shadow:
+        0 0 0 5px rgba(46,158,139,.12);
+
+}
+
+
+.live-card-header h3 {
+
+    margin: 7px 0 0;
+
+    color: #16213e;
+
+    font-size: 25px;
+
+    font-weight: 850;
+
+    letter-spacing: -.7px;
+
+}
+
+
+.live-card-icon {
+
+    width: 40px;
+
+    height: 40px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: #16213e;
+
+    color: #e5a83b;
+
+    font-size: 18px;
+
+}
+
+
+/* =========================================================
+   CLASS ITEM
+========================================================= */
+
+.tutorain-class-item {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 15px 0;
+
+    border-top: 1px solid #edf0f4;
+
+}
+
+
+.class-icon {
+
+    width: 43px;
+
+    height: 43px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 12px;
+
+    color: white;
+
+    font-size: 12px;
+
+    font-weight: 850;
+
+}
+
+
+.class-icon.math {
+
+    background: #2e9e8b;
+
+}
+
+
+.class-icon.science {
+
+    background: #e8a33d;
+
+}
+
+
+.class-icon.python {
+
+    background: #5e6ad2;
+
+}
+
+
+.class-details {
+
+    flex: 1;
+
+    min-width: 0;
+
+}
+
+
+.class-details strong {
+
+    display: block;
+
+    color: #202638;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+}
+
+
+.class-details span {
+
+    display: block;
+
+    margin-top: 4px;
+
+    overflow: hidden;
+
+    color: #858d9b;
+
+    font-size: 11px;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+
+}
+
+
+.class-time {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: flex-end;
+
+}
+
+
+.class-time strong {
+
+    color: #16213e;
+
+    font-size: 14px;
+
+}
+
+
+.class-time span {
+
+    color: #9aa1ad;
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+}
+
+
+/* =========================================================
+   CARD FOOTER
+========================================================= */
+
+.live-card-footer {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin-top: 10px;
+
+    padding-top: 17px;
+
+    border-top: 1px solid #edf0f4;
+
+    color: #697386;
+
+    font-size: 11px;
+
+    font-weight: 650;
+
+}
+
+
+.footer-check {
+
+    width: 20px;
+
+    height: 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: rgba(46,158,139,.12);
+
+    color: #2e9e8b;
+
+    font-size: 10px;
+
+}
+
+
+.footer-arrow {
+
+    margin-left: auto;
+
+    color: #16213e;
+
+    font-size: 17px;
+
+}
+
+
+/* =========================================================
+   FLOATING CARD
+========================================================= */
+
+.hero-floating-card {
+
+    position: absolute;
+
+    z-index: 4;
+
+    left: -10px;
+
+    bottom: 35px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 12px 15px;
+
+    border: 1px solid rgba(255,255,255,.9);
+
+    border-radius: 14px;
+
+    background: rgba(255,255,255,.92);
+
+    box-shadow:
+        0 15px 35px rgba(22,33,62,.12);
+
+    backdrop-filter: blur(12px);
+
+}
+
+
+.floating-icon {
+
+    width: 31px;
+
+    height: 31px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 9px;
+
+    background: #e8f5f2;
+
+    color: #2e9e8b;
+
+    font-weight: 900;
+
+}
+
+
+.hero-floating-card strong {
+
+    display: block;
+
+    color: #16213e;
+
+    font-size: 11px;
+
+}
+
+
+.hero-floating-card span {
+
+    display: block;
+
+    margin-top: 2px;
+
+    color: #8991a0;
+
+    font-size: 9px;
+
+}
+
+
+/* =========================================================
+   DARK MODE
+========================================================= */
+
+html[data-theme="dark"] .tutorain-hero {
+
+    background:
+        radial-gradient(
+            circle at 85% 20%,
+            rgba(229,168,59,.08),
+            transparent 30%
+        ),
+        #0d1322;
+
+}
+
+
+html[data-theme="dark"] .tutorain-hero-title,
+
+html[data-theme="dark"] .tutorain-hero-title strong {
+
+    color: #f4f6fa;
+
+}
+
+
+html[data-theme="dark"] .tutorain-hero-description {
+
+    color: #aab3c4;
+
+}
+
+
+html[data-theme="dark"] .tutorain-hero-description strong {
+
+    color: #f1f3f7;
+
+}
+
+
+html[data-theme="dark"] .tutorain-hero-badge {
+
+    border-color: rgba(255,255,255,.1);
+
+    background: rgba(255,255,255,.05);
+
+    color: #f0f2f6;
+
+}
+
+
+html[data-theme="dark"] .tutorain-secondary-btn {
+
+    border-color: #30394e;
+
+    background: rgba(255,255,255,.04);
+
+    color: #f1f3f7;
+
+}
+
+
+html[data-theme="dark"] .tutorain-mobile-login {
+
+    border-color: #293249;
+
+    background: rgba(255,255,255,.05);
+
+}
+
+
+html[data-theme="dark"] .tutorain-login-icon {
+
+    background: #1a2234;
+
+}
+
+
+html[data-theme="dark"] .tutorain-login-info strong {
+
+    color: #f1f3f7;
+
+}
+
+
+html[data-theme="dark"] .tutorain-login-info span,
+
+html[data-theme="dark"] .tutorain-stat span {
+
+    color: #8994a9;
+
+}
+
+
+html[data-theme="dark"] .tutorain-stat strong {
+
+    color: #f1f3f7;
+
+}
+
+
+html[data-theme="dark"] .tutorain-stat-divider {
+
+    background: #30384b;
+
+}
+
+
+html[data-theme="dark"] .tutorain-live-card {
+
+    border-color: rgba(255,255,255,.08);
+
+    background: rgba(22,29,45,.92);
+
+    box-shadow:
+        0 30px 70px rgba(0,0,0,.35);
+
+}
+
+
+html[data-theme="dark"] .live-card-header h3,
+
+html[data-theme="dark"] .class-details strong,
+
+html[data-theme="dark"] .class-time strong {
+
+    color: #f2f4f8;
+
+}
+
+
+html[data-theme="dark"] .class-details span {
+
+    color: #8e98aa;
+
+}
+
+
+html[data-theme="dark"] .tutorain-class-item,
+
+html[data-theme="dark"] .live-card-footer {
+
+    border-color: #293247;
+
+}
+
+
+html[data-theme="dark"] .live-card-footer {
+
+    color: #9ba5b8;
+
+}
+
+
+html[data-theme="dark"] .footer-arrow {
+
+    color: #f1f3f7;
+
+}
+
+
+html[data-theme="dark"] .hero-floating-card {
+
+    border-color: rgba(255,255,255,.08);
+
+    background: rgba(22,29,45,.95);
+
+}
+
+
+html[data-theme="dark"] .hero-floating-card strong {
+
+    color: #f1f3f7;
+
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1100px) {
+
+    .tutorain-hero {
+
+        padding: 70px 0;
+
+    }
+
+
+    .tutorain-hero-grid {
+
+        grid-template-columns:
+            minmax(0, 1fr)
+            minmax(350px, .85fr);
+
+        gap: 40px;
+
+    }
+
+
+    .tutorain-hero-title {
+
+        font-size: clamp(45px, 5.5vw, 65px);
+
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .tutorain-hero {
+
+        padding: 55px 0 60px;
+
+    }
+
+
+    .tutorain-hero-grid {
+
+        grid-template-columns: 1fr;
+
+        gap: 45px;
+
+    }
+
+
+    .tutorain-hero-content {
+
+        text-align: center;
+
+    }
+
+
+    .tutorain-hero-badge {
+
+        margin-left: auto;
+
+        margin-right: auto;
+
+    }
+
+
+    .tutorain-hero-title {
+
+        font-size: clamp(44px, 10vw, 62px);
+
+        letter-spacing: -2.5px;
+
+    }
+
+
+    .tutorain-hero-description {
+
+        margin-left: auto;
+
+        margin-right: auto;
+
+    }
+
+
+    .tutorain-hero-actions {
+
+        justify-content: center;
+
+    }
+
+
+    .tutorain-mobile-login {
+
+        margin-left: auto;
+
+        margin-right: auto;
+
+        text-align: left;
+
+    }
+
+
+    .tutorain-hero-stats {
+
+        justify-content: center;
+
+    }
+
+
+    .tutorain-hero-visual {
+
+        min-height: 430px;
+
+    }
+
+
+    .hero-floating-card {
+
+        left: 0;
+
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 576px) {
+
+    .tutorain-hero {
+
+        padding: 40px 0 45px;
+
+    }
+
+
+    .tutorain-hero-grid {
+
+        gap: 35px;
+
+    }
+
+
+    .tutorain-hero-badge {
+
+        font-size: 8px;
+
+        letter-spacing: 1px;
+
+        padding: 7px 11px;
+
+    }
+
+
+    .tutorain-hero-title {
+
+        font-size: 43px;
+
+        letter-spacing: -2px;
+
+    }
+
+
+    .tutorain-hero-description {
+
+        font-size: 14px;
+
+        line-height: 1.65;
+
+    }
+
+
+    .tutorain-hero-actions {
+
+        flex-direction: column;
+
+        width: 100%;
+
+    }
+
+
+    .tutorain-primary-btn,
+
+    .tutorain-secondary-btn {
+
+        width: 100%;
+
+        justify-content: center;
+
+    }
+
+
+    .tutorain-mobile-login {
+
+        gap: 9px;
+
+        padding: 11px;
+
+    }
+
+
+    .tutorain-login-icon {
+
+        width: 36px;
+
+        height: 36px;
+
+        font-size: 16px;
+
+    }
+
+
+    .tutorain-login-info strong {
+
+        font-size: 11px;
+
+    }
+
+
+    .tutorain-login-info span {
+
+        font-size: 9px;
+
+    }
+
+
+    .tutorain-login-btn {
+
+        padding: 8px 10px;
+
+        font-size: 10px;
+
+    }
+
+
+    .tutorain-hero-stats {
+
+        gap: 12px;
+
+    }
+
+
+    .tutorain-stat strong {
+
+        font-size: 14px;
+
+    }
+
+
+    .tutorain-stat span {
+
+        font-size: 9px;
+
+    }
+
+
+    .tutorain-stat-divider {
+
+        height: 27px;
+
+    }
+
+
+    .tutorain-hero-visual {
+
+        min-height: 390px;
+
+    }
+
+
+    .tutorain-live-card {
+
+        padding: 19px;
+
+        border-radius: 20px;
+
+    }
+
+
+    .live-card-header h3 {
+
+        font-size: 21px;
+
+    }
+
+
+    .hero-floating-card {
+
+        left: -5px;
+
+        bottom: 10px;
+
+        padding: 9px 11px;
+
+    }
+
+
+    .hero-floating-card strong {
+
+        font-size: 9px;
+
+    }
+
+
+    .hero-floating-card span {
+
+        font-size: 7px;
+
+    }
+
+}
+
+</style>
+```
+
 
 
 
