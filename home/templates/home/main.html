@@ -1,4 +1,8 @@
+
 {% load static %}
+
+
+
 <!doctype html>
 <html class="no-js" lang="en">
     <head>
@@ -70,1080 +74,4815 @@
     "description": "Live classes, recorded sessions, and AI-powered learning tools"
   }
 }
-</script>
-
-		<!-- CSS here -->
-            <link rel="stylesheet" href="{% static 'website/css/bootstrap.min.css' %}">
-            <link rel="stylesheet" href="{% static 'website/css/owl.carousel.min.css' %}">
-            <link rel="stylesheet" href="{% static 'website/css/flaticon.css' %}">
-            <link rel="stylesheet" href="{% static 'website/css/price_rangs.css' %}">
-            <link rel="stylesheet" href="{% static 'website/css/slicknav.css' %}">
-            <link rel="stylesheet" href="{% static 'website/css/animate.min.css' %}">
-            <link rel="stylesheet" href="{% static 'website/css/magnific-popup.css' %}">
-            <link rel="stylesheet" href="{% static 'website/css/fontawesome-all.min.css' %}">
-            <link rel="stylesheet" href="{% static 'website/css/themify-icons.css' %}">
-            <link rel="stylesheet" href="{% static 'website/css/slick.css' %}">
-            <link rel="stylesheet" href="{% static 'website/css/nice-select.css' %}">
-            <link rel="stylesheet" href="{% static 'website/css/style.css' %}">
-            <link rel="stylesheet" href="{% static 'style.css' %}">
-            <!-- Add these in your <head> -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-
-   </head>
-
-   <body>
-    <!-- Preloader Start -->
-    <div id="preloader-active">
-        <div class="preloader d-flex align-items-center justify-content-center">
-            <div class="preloader-inner position-relative">
-                <div class="preloader-circle"></div>
-                <div class="preloader-img pere-text">
-                    <img src="{% static 'logo.png' %}" alt="T">
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Preloader Start -->
-    <header>
-    <!-- Header Start -->
 
 
 
 
-             <!-- Include jQuery and Bootstrap JS -->
-<script src="{% static 'website/js/vendor/jquery-1.12.4.min.js' %}"></script>
-<script src="{% static 'website/js/popper.min.js' %}"></script>
-<script src="{% static 'website/js/bootstrap.min.js' %}"></script>
+<html lang="en">
 
-<!-- Collapse mobile navbar on link click -->
-<script>
-  $(document).ready(function () {
-    $('.navbar-nav .nav-link').on('click', function () {
-      $('.navbar-collapse').collapse('hide');
-    });
-  });
-</script>
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Tutorain – Learn Anything, Anywhere, Anytime</title>
+
+    <meta name="description"
+          content="Tutorain - a platform for students from LKG to college. Learn anytime, anywhere with live classes, recorded sessions, and expert guidance across all subjects.">
+
+    <meta name="keywords"
+          content="Tutorain, online learning, MA AI, smart education, live classes, skill learning, e-learning platform, study anywhere, learn online">
+
+    <meta name="author" content="Tutorain Team">
+
+    <meta property="og:title" content="Tutorain – The Future of Learning">
+    <meta property="og:description"
+          content="Tutorain is your all-in-one learning platform for live classes, expert mentors, and skill-based education. Learn anytime, anywhere.">
+    <meta property="og:image"
+          content="https://www.tutorain.com/static/website/img/logo/logo1 (3).png">
+    <meta property="og:url" content="https://tutorain.com">
+    <meta property="og:type" content="website">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title"
+          content="Tutorain – Learn Anything, Anywhere, Anytime">
+    <meta name="twitter:description"
+          content="Smart learning powered by MA AI. Join Tutorain and upgrade your skills anytime, anywhere.">
+    <meta name="twitter:image"
+          content="https://tutorain.com/static/images/og-preview.jpg">
+
+    <link rel="manifest" href="{% static 'site.webmanifest' %}">
+    <link rel="shortcut icon"
+          type="image/x-icon"
+          href="{% static 'website/img/favicon.png' %}">
+
+    <link rel="canonical" href="https://www.tutorain.com/">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+
+
+    <!-- =========================================================
+         THEME LOAD
+         Prevents white flash before page loads
+    ========================================================== -->
+
+    <script>
+        (function () {
+
+            const savedTheme = localStorage.getItem("tutorain-theme");
+
+            if (savedTheme === "dark" || savedTheme === "light") {
+
+                document.documentElement.setAttribute(
+                    "data-theme",
+                    savedTheme
+                );
+
+            } else {
+
+                const systemDark =
+                    window.matchMedia &&
+                    window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+                document.documentElement.setAttribute(
+                    "data-theme",
+                    systemDark ? "dark" : "light"
+                );
+            }
+
+        })();
+    </script>
+
+
+    <style>
+
+        /* =========================================================
+           ROOT / LIGHT THEME
+        ========================================================== */
+
+        :root {
+
+            --ink: #16213E;
+            --ink-soft: #5A6377;
+
+            --bg: #F7F8FA;
+            --bg-alt: #EEF1F6;
+
+            --surface: #FFFFFF;
+
+            --border: #E2E6EE;
+
+            --accent: #E8A33D;
+            --accent-dark: #C67F1D;
+
+            --teal: #2E9E8B;
+            --teal-dark: #217566;
+
+            --radius-lg: 22px;
+            --radius-md: 14px;
+            --radius-sm: 10px;
+
+            --shadow-sm:
+                0 1px 2px rgba(22,33,62,.06);
+
+            --shadow-md:
+                0 10px 30px rgba(22,33,62,.08);
+
+            --shadow-lg:
+                0 24px 60px rgba(22,33,62,.14);
+
+            --font-display: 'Lexend', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+
+        /* =========================================================
+           DARK THEME
+        ========================================================== */
+
+        html[data-theme="dark"] {
+
+            --ink: #F4F6FA;
+            --ink-soft: #AAB3C7;
+
+            --bg: #0B1020;
+            --bg-alt: #151C30;
+
+            --surface: #11182A;
+
+            --border: #29334D;
+
+            --accent: #F0B24F;
+            --accent-dark: #D99632;
+
+            --teal: #42B7A3;
+            --teal-dark: #35A18F;
+
+            --shadow-sm:
+                0 1px 2px rgba(0,0,0,.25);
+
+            --shadow-md:
+                0 10px 30px rgba(0,0,0,.30);
+
+            --shadow-lg:
+                0 24px 60px rgba(0,0,0,.45);
+        }
+
+
+        /* =========================================================
+           GLOBAL
+        ========================================================== */
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 90px;
+        }
+
+        body {
+
+            margin: 0;
+
+            background: var(--bg);
+            color: var(--ink);
+
+            font-family: var(--font-body);
+
+            line-height: 1.6;
+
+            -webkit-font-smoothing: antialiased;
+
+            transition:
+                background .25s ease,
+                color .25s ease;
+        }
+
+        img {
+            max-width: 100%;
+            display: block;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5 {
+
+            font-family: var(--font-display);
+
+            color: var(--ink);
+
+            margin: 0 0 .5em;
+
+            font-weight: 700;
+
+            letter-spacing: -.01em;
+        }
+
+        p {
+            margin: 0 0 1em;
+        }
+
+        .container {
+
+            max-width: 1180px;
+
+            margin: 0 auto;
+
+            padding: 0 24px;
+        }
+
+        .section {
+            padding: 88px 0;
+        }
+
+        .section-narrow {
+            padding: 64px 0;
+        }
+
+        .eyebrow {
+
+            font-size: .95rem;
+
+            color: var(--teal-dark);
+
+            font-weight: 600;
+
+            margin-bottom: .6em;
+        }
+
+
+        /* =========================================================
+           BUTTONS
+        ========================================================== */
+
+        .btn {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 8px;
+
+            padding: 14px 28px;
+
+            border-radius: 999px;
+
+            font-weight: 600;
+
+            font-size: 1rem;
+
+            border: 1px solid transparent;
+
+            cursor: pointer;
+
+            transition:
+                transform .15s ease,
+                box-shadow .15s ease,
+                background .15s ease;
+        }
+
+        .btn:focus-visible {
+
+            outline: 3px solid var(--accent);
+
+            outline-offset: 2px;
+        }
+
+        .btn-primary {
+
+            background: var(--ink);
+
+            color: var(--bg);
+        }
+
+        .btn-primary:hover {
+
+            transform: translateY(-1px);
+
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-accent {
+
+            background: var(--accent);
+
+            color: #25190A;
+        }
+
+        .btn-accent:hover {
+
+            background: var(--accent-dark);
+
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+
+            background: transparent;
+
+            color: var(--ink);
+
+            border-color: var(--border);
+        }
+
+        .btn-outline:hover {
+
+            border-color: var(--ink);
+
+            background: var(--bg-alt);
+        }
+
+        .btn-sm {
+
+            padding: 10px 20px;
+
+            font-size: .92rem;
+        }
+
+
+        /* =========================================================
+           HEADER
+        ========================================================== */
+
+        header {
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 100;
+
+            background: rgba(247,248,250,.90);
+
+            backdrop-filter: blur(10px);
+
+            border-bottom: 1px solid var(--border);
+
+            transition:
+                background .25s ease,
+                border-color .25s ease;
+        }
+
+        html[data-theme="dark"] header {
+
+            background: rgba(11,16,32,.90);
+        }
+
+        .nav-row {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 14px 0;
+        }
+
+        .brand {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            font-family: var(--font-display);
+
+            font-weight: 800;
+
+            font-size: 1.3rem;
+
+            color: var(--ink);
+        }
+
+        .brand img {
+
+            height: 38px;
+
+            width: auto;
+        }
+
+        .brand-mark {
+
+            width: 34px;
+
+            height: 34px;
+
+            border-radius: 9px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--ink),
+                    var(--teal-dark)
+                );
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            color: var(--bg);
+
+            font-family: var(--font-display);
+
+            font-weight: 800;
+        }
+
+
+        /* =========================================================
+           NAVIGATION
+        ========================================================== */
+
+        nav.primary-nav {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 6px;
+        }
+
+        nav.primary-nav > ul {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 4px;
+        }
+
+        .nav-link {
+
+            padding: 10px 14px;
+
+            border-radius: 8px;
+
+            font-weight: 500;
+
+            color: var(--ink-soft);
+
+            font-size: .98rem;
+        }
+
+        .nav-link:hover {
+
+            color: var(--ink);
+
+            background: var(--bg-alt);
+        }
+
+        .nav-actions {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            margin-left: 8px;
+        }
+
+
+        /* =========================================================
+           DROPDOWN
+        ========================================================== */
+
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-menu {
+
+            position: absolute;
+
+            top: calc(100% + 8px);
+
+            left: 0;
+
+            background: var(--surface);
+
+            border: 1px solid var(--border);
+
+            border-radius: var(--radius-sm);
+
+            box-shadow: var(--shadow-md);
+
+            min-width: 170px;
+
+            padding: 6px;
+
+            opacity: 0;
+
+            visibility: hidden;
+
+            transform: translateY(4px);
+
+            transition: .15s ease;
+        }
+
+        .dropdown:hover .dropdown-menu,
+        .dropdown.open .dropdown-menu {
+
+            opacity: 1;
+
+            visibility: visible;
+
+            transform: translateY(0);
+        }
+
+        .dropdown-menu a {
+
+            display: block;
+
+            padding: 9px 12px;
+
+            border-radius: 6px;
+
+            font-size: .95rem;
+
+            color: var(--ink-soft);
+        }
+
+        .dropdown-menu a:hover {
+
+            background: var(--bg-alt);
+
+            color: var(--ink);
+        }
+
+
+        /* =========================================================
+           THEME SWITCHER
+        ========================================================== */
+
+        .theme-switcher {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 3px;
+
+            padding: 4px;
+
+            background: var(--bg-alt);
+
+            border: 1px solid var(--border);
+
+            border-radius: 999px;
+        }
+
+        .theme-option {
+
+            border: none;
+
+            background: transparent;
+
+            color: var(--ink-soft);
+
+            padding: 7px 10px;
+
+            border-radius: 999px;
+
+            cursor: pointer;
+
+            font-family: var(--font-body);
+
+            font-size: .78rem;
+
+            font-weight: 600;
+
+            transition: .2s ease;
+        }
+
+        .theme-option:hover {
+
+            color: var(--ink);
+        }
+
+        .theme-option.active {
+
+            background: var(--surface);
+
+            color: var(--ink);
+
+            box-shadow: var(--shadow-sm);
+        }
+
+
+        /* =========================================================
+           MOBILE NAV BUTTON
+        ========================================================== */
+
+        .nav-toggle {
+
+            display: none;
+
+            background: none;
+
+            border: none;
+
+            cursor: pointer;
+
+            padding: 8px;
+        }
+
+        .nav-toggle span {
+
+            display: block;
+
+            width: 22px;
+
+            height: 2px;
+
+            background: var(--ink);
+
+            margin: 5px 0;
+
+            border-radius: 2px;
+        }
+
+
+        /* =========================================================
+           ALERTS
+        ========================================================== */
+
+        .alert-messages {
+
+            max-width: 1180px;
+
+            margin: 16px auto 0;
+
+            padding: 0 24px;
+        }
+
+        .alert {
+
+            background: #FFF6E6;
+
+            border: 1px solid #F0D8A6;
+
+            color: #6B4B10;
+
+            padding: 12px 18px;
+
+            border-radius: var(--radius-sm);
+
+            text-align: center;
+
+            font-size: .95rem;
+        }
+
+
+        /* =========================================================
+           HERO
+        ========================================================== */
+
+        .hero {
+
+            padding: 64px 0 40px;
+        }
+
+        .hero-grid {
+
+            display: grid;
+
+            grid-template-columns: 1.1fr .9fr;
+
+            gap: 56px;
+
+            align-items: center;
+        }
+
+        .hero h1 {
+
+            font-size: clamp(2.3rem, 4vw, 3.3rem);
+
+            line-height: 1.08;
+        }
+
+        .hero p.lead {
+
+            font-size: 1.15rem;
+
+            color: var(--ink-soft);
+
+            max-width: 46ch;
+        }
+
+        .hero-ctas {
+
+            display: flex;
+
+            gap: 14px;
+
+            margin-top: 28px;
+
+            flex-wrap: wrap;
+        }
+
+        .hero-stats {
+
+            display: flex;
+
+            gap: 32px;
+
+            margin-top: 40px;
+        }
+
+        .hero-stats div strong {
+
+            display: block;
+
+            font-family: var(--font-display);
+
+            font-size: 1.5rem;
+
+            color: var(--ink);
+        }
+
+        .hero-stats div span {
+
+            color: var(--ink-soft);
+
+            font-size: .9rem;
+        }
+
+
+        /* =========================================================
+           MOBILE STUDENT LOGIN CARD
+        ========================================================== */
+
+        .mobile-login-card {
+            display: none;
+        }
+
+
+        /* =========================================================
+           SCHEDULE
+        ========================================================== */
+
+        .schedule-card {
+
+            background: var(--surface);
+
+            border: 1px solid var(--border);
+
+            border-radius: var(--radius-lg);
+
+            box-shadow: var(--shadow-lg);
+
+            padding: 22px;
+
+            position: relative;
+        }
+
+        .schedule-card .live-tag {
+
+            position: absolute;
+
+            top: -14px;
+
+            right: 22px;
+
+            background: var(--teal);
+
+            color: #fff;
+
+            font-size: .78rem;
+
+            font-weight: 700;
+
+            padding: 6px 12px;
+
+            border-radius: 999px;
+
+            box-shadow: var(--shadow-sm);
+        }
+
+        .schedule-card h4 {
+
+            font-size: 1rem;
+
+            color: var(--ink-soft);
+
+            font-weight: 600;
+
+            margin-bottom: 16px;
+        }
+
+        .schedule-item {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 14px;
+
+            padding: 12px 10px;
+
+            border-radius: var(--radius-sm);
+        }
+
+        .schedule-item + .schedule-item {
+
+            border-top: 1px solid var(--border);
+        }
+
+        .schedule-item .dot {
+
+            width: 38px;
+
+            height: 38px;
+
+            border-radius: 10px;
+
+            flex: none;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            color: #fff;
+
+            font-weight: 700;
+
+            font-size: .85rem;
+        }
+
+        .schedule-item .info strong {
+
+            display: block;
+
+            font-size: .98rem;
+        }
+
+        .schedule-item .info span {
+
+            color: var(--ink-soft);
+
+            font-size: .85rem;
+        }
+
+        .schedule-item .time {
+
+            margin-left: auto;
+
+            color: var(--ink-soft);
+
+            font-size: .85rem;
+
+            font-weight: 600;
+        }
+
+
+        /* =========================================================
+           ADMISSION
+        ========================================================== */
+
+        .admission-card {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #16213E,
+                    #1E2E52
+                );
+
+            color: #fff;
+
+            border-radius: var(--radius-lg);
+
+            padding: 44px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 24px;
+
+            flex-wrap: wrap;
+
+            box-shadow: var(--shadow-lg);
+        }
+
+        .admission-card h2 {
+
+            color: #fff;
+
+            font-size: 1.7rem;
+
+            margin-bottom: .3em;
+        }
+
+        .admission-card p {
+
+            color: #C3C9DA;
+
+            margin: 0;
+
+            max-width: 46ch;
+        }
+
+
+        /* =========================================================
+           CONTACT
+        ========================================================== */
+
+        .contact-strip {
+
+            background: var(--surface);
+
+            border: 1px solid var(--border);
+
+            border-radius: var(--radius-lg);
+
+            padding: 40px;
+
+            text-align: center;
+
+            box-shadow: var(--shadow-sm);
+        }
+
+        .contact-strip h2 {
+
+            font-size: 1.5rem;
+        }
+
+        .contact-strip p {
+
+            color: var(--ink-soft);
+
+            max-width: 52ch;
+
+            margin-inline: auto;
+        }
+
+        .contact-buttons {
+
+            display: flex;
+
+            gap: 14px;
+
+            justify-content: center;
+
+            flex-wrap: wrap;
+
+            margin-top: 22px;
+        }
+
+        .contact-number {
+
+            margin-top: 16px;
+
+            font-weight: 700;
+
+            color: var(--ink);
+
+            font-size: 1.05rem;
+        }
+
+
+        /* =========================================================
+           FREE CLASSES
+        ========================================================== */
+
+        .free-banner {
+
+            background: var(--bg-alt);
+
+            border-radius: var(--radius-lg);
+
+            padding: 48px;
+
+            text-align: center;
+        }
+
+        .free-banner h2 {
+
+            font-size: 1.7rem;
+        }
+
+        .free-banner p {
+
+            color: var(--ink-soft);
+        }
+
+
+        /* =========================================================
+           DOWNLOAD
+        ========================================================== */
+
+        .download-banner {
+
+            max-width: 1180px;
+
+            margin: 0 auto;
+
+            padding: 26px 32px;
+
+            background: var(--surface);
+
+            border: 1px solid var(--border);
+
+            border-radius: var(--radius-lg);
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            gap: 20px;
+
+            box-shadow: var(--shadow-sm);
+        }
+
+        .download-left {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 18px;
+        }
+
+        .icon-tile {
+
+            width: 56px;
+
+            height: 56px;
+
+            border-radius: 14px;
+
+            background: var(--bg-alt);
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            color: var(--ink);
+
+            flex: none;
+        }
+
+        .badge {
+
+            display: inline-block;
+
+            padding: 4px 10px;
+
+            font-size: .72rem;
+
+            font-weight: 700;
+
+            background: #E9F6F3;
+
+            color: var(--teal-dark);
+
+            border-radius: 999px;
+
+            margin-bottom: 6px;
+
+            letter-spacing: .3px;
+        }
+
+        .download-text h3 {
+
+            margin: 0;
+
+            font-size: 1.2rem;
+        }
+
+        .download-text p {
+
+            margin-top: 4px;
+
+            color: var(--ink-soft);
+
+            font-size: .95rem;
+        }
+
+
+        /* =========================================================
+           MOBILE APP
+        ========================================================== */
+
+        .app-section {
+
+            display: grid;
+
+            grid-template-columns: .85fr 1.15fr;
+
+            gap: 56px;
+
+            align-items: center;
+        }
+
+        .phone-mock {
+
+            width: 220px;
+
+            height: 440px;
+
+            margin-inline: auto;
+
+            border-radius: 34px;
+
+            background:
+                linear-gradient(
+                    160deg,
+                    #1E2E52,
+                    #16213E
+                );
+
+            border: 8px solid #0E1830;
+
+            box-shadow: var(--shadow-lg);
+
+            position: relative;
+
+            padding: 18px 14px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 10px;
+        }
+
+        .phone-mock .bar {
+
+            height: 8px;
+
+            border-radius: 4px;
+
+            background: rgba(255,255,255,.16);
+        }
+
+        .phone-mock .bar.short {
+
+            width: 60%;
+        }
+
+        .phone-mock .card-mini {
+
+            background: rgba(255,255,255,.08);
+
+            border-radius: 10px;
+
+            padding: 10px;
+
+            margin-top: 4px;
+        }
+
+        .phone-mock .card-mini strong {
+
+            display: block;
+
+            color: #fff;
+
+            font-size: .8rem;
+        }
+
+        .phone-mock .card-mini span {
+
+            color: #9AA4BF;
+
+            font-size: .72rem;
+        }
+
+        .app-content h2 {
+
+            font-size: 1.9rem;
+        }
+
+        .app-content p {
+
+            color: var(--ink-soft);
+
+            max-width: 50ch;
+        }
+
+
+        /* =========================================================
+           SERVICES
+        ========================================================== */
+
+        .section-head {
+
+            text-align: left;
+
+            max-width: 640px;
+
+            margin-bottom: 40px;
+        }
+
+        .section-head h2 {
+
+            font-size: 2rem;
+        }
+
+        .section-head p {
+
+            color: var(--ink-soft);
+        }
+
+        .services-grid {
+
+            display: grid;
+
+            grid-template-columns: repeat(4,1fr);
+
+            gap: 20px;
+        }
+
+        .service-card {
+
+            background: var(--surface);
+
+            border: 1px solid var(--border);
+
+            border-radius: var(--radius-md);
+
+            padding: 26px 22px;
+
+            transition: .15s ease;
+
+            box-shadow: var(--shadow-sm);
+        }
+
+        .service-card:hover {
+
+            border-color: var(--ink);
+
+            box-shadow: var(--shadow-md);
+
+            transform: translateY(-2px);
+        }
+
+        .service-ion {
+
+            width: 46px;
+
+            height: 46px;
+
+            border-radius: 12px;
+
+            background: var(--bg-alt);
+
+            color: var(--ink);
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            margin-bottom: 16px;
+        }
+
+        .service-card h5 {
+
+            font-size: 1.05rem;
+
+            margin-bottom: 4px;
+        }
+
+        .service-card span {
+
+            color: var(--ink-soft);
+
+            font-size: .9rem;
+        }
+
+        .services-cta {
+
+            text-align: center;
+
+            margin-top: 40px;
+        }
+
+
+        /* =========================================================
+           WHY TUTORAIN
+        ========================================================== */
+
+        .process-band {
+
+            background: var(--ink);
+
+            color: var(--bg);
+
+            border-radius: var(--radius-lg);
+        }
+
+        .process-band .section-head h2,
+        .process-band .section-head {
+
+            color: var(--bg);
+        }
+
+        .process-band .section-head p {
+
+            color: #B7BFD6;
+        }
+
+        .process-grid {
+
+            display: grid;
+
+            grid-template-columns: repeat(3,1fr);
+
+            gap: 24px;
+        }
+
+        .process-card {
+
+            background: rgba(255,255,255,.06);
+
+            border: 1px solid rgba(255,255,255,.12);
+
+            border-radius: var(--radius-md);
+
+            padding: 28px;
+        }
+
+        .process-ion {
+
+            width: 44px;
+
+            height: 44px;
+
+            border-radius: 11px;
+
+            background: var(--accent);
+
+            color: #25190A;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            margin-bottom: 18px;
+        }
+
+        .process-card h5 {
+
+            color: #fff;
+
+            font-size: 1.08rem;
+        }
+
+        .process-card p {
+
+            color: #B7BFD6;
+
+            margin: 0;
+
+            font-size: .95rem;
+        }
+
+
+        /* =========================================================
+           MACA
+        ========================================================== */
+
+        .maca-grid {
+
+            display: grid;
+
+            grid-template-columns: 1.1fr .9fr;
+
+            gap: 56px;
+
+            align-items: center;
+        }
+
+        .maca-grid ul {
+
+            margin: 18px 0 26px;
+        }
+
+        .maca-grid li {
+
+            display: flex;
+
+            gap: 10px;
+
+            align-items: flex-start;
+
+            padding: 6px 0;
+
+            color: var(--ink-soft);
+        }
+
+        .maca-grid li svg {
+
+            flex: none;
+
+            margin-top: 3px;
+
+            color: var(--teal);
+        }
+
+        .maca-visual {
+
+            background:
+                linear-gradient(
+                    150deg,
+                    #E9F6F3,
+                    #F7F8FA
+                );
+
+            border: 1px solid var(--border);
+
+            border-radius: var(--radius-lg);
+
+            padding: 34px;
+
+            box-shadow: var(--shadow-sm);
+        }
+
+        html[data-theme="dark"] .maca-visual {
+
+            background:
+                linear-gradient(
+                    150deg,
+                    #132B2A,
+                    #11182A
+                );
+        }
+
+        .maca-visual .stat {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 16px;
+
+            padding: 14px 0;
+        }
+
+        .maca-visual .stat + .stat {
+
+            border-top: 1px solid var(--border);
+        }
+
+        .maca-visual .stat .ic {
+
+            width: 44px;
+
+            height: 44px;
+
+            border-radius: 12px;
+
+            background: var(--surface);
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            color: var(--teal-dark);
+
+            box-shadow: var(--shadow-sm);
+
+            flex: none;
+        }
+
+        .maca-visual .stat strong {
+
+            display: block;
+
+            font-size: 1.05rem;
+        }
+
+        .maca-visual .stat span {
+
+            color: var(--ink-soft);
+
+            font-size: .88rem;
+        }
+
+
+        /* =========================================================
+           FOOTER
+        ========================================================== */
+
+        footer {
+
+            background: #101a33;
+
+            color: #B7BFD6;
+
+            margin-top: 40px;
+        }
+
+        .footer-top {
+
+            padding: 64px 0 32px;
+
+            display: grid;
+
+            grid-template-columns:
+                1.2fr 1fr 1fr 1.2fr;
+
+            gap: 32px;
+        }
+
+        .footer-top h4 {
+
+            color: #fff;
+
+            font-size: 1.02rem;
+
+            margin-bottom: 14px;
+        }
+
+        .footer-top p {
+
+            color: #8B93AD;
+
+            font-size: .92rem;
+        }
+
+        .footer-top li {
+
+            margin-bottom: 9px;
+
+            font-size: .92rem;
+        }
+
+        .footer-top a:hover {
+
+            color: #fff;
+        }
+
+        .footer-brand {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            color: #fff;
+
+            font-family: var(--font-display);
+
+            font-weight: 800;
+
+            font-size: 1.15rem;
+
+            margin-bottom: 12px;
+        }
+
+        .newsletter-form {
+
+            display: flex;
+
+            border: 1px solid #2A3555;
+
+            border-radius: 999px;
+
+            overflow: hidden;
+
+            margin-top: 12px;
+        }
+
+        .newsletter-form input {
+
+            flex: 1;
+
+            border: none;
+
+            background: transparent;
+
+            padding: 12px 16px;
+
+            color: #fff;
+
+            font-size: .9rem;
+        }
+
+        .newsletter-form input::placeholder {
+
+            color: #7D86A3;
+        }
+
+        .newsletter-form button {
+
+            border: none;
+
+            background: var(--accent);
+
+            color: #25190A;
+
+            padding: 0 18px;
+
+            cursor: pointer;
+
+            display: flex;
+
+            align-items: center;
+        }
+
+        .footer-bottom {
+
+            border-top: 1px solid #202A47;
+
+            padding: 20px 0;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            flex-wrap: wrap;
+
+            gap: 12px;
+        }
+
+        .footer-bottom p {
+
+            margin: 0;
+
+            font-size: .85rem;
+
+            color: #7D86A3;
+        }
+
+        .footer-bottom a {
+
+            color: #B7BFD6;
+        }
+
+        .social-row {
+
+            display: flex;
+
+            gap: 10px;
+        }
+
+        .social-row a {
+
+            width: 36px;
+
+            height: 36px;
+
+            border-radius: 9px;
+
+            background: #1A2544;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            color: #B7BFD6;
+        }
+
+        .social-row a:hover {
+
+            background: var(--accent);
+
+            color: #25190A;
+        }
+
+
+        /* =========================================================
+           TABLET
+        ========================================================== */
+
+        @media (max-width: 900px) {
+
+            nav.primary-nav {
+
+                position: fixed;
+
+                inset: 64px 16px auto 16px;
+
+                background: var(--surface);
+
+                border: 1px solid var(--border);
+
+                border-radius: var(--radius-md);
+
+                box-shadow: var(--shadow-lg);
+
+                flex-direction: column;
+
+                align-items: stretch;
+
+                padding: 12px;
+
+                display: none;
+
+                gap: 0;
+
+                max-height: calc(100vh - 80px);
+
+                overflow-y: auto;
+            }
+
+            nav.primary-nav.open {
+                display: flex;
+            }
+
+            nav.primary-nav > ul {
+
+                flex-direction: column;
+
+                align-items: stretch;
+
+                gap: 0;
+            }
+
+            .nav-actions {
+
+                flex-direction: column;
+
+                align-items: stretch;
+
+                margin: 10px 0 0;
+            }
+
+            .theme-switcher {
+
+                width: 100%;
+
+                justify-content: center;
+            }
+
+            .theme-option {
+
+                flex: 1;
+
+                padding: 10px;
+            }
+
+            .student-login-btn {
+
+                width: 100%;
+
+                min-height: 48px;
+
+                font-size: 1rem;
+            }
+
+            .dropdown-menu {
+
+                position: static;
+
+                box-shadow: none;
+
+                border: none;
+
+                display: none;
+
+                opacity: 1;
+
+                visibility: visible;
+
+                transform: none;
+            }
+
+            .dropdown.open .dropdown-menu {
+
+                display: block;
+            }
+
+            .nav-toggle {
+
+                display: block;
+            }
+
+            .services-grid {
+
+                grid-template-columns: repeat(2,1fr);
+            }
+
+            .process-grid {
+
+                grid-template-columns: 1fr;
+            }
+
+            .footer-top {
+
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .hero-grid,
+            .app-section,
+            .maca-grid {
+
+                grid-template-columns: 1fr;
+            }
+
+            .app-section {
+
+                text-align: center;
+            }
+
+            .maca-grid {
+
+                text-align: left;
+            }
+        }
+
+
+        /* =========================================================
+           MOBILE
+        ========================================================== */
+
+        @media (max-width: 700px) {
+
+            .container {
+
+                padding: 0 18px;
+            }
+
+            .hero {
+
+                padding: 42px 0 25px;
+            }
+
+            .hero h1 {
+
+                font-size: 2.25rem;
+            }
+
+            .hero p.lead {
+
+                font-size: 1rem;
+            }
+
+            .hero-ctas {
+
+                display: grid;
+
+                grid-template-columns: 1fr;
+
+                gap: 10px;
+            }
+
+            .hero-ctas .btn {
+
+                width: 100%;
+            }
+
+            .hero-stats {
+
+                gap: 16px;
+
+                justify-content: space-between;
+
+                margin-top: 28px;
+            }
+
+            .hero-stats div strong {
+
+                font-size: 1.2rem;
+            }
+
+            .hero-stats div span {
+
+                font-size: .72rem;
+            }
+
+
+            /* Mobile login */
+
+            .mobile-login-card {
+
+                display: flex;
+
+                align-items: center;
+
+                gap: 12px;
+
+                margin-top: 18px;
+
+                padding: 14px;
+
+                background: var(--surface);
+
+                border: 1px solid var(--border);
+
+                border-radius: var(--radius-md);
+
+                box-shadow: var(--shadow-sm);
+            }
+
+            .mobile-login-icon {
+
+                width: 42px;
+
+                height: 42px;
+
+                flex: 0 0 42px;
+
+                display: flex;
+
+                align-items: center;
+
+                justify-content: center;
+
+                background: var(--bg-alt);
+
+                border-radius: 12px;
+
+                font-size: 19px;
+            }
+
+            .mobile-login-text {
+
+                flex: 1;
+
+                min-width: 0;
+            }
+
+            .mobile-login-text strong {
+
+                display: block;
+
+                font-size: .86rem;
+
+                color: var(--ink);
+            }
+
+            .mobile-login-text span {
+
+                display: block;
+
+                margin-top: 2px;
+
+                color: var(--ink-soft);
+
+                font-size: .73rem;
+            }
+
+            .mobile-login-btn {
+
+                flex: none;
+
+                padding: 10px 13px;
+
+                border-radius: 10px;
+
+                background: var(--ink);
+
+                color: var(--bg);
+
+                font-size: .78rem;
+
+                font-weight: 700;
+
+                white-space: nowrap;
+            }
+
+            html[data-theme="dark"] .mobile-login-btn {
+
+                background: #F4F6FA;
+
+                color: #0B1020;
+            }
+
+
+            .schedule-card {
+
+                margin-top: 30px;
+            }
+
+            .admission-card {
+
+                padding: 30px 24px;
+            }
+
+            .download-banner {
+
+                padding: 22px;
+
+                flex-direction: column;
+
+                align-items: stretch;
+            }
+
+            .download-banner .btn {
+
+                width: 100%;
+            }
+
+            .free-banner {
+
+                padding: 34px 22px;
+            }
+
+            .contact-strip {
+
+                padding: 30px 20px;
+            }
+
+            .services-grid {
+
+                grid-template-columns: 1fr;
+            }
+
+            .section {
+
+                padding: 64px 0;
+            }
+
+            .section-narrow {
+
+                padding: 42px 0;
+            }
+
+            .footer-top {
+
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+
+        /* =========================================================
+           SMALL PHONES
+        ========================================================== */
+
+        @media (max-width: 430px) {
+
+            .hero h1 {
+
+                font-size: 2rem;
+            }
+
+            .mobile-login-card {
+
+                padding: 12px;
+
+                gap: 9px;
+            }
+
+            .mobile-login-icon {
+
+                width: 38px;
+
+                height: 38px;
+
+                flex-basis: 38px;
+
+                font-size: 16px;
+            }
+
+            .mobile-login-text strong {
+
+                font-size: .75rem;
+            }
+
+            .mobile-login-text span {
+
+                font-size: .65rem;
+            }
+
+            .mobile-login-btn {
+
+                padding: 9px 10px;
+
+                font-size: .7rem;
+            }
+
+            .hero-stats {
+
+                gap: 8px;
+            }
+
+            .hero-stats div strong {
+
+                font-size: 1.05rem;
+            }
+
+            .hero-stats div span {
+
+                font-size: .65rem;
+            }
+        }
 
 
 
-    <!-- Wrap inside header -->
-<div class="container">
-  <div class="row align-items-center py-2">  <!-- Use py-2 for padding -->
-    <div class="col-6 col-lg-3">
-      <a class="navbar-brand" href="{% url 'home' %}">
-        <img src="{% static 'website/img/logo/logo1.png' %}" alt="Tutorain" style="height: 45px;">
-      </a>
-    </div>
-    <div class="col-6 col-lg-9">
-      <nav class="navbar navbar-expand-lg navbar-light bg-light p-0">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNavbar"
-          aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
+
+        
+/* =========================================================
+   TUTORAIN BANNER SLIDER
+   Reusable + Responsive
+========================================================= */
+
+.tutorain-slider-wrapper {
+
+    width: 100%;
+
+    max-width: 620px;
+
+    margin: 0 auto;
+
+    position: relative;
+
+}
+
+
+/* =========================================================
+   SLIDER CONTAINER
+========================================================= */
+
+.tutorain-slider-wrapper .banner-slider {
+
+    position: relative;
+
+    width: 100%;
+
+    /*
+       Aspect ratio of your banners.
+
+       16 / 9 is good for normal banners.
+       Change this if your banner has another ratio.
+    */
+
+    aspect-ratio: 16 / 9;
+
+    overflow: hidden;
+
+    border-radius: 18px;
+
+    background: #eef1f6;
+
+    border: 1px solid rgba(0, 0, 0, 0.08);
+
+    box-shadow:
+        0 12px 35px rgba(22, 33, 62, 0.12);
+
+}
+
+
+/* =========================================================
+   SLIDES
+========================================================= */
+
+.tutorain-slider-wrapper .slide {
+
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+
+    height: 100%;
+
+    /*
+       IMPORTANT:
+       cover = fills the complete slider
+       without stretching the image.
+    */
+
+    object-fit: cover;
+
+    object-position: center;
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    transform: scale(1.02);
+
+    transition:
+        opacity .55s ease,
+        transform .7s ease,
+        visibility .55s ease;
+
+}
+
+
+/* Active slide */
+
+.tutorain-slider-wrapper .slide.active {
+
+    opacity: 1;
+
+    visibility: visible;
+
+    transform: scale(1);
+
+}
+
+
+/* =========================================================
+   DOT CONTAINER
+========================================================= */
+
+.tutorain-slider-wrapper .dots {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 7px;
+
+    margin-top: 13px;
+
+    min-height: 14px;
+
+}
+
+
+/* =========================================================
+   DOT
+========================================================= */
+
+.tutorain-slider-wrapper .dot {
+
+    width: 8px;
+
+    height: 8px;
+
+    padding: 0;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: #c5cbd7;
+
+    cursor: pointer;
+
+    transition:
+        width .25s ease,
+        background .25s ease,
+        transform .2s ease;
+
+}
+
+
+/* Dot hover */
+
+.tutorain-slider-wrapper .dot:hover {
+
+    transform: scale(1.2);
+
+    background: #8f98aa;
+
+}
+
+
+/* Active dot */
+
+.tutorain-slider-wrapper .dot.active {
+
+    width: 24px;
+
+    border-radius: 999px;
+
+    background: #16213e;
+
+}
+
+
+/* =========================================================
+   DARK MODE
+   Works with your existing:
+
+   html[data-theme="dark"]
+========================================================= */
+
+html[data-theme="dark"]
+.tutorain-slider-wrapper .banner-slider {
+
+    background: #11182a;
+
+    border-color: #29334d;
+
+    box-shadow:
+        0 14px 40px rgba(0, 0, 0, .35);
+
+}
+
+
+html[data-theme="dark"]
+.tutorain-slider-wrapper .dot {
+
+    background: #46506a;
+
+}
+
+
+html[data-theme="dark"]
+.tutorain-slider-wrapper .dot:hover {
+
+    background: #68738d;
+
+}
+
+
+html[data-theme="dark"]
+.tutorain-slider-wrapper .dot.active {
+
+    background: #f0b24f;
+
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .tutorain-slider-wrapper {
+
+        max-width: 100%;
+
+    }
+
+    .tutorain-slider-wrapper .banner-slider {
+
+        border-radius: 16px;
+
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .tutorain-slider-wrapper {
+
+        width: 100%;
+
+        max-width: 100%;
+
+        margin: 0 auto;
+
+    }
+
+
+    .tutorain-slider-wrapper .banner-slider {
+
+        /*
+           Slightly taller on mobile so banners
+           remain easy to see.
+        */
+
+        aspect-ratio: 16 / 10;
+
+        border-radius: 14px;
+
+    }
+
+
+    .tutorain-slider-wrapper .dots {
+
+        gap: 6px;
+
+        margin-top: 11px;
+
+    }
+
+
+    .tutorain-slider-wrapper .dot {
+
+        width: 7px;
+
+        height: 7px;
+
+    }
+
+
+    .tutorain-slider-wrapper .dot.active {
+
+        width: 20px;
+
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 400px) {
+
+    .tutorain-slider-wrapper .banner-slider {
+
+        aspect-ratio: 16 / 10.5;
+
+        border-radius: 12px;
+
+    }
+
+
+    .tutorain-slider-wrapper .dots {
+
+        gap: 5px;
+
+    }
+
+
+    .tutorain-slider-wrapper .dot {
+
+        width: 6px;
+
+        height: 6px;
+
+    }
+
+
+    .tutorain-slider-wrapper .dot.active {
+
+        width: 18px;
+
+    }
+
+}
+
+
+
+
+
+
+    </style>
+
+</head>
+
+
+<body>
+
+   
+<!-- =========================================================
+     HEADER
+========================================================== -->
+
+<header>
+
+    <div class="container nav-row">
+
+        <a class="brand" href="{% url 'home' %}">
+
+            <img
+                src="{% static 'website/img/logo/logo1.png' %}"
+                alt="Tutorain"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+            >
+
+            <span class="brand-mark" style="display:none;">
+                T
+            </span>
+
+            Tutorain
+
+        </a>
+
+
+        <button
+            class="nav-toggle"
+            id="navToggle"
+            aria-label="Toggle navigation"
+            aria-expanded="false"
+        >
+
+            <span></span>
+            <span></span>
+            <span></span>
+
         </button>
 
-        <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
-          <ul class="navbar-nav">
-            <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
 
-            <li class="nav-item"><a class="nav-link" href="{% url 'findsub' %}">Find Your Subject & Tutor  </a></li>
-            <!-- <li class="nav-item"><a class="nav-link" href="{% url 'findsub' %}">Find Your Tutor  </a></li> -->
+        <nav class="primary-nav" id="primaryNav">
 
-            <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact Us</a></li>
+            <ul>
 
-                        <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="MoreDropdown" role="button" data-toggle="dropdown">                        More
+                <li>
+                    <a class="nav-link"
+                       href="{% url 'home' %}">
+                        Home
+                    </a>
+                </li>
+
+                <li>
+                    <a class="nav-link"
+                       href="{% url 'findsub' %}">
+                        Find Your Subject &amp; Tutor
+                    </a>
+                </li>
+
+                <li>
+                    <a class="nav-link"
+                       href="{% url 'contact' %}">
+                        Contact Us
+                    </a>
+                </li>
+
+
+                <li class="dropdown" id="moreDropdown">
+
+                    <a
+                        class="nav-link"
+                        href="#"
+                        id="moreToggle"
+                    >
+                        More
                     </a>
 
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="{% url 'maca' %}">MACA</a>
-                        <a class="dropdown-item" href="{% url 'comingsoon' %}">MAAI</a>
-                        <a class="dropdown-item" href="{% url 'comingsoon' %}">Feedback</a>
-                    </div>
-                    </li>
-            <li class="nav-item"><a class="btn btn-outline-primary btn-sm m-1" href="{% url 'findsub' %}" class="btn-primary">Join Tutorain </a></li>
-            <li class="nav-item"><a class="btn btn-outline-primary btn-sm m-1" href="{% url 'login' %}">Login</a></li>
-          </ul>
-        </div>
-      </nav>
-    </div>
-  </div>
-</div>
 
-    <!-- Header End -->
+                        <a href="{% url 'maca' %}">
+                            MACA
+                        </a>
+
+                        <a href="{% url 'comingsoon' %}">
+                            MAAI
+                        </a>
+
+                        <a href="{% url 'comingsoon' %}">
+                            Feedback
+                        </a>
+
+                    </div>
+
+                </li>
+
+            </ul>
+
+
+            <!-- NAV ACTIONS -->
+
+            <div class="nav-actions">
+
+                <a
+                    class="btn btn-outline btn-sm"
+                    href="{% url 'findsub' %}"
+                >
+                    Join Tutorain
+                </a>
+
+
+                <!-- THEME -->
+
+                <div
+                    class="theme-switcher"
+                    aria-label="Theme selection"
+                >
+
+                    <button
+                        type="button"
+                        class="theme-option"
+                        data-theme="light"
+                    >
+                        ☀️ <span>Light</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        class="theme-option"
+                        data-theme="dark"
+                    >
+                        🌙 <span>Dark</span>
+                    </button>
+
+                </div>
+
+
+                <!-- STUDENT LOGIN -->
+
+                <a
+                    class="btn btn-primary btn-sm student-login-btn"
+                    href="{% url 'login' %}"
+                >
+                    👤 Student Login
+                </a>
+
+            </div>
+
+        </nav>
+
+    </div>
+
 </header>
 
 
 
+
+    
+
+<!-- =========================================================
+     TUTORAIN BANNER SLIDER
+========================================================== -->
+
+<div class="tutorain-slider-wrapper">
+
+    <div class="banner-slider">
+
+        <img src="{% static 'banner1.png' %}"
+             class="slide active"
+             alt="Tutorain Banner 1">
+
+        <img src="{% static 'banner2.png' %}"
+             class="slide"
+             alt="Tutorain Banner 2">
+
+        <img src="{% static 'banner3.png' %}"
+             class="slide"
+             alt="Tutorain Banner 3">
+
+        <img src="{% static 'banner7.png' %}"
+             class="slide"
+             alt="Tutorain Banner 4">
+
+        <img src="{% static 'banner5.png' %}"
+             class="slide"
+             alt="Tutorain Banner 5">
+
+        <img src="{% static 'banner6.png' %}"
+             class="slide"
+             alt="Tutorain Banner 6">
+
+        <img src="{% static 'banner4.png' %}"
+             class="slide"
+             alt="Tutorain Banner 7">
+
+        <img src="{% static 'banner8.png' %}"
+             class="slide"
+             alt="Tutorain Banner 8">
+
+    </div>
+
+
+    <!-- DOTS -->
+
+    <div class="dots">
+
+        <button class="dot active"
+                type="button"
+                aria-label="Go to slide 1"></button>
+
+        <button class="dot"
+                type="button"
+                aria-label="Go to slide 2"></button>
+
+        <button class="dot"
+                type="button"
+                aria-label="Go to slide 3"></button>
+
+        <button class="dot"
+                type="button"
+                aria-label="Go to slide 4"></button>
+
+        <button class="dot"
+                type="button"
+                aria-label="Go to slide 5"></button>
+
+        <button class="dot"
+                type="button"
+                aria-label="Go to slide 6"></button>
+
+        <button class="dot"
+                type="button"
+                aria-label="Go to slide 7"></button>
+
+        <button class="dot"
+                type="button"
+                aria-label="Go to slide 8"></button>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+<!-- =========================================================
+     MESSAGES
+========================================================== -->
+
 {% if messages %}
+
+<div class="alert-messages">
+
     {% for message in messages %}
-        <div class="alert alert-info alert-dismissible fade show mt-3" role="alert">
-           <center> {{ message }}..</center>
-            
+
+        <div class="alert">
+            {{ message }}
         </div>
+
     {% endfor %}
+
+</div>
+
 {% endif %}
 
 
 
-
-    <main><div style="height: 20px;"></div>
-      
-
-        <!-- slider Area Start-->
-        <div class="slider-area ">
-            <!-- Mobile Menu -->
-            <div class="slider-active">
-                <div class="single-slider slider-height d-flex align-items-center" data-background="{% static 'website/img/hero/h1_hero.png' %}">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-xl-6 col-lg-9 col-md-10">
-                                <div class="hero__caption">
-                                   <!-- <h1 style="font-size: 2.7rem; margin: 0;">Where Skill Meets Opportunity</h1> -->
-                                    <!-- <h1 style="font-size: 3.0rem; margin: 0;">The Perfect Fit Starts Here.</h1> -->
-                                </div>
-                            </div>
-                        </div>
-                        
-
-<div class="hero-spacer"></div>
-
-                        <!-- sliding baner -->
+<main>
 
 
-<div class="hero">
-    
-    <!-- Slider Container (Top Left) -->
-<div class="banner-slider">
-    <img src="{% static 'banner1.png' %}" class="slide active">
-    <img src="{% static 'banner2.png' %}" class="slide">
-    <img src="{% static 'banner3.png' %}" class="slide">
-    <img src="{% static 'banner7.png' %}" class="slide">
-    <img src="{% static 'banner5.png' %}" class="slide">
-    <img src="{% static 'banner6.png' %}" class="slide">
-    <img src="{% static 'banner4.png' %}" class="slide">
-    <img src="{% static 'banner8.png' %}" class="slide">
-</div>
+<!-- =========================================================
+     HERO
+========================================================== -->
 
-<!-- ✅ DOTS -->
-<div class="dots">
-    <span class="dot active"></span>
-    <span class="dot"></span>
-    <span class="dot"></span>
-    <span class="dot"></span>
-    <span class="dot"></span>
-    <span class="dot"></span>
-    <span class="dot"></span>
-    <span class="dot"></span>
-</div>
-<div class="hero-content">
-    <h1 class="hero-title">
-        Join <span>Tutorain</span>
-    </h1>
+<section class="hero">
 
-    <p class="hero-subtitle">
-        Study Anytime, Anywhere — with Tutorain
-    </p>
+    <div class="container hero-grid">
 
-    <div class="hero-buttons">
-        <a href="{% url 'findsub' %}" class="btn-primary">🚀 Get Started</a>
-        <a href="https://youtube.com/@tutorain333?si=h4PkYuY6BadNCubl" class="btn-secondary">▶ Watch Demo</a>
+
+        <div>
+
+            <h1>
+                Study anytime, anywhere with Tutorain
+            </h1>
+
+
+            <p class="lead">
+
+                One platform for students from LKG to college —
+                live classes, recorded sessions, doubt support and
+                personalised guidance across every subject.
+
+            </p>
+
+
+            <div class="hero-ctas">
+
+                <a
+                    href="{% url 'findsub' %}"
+                    class="btn btn-accent"
+                >
+                    Get Started
+                </a>
+
+                <a
+                    href="https://youtube.com/@tutorain333?si=h4PkYuY6BadNCubl"
+                    class="btn btn-outline"
+                    target="_blank"
+                    rel="noopener"
+                >
+                    Watch Demo
+                </a>
+
+            </div>
+
+
+            <!-- MOBILE LOGIN -->
+
+            <div class="mobile-login-card">
+
+                <div class="mobile-login-icon">
+                    👤
+                </div>
+
+                <div class="mobile-login-text">
+
+                    <strong>
+                        Already a Tutorain student?
+                    </strong>
+
+                    <span>
+                        Login to access your classes
+                    </span>
+
+                </div>
+
+                <a
+                    href="{% url 'login' %}"
+                    class="mobile-login-btn"
+                >
+                    Student Login
+                </a>
+
+            </div>
+
+
+            <div class="hero-stats">
+
+                <div>
+
+                    <strong>LKG–12</strong>
+
+                    <span>
+                        &amp; college level
+                    </span>
+
+                </div>
+
+                <div>
+
+                    <strong>Live</strong>
+
+                    <span>
+                        &amp; recorded classes
+                    </span>
+
+                </div>
+
+                <div>
+
+                    <strong>1:1</strong>
+
+                    <span>
+                        doubt support
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- SCHEDULE -->
+
+        <div class="schedule-card">
+
+            <span class="live-tag">
+                Live now
+            </span>
+
+            <h4>
+                Today's classes
+            </h4>
+
+
+            <div class="schedule-item">
+
+                <div
+                    class="dot"
+                    style="background:#2E9E8B;"
+                >
+                    Mt
+                </div>
+
+                <div class="info">
+
+                    <strong>
+                        Mathematics
+                    </strong>
+
+                    <span>
+                        Grade 12 · Algebra
+                    </span>
+
+                </div>
+
+                <div class="time">
+                    10:00
+                </div>
+
+            </div>
+
+
+            <div class="schedule-item">
+
+                <div
+                    class="dot"
+                    style="background:#E8A33D;"
+                >
+                    Sc
+                </div>
+
+                <div class="info">
+
+                    <strong>
+                        Science
+                    </strong>
+
+                    <span>
+                        Grade 10 · Physics
+                    </span>
+
+                </div>
+
+                <div class="time">
+                    11:30
+                </div>
+
+            </div>
+
+
+            <div class="schedule-item">
+
+                <div
+                    class="dot"
+                    style="background:#5E6AD2;"
+                >
+                    Py
+                </div>
+
+                <div class="info">
+
+                    <strong>
+                        Python
+                    </strong>
+
+                    <span>
+                        Grade college · AI and Machine Learning
+                    </span>
+
+                </div>
+
+                <div class="time">
+                    1:00
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
-</div>
+
+</section>
+
+
+
+<!-- =========================================================
+     ADMISSION
+========================================================== -->
+
+<section class="section-narrow">
+
+    <div class="container">
+
+        <div class="admission-card">
+
+            <div>
+
+                <h2>
+                    Limited seats — admissions open
+                </h2>
+
+                <p>
+
+                    Join Tutorain today for school-to-college level
+                    excellence, with expert mentors and a learning
+                    plan built around you.
+
+                </p>
+
+            </div>
+
+            <a
+                href="{% url 'findsub' %}"
+                class="btn btn-accent"
+            >
+                Apply Now
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     CONTACT
+========================================================== -->
+
+<section class="section-narrow">
+
+    <div class="container">
+
+        <div class="contact-strip">
+
+            <h2>
+                Need help with admission?
+            </h2>
+
+            <p>
+
+                Talk to our team directly and secure your seat instantly.
+                Call or WhatsApp us for quick admission support.
+
+            </p>
+
+
+            <div class="contact-buttons">
+
+                <a
+                    href="tel:+919497200270"
+                    class="btn btn-primary"
+                >
+                    📞 Call Now
+                </a>
+
+
+                <a
+                    href="https://wa.me/919497200270"
+                    target="_blank"
+                    rel="noopener"
+                    class="btn btn-outline"
+                >
+                    💬 WhatsApp
+                </a>
+
+            </div>
+
+
+            <p class="contact-number">
+                +91 94972 00270
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     FREE CLASSES
+========================================================== -->
+
+<section class="section-narrow">
+
+    <div class="container">
+
+        <div class="free-banner">
+
+            <h2>
+                Start learning for free
+            </h2>
+
+            <p>
+
+                Access chapter-wise classes prepared by Tutorain —
+                no admission needed to get started.
+
+            </p>
+
+            <a
+                href="{% url 'free_classes' %}"
+                class="btn btn-primary"
+            >
+                Explore Free Classes
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     DESKTOP DOWNLOAD
+========================================================== -->
+
+<section class="section-narrow">
+
+    <div class="container">
+
+        <div class="download-banner">
+
+            <div class="download-left">
+
+                <div class="icon-tile">
+                    ↓
+                </div>
+
+                <div class="download-text">
+
+                    <span class="badge">
+                        NEW
+                    </span>
+
+                    <h3>
+                        Tutorain Desktop
+                    </h3>
+
+                    <p>
+                        Learn faster with the Windows app.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <a
+                href="{% url 'download' %}"
+                class="btn btn-primary"
+            >
+                Download
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     MOBILE APP
+========================================================== -->
+
+<section class="section">
+
+    <div class="container app-section">
+
+
+        <div class="phone-mock">
+
+            <div class="bar short"></div>
+
+            <div class="bar"></div>
+
+
+            <div class="card-mini">
+
+                <strong>
+                    Live class · Mathematics
+                </strong>
+
+                <span>
+                    Starts in 12 min
+                </span>
+
+            </div>
+
+
+            <div class="card-mini">
+
+                <strong>
+                    Doubt reply
+                </strong>
+
+                <span>
+                    Tutor answered your question
+                </span>
+
+            </div>
+
+
+            <div class="card-mini">
+
+                <strong>
+                    Practice test
+                </strong>
+
+                <span>
+                    82% score · Grade 12th
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="app-content">
+
+            <h2>
+                Learn anytime, anywhere
+            </h2>
+
+            <p>
+
+                Experience the power of Tutorain in your pocket.
+                Access courses, live classes, and study materials
+                from school to college level — all in one app.
+
+            </p>
+
+            <a
+                href="https://play.google.com/store/apps/details?id=com.tutorain.app"
+                target="_blank"
+                rel="noopener"
+                class="btn btn-accent"
+            >
+                Download The App Now!
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     CATEGORIES
+========================================================== -->
+
+<section class="section">
+
+    <div class="container">
+
+        <div class="section-head">
+
+            <h2>
+                Choose your learning path
+            </h2>
+
+            <p>
+                Everything a student needs, organised in one place.
+            </p>
+
+        </div>
+
+
+        <div class="services-grid">
+
+
+            <a
+                class="service-card"
+                href="{% url 'comingsoon' %}"
+            >
+
+                <div class="service-ion">
+                    ▶
+                </div>
+
+                <h5>
+                    Live Classes
+                </h5>
+
+                <span>
+                    Join real-time sessions
+                </span>
+
+            </a>
+
+
+            <a
+                class="service-card"
+                href="{% url 'comingsoon' %}"
+            >
+
+                <div class="service-ion">
+                    ▷
+                </div>
+
+                <h5>
+                    Recorded Classes
+                </h5>
+
+                <span>
+                    Learn anytime
+                </span>
+
+            </a>
+
+
+            <a
+                class="service-card"
+                href="{% url 'comingsoon' %}"
+            >
+
+                <div class="service-ion">
+                    📝
+                </div>
+
+                <h5>
+                    Practice Tests
+                </h5>
+
+                <span>
+                    Test your skills
+                </span>
+
+            </a>
+
+
+            <a
+                class="service-card"
+                href="{% url 'comingsoon' %}"
+            >
+
+                <div class="service-ion">
+                    ?
+                </div>
+
+                <h5>
+                    Doubt Support
+                </h5>
+
+                <span>
+                    Ask &amp; learn faster
+                </span>
+
+            </a>
+
+
+            <a
+                class="service-card"
+                href="{% url 'comingsoon' %}"
+            >
+
+                <div class="service-ion">
+                    📚
+                </div>
+
+                <h5>
+                    Study Materials
+                </h5>
+
+                <span>
+                    Notes &amp; PDFs
+                </span>
+
+            </a>
+
+
+            <a
+                class="service-card"
+                href="{% url 'comingsoon' %}"
+            >
+
+                <div class="service-ion">
+                    🤖
+                </div>
+
+                <h5>
+                    MAAI Assistant
+                </h5>
+
+                <span>
+                    Smart AI help
+                </span>
+
+            </a>
+
+
+            <a
+                class="service-card"
+                href="{% url 'comingsoon' %}"
+            >
+
+                <div class="service-ion">
+                    🎧
+                </div>
+
+                <h5>
+                    Community
+                </h5>
+
+                <span>
+                    Learn together
+                </span>
+
+            </a>
+
+
+            <a
+                class="service-card"
+                href="{% url 'comingsoon' %}"
+            >
+
+                <div class="service-ion">
+                    +
+                </div>
+
+                <h5>
+                    More Features
+                </h5>
+
+                <span>
+                    Coming soon
+                </span>
+
+            </a>
+
+        </div>
+
+
+        <div class="services-cta">
+
+            <a
+                href="{% url 'findsub' %}"
+                class="btn btn-primary"
+            >
+                Start Learning Now
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     WHY TUTORAIN
+========================================================== -->
+
+<section class="section">
+
+    <div class="container">
+
+        <div
+            class="process-band section"
+            style="padding:56px 40px;"
+        >
+
+            <div class="section-head">
+
+                <h2>
+                    Why Tutorain
+                </h2>
+
+                <p>
+                    Designed to deliver smarter learning with real impact.
+                </p>
+
+            </div>
+
+
+            <div class="process-grid">
+
+
+                <div class="process-card">
+
+                    <div class="process-ion">
+                        🔍
+                    </div>
+
+                    <h5>
+                        Personalised Learning Analysis
+                    </h5>
+
+                    <p>
+
+                        We identify each student's weak areas and
+                        continuously refine their learning path for
+                        better results.
+
+                    </p>
+
+                </div>
+
+
+                <div class="process-card">
+
+                    <div class="process-ion">
+                        🎓
+                    </div>
+
+                    <h5>
+                        Expert-Led Education
+                    </h5>
+
+                    <p>
+
+                        Learn from qualified and experienced educators
+                        dedicated to delivering high-quality teaching.
+
+                    </p>
+
+                </div>
+
+
+                <div class="process-card">
+
+                    <div class="process-ion">
+                        ↻
+                    </div>
+
+                    <h5>
+                        Continuous Feedback System
+                    </h5>
+
+                    <p>
+
+                        Regular feedback from students and parents helps
+                        us improve performance and ensure steady growth.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     MACA
+========================================================== -->
+
+
+
+<!-- =========================================================
+     MACA EDUCATION SUPPORT SECTION
+========================================================= -->
+
+<div class="maca-support-section">
+
+    <!-- LEFT : LARGE BANNER -->
+    <div class="maca-support-image">
+
+        <img src="{% static 'banner4.png' %}"
+             alt="MACA Free Education Support">
+
+    </div>
+
+
+    <!-- RIGHT : TEXT -->
+    <div class="maca-support-content">
+
+        <span class="maca-support-label">
+            ✦ MACA EDUCATION SUPPORT
+        </span>
+
+        <h2>
+            MACA
+            <span>MA's Charity Affiliate</span>
+        </h2>
+
+        <p>
+            Helping students move forward with better learning,
+            guidance and opportunities. Tutorain is here to make
+            your learning journey simpler and more effective.
+        </p>
+
+
+        <div class="maca-support-points">
+
+            <div>
+                <b>✓</b>
+                <span>Student-focused learning support</span>
+            </div>
+
+            <div>
+                <b>✓</b>
+                <span>Learn anytime, anywhere</span>
+            </div>
+
+            <div>
+                <b>✓</b>
+                <span>Guidance for better academic progress</span>
+            </div>
+
+        </div>
+
+
+        <a href="{% url 'maca' %}" class="maca-support-button">
+            Learn More
+            <span>→</span>
+        </a>
+
+    </div>
 
 </div>
 
+
+<style>
+
+/* =========================================================
+   MAIN SECTION
+========================================================= */
+
+.maca-support-section {
+
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    align-items: center;
+
+    gap: 55px;
+
+    padding: 30px 0;
+
+}
+
+
+/* =========================================================
+   LEFT LARGE IMAGE
+========================================================= */
+
+.maca-support-image {
+
+    width: 100%;
+
+    overflow: hidden;
+
+    border-radius: 22px;
+
+}
+
+
+.maca-support-image img {
+
+    display: block;
+
+    width: 100%;
+
+    height: auto;
+
+    /*
+       IMPORTANT:
+       No fixed small height.
+       The image keeps its original ratio.
+    */
+
+    object-fit: contain;
+
+    border-radius: 22px;
+
+    transition: transform .5s ease;
+
+}
+
+
+.maca-support-image:hover img {
+
+    transform: scale(1.02);
+
+}
+
+
+/* =========================================================
+   RIGHT CONTENT
+========================================================= */
+
+.maca-support-content {
+
+    padding: 20px 20px 20px 0;
+
+}
+
+
+.maca-support-label {
+
+    display: inline-block;
+
+    padding: 8px 14px;
+
+    margin-bottom: 18px;
+
+    border-radius: 50px;
+
+    background: rgba(22, 33, 62, .08);
+
+    color: #16213e;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 1px;
+
+}
+
+
+/* =========================================================
+   HEADING
+========================================================= */
+
+.maca-support-content h2 {
+
+    margin: 0 0 20px;
+
+    max-width: 550px;
+
+    color: #16213e;
+
+    font-size: clamp(38px, 4vw, 58px);
+
+    line-height: 1.05;
+
+    font-weight: 900;
+
+    letter-spacing: -2px;
+
+}
+
+
+.maca-support-content h2 span {
+
+    display: block;
+
+    color: #e5a83b;
+
+}
+
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
+
+.maca-support-content p {
+
+    max-width: 520px;
+
+    margin: 0 0 25px;
+
+    color: #687181;
+
+    font-size: 16px;
+
+    line-height: 1.7;
+
+}
+
+
+/* =========================================================
+   POINTS
+========================================================= */
+
+.maca-support-points {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 13px;
+
+    margin-bottom: 28px;
+
+}
+
+
+.maca-support-points div {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    color: #303747;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+}
+
+
+.maca-support-points b {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 27px;
+
+    height: 27px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #16213e;
+
+    color: white;
+
+    font-size: 13px;
+
+}
+
+
+/* =========================================================
+   BUTTON
+========================================================= */
+
+.maca-support-button {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 13px 22px;
+
+    border-radius: 10px;
+
+    background: #16213e;
+
+    color: white;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    transition: .25s ease;
+
+}
+
+
+.maca-support-button span {
+
+    font-size: 20px;
+
+    line-height: 0;
+
+    transition: .25s ease;
+
+}
+
+
+.maca-support-button:hover {
+
+    color: white;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 10px 25px rgba(22, 33, 62, .2);
+
+}
+
+
+.maca-support-button:hover span {
+
+    transform: translateX(5px);
+
+}
+
+
+/* =========================================================
+   DARK MODE
+========================================================= */
+
+html[data-theme="dark"] .maca-support-label {
+
+    background: rgba(255,255,255,.08);
+
+    color: #f0b24f;
+
+}
+
+
+html[data-theme="dark"] .maca-support-content h2 {
+
+    color: #f4f6fa;
+
+}
+
+
+html[data-theme="dark"] .maca-support-content p {
+
+    color: #aeb6c7;
+
+}
+
+
+html[data-theme="dark"] .maca-support-points div {
+
+    color: #e4e7ed;
+
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 991px) {
+
+    .maca-support-section {
+
+        grid-template-columns: 1fr;
+
+        gap: 35px;
+
+    }
+
+
+    .maca-support-content {
+
+        padding: 0;
+
+    }
+
+
+    .maca-support-content h2 {
+
+        font-size: 48px;
+
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 576px) {
+
+    .maca-support-section {
+
+        gap: 25px;
+
+        padding: 15px 0;
+
+    }
+
+
+    .maca-support-image {
+
+        border-radius: 15px;
+
+    }
+
+
+    .maca-support-image img {
+
+        border-radius: 15px;
+
+    }
+
+
+    .maca-support-label {
+
+        font-size: 9px;
+
+        padding: 7px 11px;
+
+    }
+
+
+    .maca-support-content h2 {
+
+        font-size: 38px;
+
+        line-height: 1.05;
+
+        letter-spacing: -1.3px;
+
+    }
+
+
+    .maca-support-content p {
+
+        font-size: 15px;
+
+        line-height: 1.6;
+
+    }
+
+}
+
+</style>
+
+
+
+
+
+
+
+
+
+
+<!-- MACA end-->
+
+
+<section class="section">
+
+    <div class="container maca-grid">
+
+
+        <div>
+
+            <span class="eyebrow">
+                MACA Initiative
+            </span>
+
+            <h2>
+                Free education for students in need
+            </h2>
+
+            <p>
+
+                MA's Charity Affiliate (MACA) is an initiative by
+                Tutorain focused on providing free education support
+                to students who have lost both parents.
+
+            </p>
+
+            <p>
+
+                Through MACA Phase 1, we aim to empower deserving
+                students with access to quality learning, mentorship,
+                and guidance — helping them build a brighter future.
+
+            </p>
+
+
+            <ul>
+
+                <li>
+                    ✓ 100% free education support
+                </li>
+
+                <li>
+                    ✓ Verified &amp; genuine scholarship program
+                </li>
+
+                <li>
+                    ✓ Personalised learning through Tutorain
+                </li>
+
+            </ul>
+
+
+            <a
+                href="{% url 'maca' %}"
+                class="btn btn-primary"
+            >
+                Learn More &amp; Apply
+            </a>
+
+        </div>
+
+
+        <div class="maca-visual">
+
+
+            <div class="stat">
+
+                <div class="ic">
+                    +
+                </div>
+
+                <div>
+
+                    <strong>
+                        100% sponsored
+                    </strong>
+
+                    <span>
+                        tuition &amp; materials
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="ic">
+                    👥
+                </div>
+
+                <div>
+
+                    <strong>
+                        Mentor matched
+                    </strong>
+
+                    <span>
+                        True mentoring
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="ic">
+                    ✓
+                </div>
+
+                <div>
+
+                    <strong>
+                        Verified &amp; audited
+                    </strong>
+
+                    <span>
+                        fully transparent
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+
+
+
+
+
+
+
+</main>
+
+
+
+<!-- =========================================================
+     FOOTER
+========================================================== -->
+
+<footer>
+
+    <div class="container footer-top">
+
+
+        <div>
+
+            <div class="footer-brand">
+
+                <img
+                    src="{% static 'blogo.png' %}"
+                    alt="Tutorain"
+                    style="height:30px;"
+                    onerror="this.style.display='none';"
+                >
+
+                Tutorain
+
+            </div>
+
+            <p>
+                Tutorain — it's an MA Product.
+            </p>
+
+        </div>
+
+
+        <div>
+
+            <h4>
+                Contact Info
+            </h4>
+
+            <ul>
+
+                <li>
+                    <a href="tel:+919497200270">
+                        Phone: +91 9497200270
+                    </a>
+                </li>
+
+                <li>
+                    <a href="mailto:ma.ceo@tutorain.com">
+                        CEO: ma.ceo@tutorain.com
+                    </a>
+                </li>
+
+                <li>
+                    <a href="mailto:hr@tutorain.com">
+                        HR: hr@tutorain.com
+                    </a>
+                </li>
+
+                <li>
+                    <a href="mailto:support@tutorain.com">
+                        Support: support@tutorain.com
+                    </a>
+                </li>
+
+            </ul>
+
+        </div>
+
+
+        <div>
+
+            <h4>
+                Important Links
+            </h4>
+
+            <ul>
+
+                <li>
+                    <a href="{% url 'home' %}">
+                        Home
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'contact' %}">
+                        Contact Us
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'comingsoon' %}">
+                        Testimonial
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'comingsoon' %}">
+                        Properties
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'contact' %}">
+                        Support
+                    </a>
+                </li>
+
+            </ul>
+
+        </div>
+
+
+        <div>
+
+            <h4>
+                Newsletter
+            </h4>
+
+            <p>
+                Share your feedback with us.
+            </p>
+
+            <div id="mc_embed_signup">
+
+                <form
+                    target="_blank"
+                    action="https://spondonit.us12.list-manage.com/subscribe/post?u=1462626880ade1ac87bd9c93a&amp;id=92a4423d01"
+                    method="get"
+                    class="newsletter-form"
+                >
+
+                    <input
+                        type="email"
+                        name="email"
+                        id="newsletter-form-email"
+                        placeholder="Email address"
+                        required
+                    >
+
+                    <button
+                        type="submit"
+                        name="submit"
+                        id="newsletter-submit"
+                        aria-label="Subscribe"
+                    >
+                        →
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="container footer-bottom">
+
+        <p>
+
+            Copyright ©
+            <span id="footerYear"></span>
+            Tutorain.
+            All rights reserved.
+
+        </p>
+
+
+        <div class="social-row">
+
+            <a
+                href="#"
+                aria-label="Facebook"
+            >
+                f
+            </a>
+
+            <a
+                href="#"
+                aria-label="Twitter"
+            >
+                𝕏
+            </a>
+
+            <a
+                href="#"
+                aria-label="Website"
+            >
+                🌐
+            </a>
+
+            <a
+                href="#"
+                aria-label="Behance"
+            >
+                B
+            </a>
+
+        </div>
+
+    </div>
+
+</footer>
+
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================== -->
+
+<script>
+
+    /* =========================================================
+       FOOTER YEAR
+    ========================================================== */
+
+    document.getElementById('footerYear').textContent =
+        new Date().getFullYear();
+
+
+    /* =========================================================
+       MOBILE NAVIGATION
+    ========================================================== */
+
+    const navToggle =
+        document.getElementById('navToggle');
+
+    const primaryNav =
+        document.getElementById('primaryNav');
+
+
+    navToggle.addEventListener('click', function () {
+
+        const open =
+            primaryNav.classList.toggle('open');
+
+        navToggle.setAttribute(
+            'aria-expanded',
+            open
+        );
+
+    });
+
+
+    /* =========================================================
+       MORE DROPDOWN ON MOBILE
+    ========================================================== */
+
+    const moreDropdown =
+        document.getElementById('moreDropdown');
+
+    const moreToggle =
+        document.getElementById('moreToggle');
+
+
+    moreToggle.addEventListener('click', function (e) {
+
+        if (
+            window.matchMedia(
+                '(max-width: 900px)'
+            ).matches
+        ) {
+
+            e.preventDefault();
+
+            moreDropdown.classList.toggle('open');
+
+        }
+
+    });
+
+
+    /* =========================================================
+       THEME SWITCHER
+    ========================================================== */
+
+    const themeButtons =
+        document.querySelectorAll('.theme-option');
+
+
+    function applyTheme(theme) {
+
+        document.documentElement.setAttribute(
+            'data-theme',
+            theme
+        );
+
+        localStorage.setItem(
+            'tutorain-theme',
+            theme
+        );
+
+
+        themeButtons.forEach(function (button) {
+
+            button.classList.toggle(
+                'active',
+                button.dataset.theme === theme
+            );
+
+        });
+
+    }
+
+
+    const currentTheme =
+        document.documentElement.getAttribute(
+            'data-theme'
+        ) || 'light';
+
+
+    applyTheme(currentTheme);
+
+
+    themeButtons.forEach(function (button) {
+
+        button.addEventListener(
+            'click',
+            function () {
+
+                applyTheme(
+                    this.dataset.theme
+                );
+
+            }
+        );
+
+    });
+
+
+    /* =========================================================
+       CLOSE MOBILE MENU AFTER LINK CLICK
+    ========================================================== */
+
+    document.querySelectorAll(
+        '#primaryNav a:not(#moreToggle)'
+    ).forEach(function (link) {
+
+        link.addEventListener(
+            'click',
+            function () {
+
+                if (
+                    window.matchMedia(
+                        '(max-width: 900px)'
+                    ).matches
+                ) {
+
+                    primaryNav.classList.remove('open');
+
+                    navToggle.setAttribute(
+                        'aria-expanded',
+                        'false'
+                    );
+
+                }
+
+            }
+        );
+
+    });
+
+</script>
+
+
+
+<!-- =========================================================
+     TAWK.TO
+========================================================== -->
+
+<script type="text/javascript">
+
+    var Tawk_API = Tawk_API || {},
+        Tawk_LoadStart = new Date();
+
+    (function () {
+
+        var s1 = document.createElement("script"),
+            s0 = document.getElementsByTagName("script")[0];
+
+        s1.async = true;
+
+        s1.src =
+            'https://embed.tawk.to/6851cd093779dc190d3062cf/1itvohrvu';
+
+        s1.charset = 'UTF-8';
+
+        s1.setAttribute(
+            'crossorigin',
+            '*'
+        );
+
+        s0.parentNode.insertBefore(
+            s1,
+            s0
+        );
+
+    })();
+
+</script>
 
 
 
 <script>
+
 document.addEventListener("DOMContentLoaded", function () {
 
-    let slides = document.querySelectorAll(".banner-slider img");
-    let dots = document.querySelectorAll(".dot");
-    let index = 0;
+    const sliders =
+        document.querySelectorAll(
+            ".tutorain-slider-wrapper"
+        );
 
-    function changeSlide() {
-        slides[index].classList.remove("active");
-        dots[index].classList.remove("active");
 
-        index = (index + 1) % slides.length;
+    sliders.forEach(function (slider) {
 
-        slides[index].classList.add("active");
-        dots[index].classList.add("active");
-    }
+        const slides =
+            slider.querySelectorAll(".slide");
 
-    setInterval(changeSlide, 2000);
+        const dots =
+            slider.querySelectorAll(".dot");
+
+
+        if (!slides.length) return;
+
+
+        let currentSlide = 0;
+
+        let slideTimer;
+
+
+        /* =========================================
+           SHOW SLIDE
+        ========================================= */
+
+        function showSlide(index) {
+
+            slides.forEach(function (slide, i) {
+
+                slide.classList.toggle(
+                    "active",
+                    i === index
+                );
+
+            });
+
+
+            dots.forEach(function (dot, i) {
+
+                dot.classList.toggle(
+                    "active",
+                    i === index
+                );
+
+            });
+
+
+            currentSlide = index;
+
+        }
+
+
+        /* =========================================
+           NEXT SLIDE
+        ========================================= */
+
+        function nextSlide() {
+
+            let next =
+                currentSlide + 1;
+
+            if (next >= slides.length) {
+
+                next = 0;
+
+            }
+
+            showSlide(next);
+
+        }
+
+
+        /* =========================================
+           AUTO PLAY
+        ========================================= */
+
+        function startSlider() {
+
+            clearInterval(slideTimer);
+
+            slideTimer = setInterval(
+                nextSlide,
+                2000
+            );
+
+        }
+
+
+        /* =========================================
+           DOT CLICK
+        ========================================= */
+
+        dots.forEach(function (dot, index) {
+
+            dot.addEventListener(
+                "click",
+                function () {
+
+                    showSlide(index);
+
+                    /*
+                       Restart timer after
+                       manually selecting a slide.
+                    */
+
+                    startSlider();
+
+                }
+            );
+
+        });
+
+
+        /* =========================================
+           START
+        ========================================= */
+
+        showSlide(0);
+
+        startSlider();
+
+
+        /* =========================================
+           PAUSE WHEN USER HOVERS
+        ========================================= */
+
+        slider.addEventListener(
+            "mouseenter",
+            function () {
+
+                clearInterval(slideTimer);
+
+            }
+        );
+
+
+        slider.addEventListener(
+            "mouseleave",
+            function () {
+
+                startSlider();
+
+            }
+        );
+
+
+        /* =========================================
+           MOBILE TOUCH / SWIPE
+        ========================================= */
+
+        let touchStartX = 0;
+
+        let touchEndX = 0;
+
+
+        slider.addEventListener(
+            "touchstart",
+            function (event) {
+
+                touchStartX =
+                    event.changedTouches[0].screenX;
+
+                clearInterval(slideTimer);
+
+            },
+            { passive: true }
+        );
+
+
+        slider.addEventListener(
+            "touchend",
+            function (event) {
+
+                touchEndX =
+                    event.changedTouches[0].screenX;
+
+
+                const difference =
+                    touchStartX - touchEndX;
+
+
+                /*
+                   Swipe left
+                */
+
+                if (difference > 50) {
+
+                    nextSlide();
+
+                }
+
+
+                /*
+                   Swipe right
+                */
+
+                if (difference < -50) {
+
+                    let previous =
+                        currentSlide - 1;
+
+
+                    if (previous < 0) {
+
+                        previous =
+                            slides.length - 1;
+
+                    }
+
+
+                    showSlide(previous);
+
+                }
+
+
+                startSlider();
+
+            },
+            { passive: true }
+        );
+
+    });
 
 });
+
 </script>
-                       
-<!-- Search Box -->
-                        <div class="row">
-                            <div class="col-xl-8">
-                                <!-- form -->
-                                <center> 
-                                        <form action="#" class="search-box">
-                                        
-                                       <div class="container my-5">
-    <div class="card shadow-lg border-0 rounded-lg bg-white text-center p-5 animate__animated animate__fadeIn">
-        <h2 class="mb-3 animate__animated animate__fadeInDown" style="color: #2c3e50; font-weight: bold;">
-            Limited Seats!
-        </h2>
-        <p class="mb-4 text-muted animate__animated animate__fadeInUp animate__delay-1s" style="font-size: 1.1rem;">
-            Join Tutorain Today — Admissions Open for School to College Level Excellence...
-        <a href="{% url 'findsub' %}" 
-           class="btn btn-lg px-5 py-3 animate__animated animate__bounceIn animate__delay-2s"
-           style="
-                background: #0a6107;
-                color: #f5e4e4;
-                font-size: 1.8rem;
-                border-radius: 50px;
-                box-shadow: 0 0 100px rgba(11, 100, 19, 0.4);
-           ">
-             Apply Now!
-        </a>
-    </div>
-</div>
 
 
 
-                                     </center>
-                                    </div>	
-                                </form>	
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- whatsapp and call -->
+</body>
 
-        <section class="contact-admission">
-
-    <h2>Need Help with Admission?</h2>
-
-    <p>
-        Talk to our team directly and secure your seat instantly.  
-        Call or WhatsApp us for quick admission support.
-    </p>
-
-    <div class="contact-buttons">
-        
-        <!-- CALL -->
-        <a href="tel:+919497200270" class="call-btn">
-            📞 Call Now
-        </a>
-
-        <!-- WHATSAPP -->
-        <a href="https://wa.me/919497200270" target="_blank" class="whatsapp-btn">
-            💬 WhatsApp
-        </a>
-
-    </div>
-
-    <p class="contact-number">+91 94972 00270</p>
-
-</section>
-
-
-        <!-- slider Area End-->
-                                    </div>	
-                                </form>	
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- slider Area End-->
-        <center> <a class="btn btn-outline-primary btn-sm m-1" href="{% url 'findsub' %}">Search Your Subject 🔎</a></center> 
-        <center>  <a class="btn btn-outline-primary btn-sm m-1" href="{% url 'findsub' %}">Join Tutorain</a>
-              <a class="btn btn-outline-primary btn-sm m-1" href="{% url 'login' %}">Login</a>  </center>
-
-<!-- free classes -->
-
-<div class="text-center my-5">
-
-    <h2>Start Learning for Free</h2>
-
-    <p>Access chapter-wise classes prepared by Tutorain.</p>
-
-    <a href="{% url 'free_classes' %}" class="hero-btn">
-
-        📚 Explore Free Classes
-
-    </a>
-
-</div>
-
-<style>
-
-.hero-btn{
-
-    display:inline-block;
-
-    background:#0d6efd;
-
-    color:white;
-
-    padding:15px 35px;
-
-    border-radius:50px;
-
-    font-size:18px;
-
-    font-weight:bold;
-
-    text-decoration:none;
-
-    transition:.3s;
-
-}
-
-.hero-btn:hover{
-
-    background:#084298;
-
-    color:white;
-
-    text-decoration:none;
-
-}
-
-</style>
-
-
-
-
-
-
- <!-- download the pc app now -->
-
-<div class="download-banner">
-    <div class="download-left">
-        <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download-icon lucide-download"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg></div>
-
-        <div class="text">
-            <span class="badge">NEW</span>
-            <h3>Tutorain Desktop</h3>
-            <p>Learn faster with the Windows app.</p>
-        </div>
-    </div>
-
-    <a href="{% url 'download' %}" class="download-btn">
-        Download
-    </a>
-</div>
-
-<style>
-
-    
-.download-banner{
-    max-width:1100px;
-    margin:40px auto;
-    padding:22px 28px;
-    background:#ffffff;
-    border:1px solid #e5e7eb;
-    border-radius:18px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:20px;
-    box-shadow:0 8px 25px rgba(0,0,0,.05);
-}
-
-.download-left{
-    display:flex;
-    align-items:center;
-    gap:18px;
-}
-
-.icon{
-    width:58px;
-    height:58px;
-    border-radius:14px;
-    background:#f3f4f6;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:28px;
-}
-
-.badge{
-    display:inline-block;
-    padding:4px 10px;
-    font-size:11px;
-    font-weight:600;
-    background:#eef2ff;
-    color:#2563eb;
-    border-radius:50px;
-    margin-bottom:8px;
-    letter-spacing:.5px;
-}
-
-.text h3{
-    margin:0;
-    font-size:22px;
-    color:#111827;
-}
-
-.text p{
-    margin-top:5px;
-    color:#6b7280;
-    font-size:15px;
-}
-
-.download-btn{
-    text-decoration:none;
-    background:#111827;
-    color:white;
-    padding:12px 22px;
-    border-radius:10px;
-    font-weight:600;
-    transition:.25s;
-}
-
-.download-btn:hover{
-    background:#2563eb;
-}
-
-@media(max-width:768px){
-
-.download-banner{
-    flex-direction:column;
-    text-align:center;
-}
-
-.download-left{
-    flex-direction:column;
-}
-
-.download-btn{
-    width:100%;
-    text-align:center;
-}
-
-
-.hero-spacer {
-    height: 350px;
-}
-
-@media (max-width: 768px) {
-    .hero-spacer {
-        height: 150px;
-    }
-}
-}
-</style>
-
-
- <!-- download the app now -->
-        <section class="app-section">
-
-    <!-- LEFT IMAGE -->
-    <div class="app-image">
-        <img src="{% static 'app-preview.png' %}" alt="Tutorain App">
-    </div>
-
-    <!-- RIGHT CONTENT -->
-    <div class="app-content">
-        <h2>Learn Anytime, Anywhere</h2>
-
-        <p>
-            Experience the power of Tutorain in your pocket.  
-            Access courses, live classes, and study materials from school to college level — all in one app.
-        </p>
-
-        <a href="https://play.google.com/store/apps/details?id=com.tutorain.app" 
-           target="_blank" class="download-btn">
-            📲 Download App
-        </a>
-    </div>
-
-</section>
-
-
-       
-        <!-- 🔥 Tutorain Categories Start -->
-<div class="our-services section-pad-t30">
-    <div class="container">
-
-        <!-- Title -->
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="section-tittle text-center">
-                    <span>Explore Learning</span>
-                    <h2>Choose Your Learning Path </h2>
-                </div>
-            </div>
-        </div>
-
-        <!-- Cards -->
-        <div class="row d-flex justify-content-center">
-
-            <!-- Live Class -->
-            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
-                <div class="single-services text-center mb-30">
-                    <div class="services-ion">
-                        <span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-tv-minimal-play-icon lucide-tv-minimal-play"><path d="M15.033 9.44a.647.647 0 0 1 0 1.12l-4.065 2.352a.645.645 0 0 1-.968-.56V7.648a.645.645 0 0 1 .967-.56z"/><path d="M7 21h10"/><rect width="20" height="14" x="2" y="3" rx="2"/></svg></span>
-                    </div>
-                    <div class="services-cap">
-                        <h5><a href="{% url 'comingsoon' %}">Live Classes</a></h5>
-                        <span>Join real-time sessions</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recorded -->
-            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
-                <div class="single-services text-center mb-30">
-                    <div class="services-ion">
-                        <span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-video-icon lucide-video"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg></span>
-                    </div>
-                    <div class="services-cap">
-                        <h5><a href="{% url 'comingsoon' %}">Recorded Classes</a></h5>
-                        <span>Learn anytime</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Practice -->
-            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
-                <div class="single-services text-center mb-30">
-                    <div class="services-ion">
-                        <span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-notebook-pen-icon lucide-notebook-pen"><path d="M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4"/><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><path d="M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/></svg></span>
-                    </div>
-                    <div class="services-cap">
-                        <h5><a href="{% url 'comingsoon' %}">Practice Tests</a></h5>
-                        <span>Test your skills</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Doubts -->
-            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
-                <div class="single-services text-center mb-30">
-                    <div class="services-ion">
-                        <span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle-question-mark-icon lucide-message-circle-question-mark"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></span>
-                    </div>
-                    <div class="services-cap">
-                        <h5><a href="{% url 'comingsoon' %}">Doubt Support</a></h5>
-                        <span>Ask & learn faster</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Notes -->
-            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
-                <div class="single-services text-center mb-30">
-                    <div class="services-ion">
-                        <span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-library-big-icon lucide-library-big"><rect width="8" height="18" x="3" y="3" rx="1"/><path d="M7 3v18"/><path d="M20.4 18.9c.2.5-.1 1.1-.6 1.3l-1.9.7c-.5.2-1.1-.1-1.3-.6L11.1 5.1c-.2-.5.1-1.1.6-1.3l1.9-.7c.5-.2 1.1.1 1.3.6Z"/></svg></span>
-                    </div>
-                    <div class="services-cap">
-                        <h5><a href="{% url 'comingsoon' %}">Study Materials</a></h5>
-                        <span>Notes & PDFs</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- AI -->
-            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
-                <div class="single-services text-center mb-30">
-                    <div class="services-ion">
-                        <span> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-gpu-icon lucide-gpu"><path d="M2 17h18a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H2"/><path d="M2 21V3"/><path d="M7 17v3a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1v-3"/><circle cx="16" cy="11" r="2"/><circle cx="8" cy="11" r="2"/></svg></span>
-                    </div>
-                    <div class="services-cap">
-                        <h5><a href="{% url 'comingsoon' %}">MAAI Assistant</a></h5>
-                        <span>Smart AI help</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Community -->
-            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
-                <div class="single-services text-center mb-30">
-                    <div class="services-ion">
-                        <span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-speech-icon lucide-speech"><path d="M8.8 20v-4.1l1.9.2a2.3 2.3 0 0 0 2.164-2.1V8.3A5.37 5.37 0 0 0 2 8.25c0 2.8.656 3.054 1 4.55a5.77 5.77 0 0 1 .029 2.758L2 20"/><path d="M19.8 17.8a7.5 7.5 0 0 0 .003-10.603"/><path d="M17 15a3.5 3.5 0 0 0-.025-4.975"/></svg></span>
-                    </div>
-                    <div class="services-cap">
-                        <h5><a href="{% url 'comingsoon' %}">Community</a></h5>
-                        <span>Learn together</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Coming Soon -->
-            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
-                <div class="single-services text-center mb-30">
-                    <div class="services-ion">
-                        <span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-fading-plus-icon lucide-circle-fading-plus"><path d="M12 2a10 10 0 0 1 7.38 16.75"/><path d="M12 8v8"/><path d="M16 12H8"/><path d="M2.5 8.875a10 10 0 0 0-.5 3"/><path d="M2.83 16a10 10 0 0 0 2.43 3.4"/><path d="M4.636 5.235a10 10 0 0 1 .891-.857"/><path d="M8.644 21.42a10 10 0 0 0 7.631-.38"/></svg></span>
-                    </div>
-                    <div class="services-cap">
-                        <h5><a href="{% url 'comingsoon' %}">More Features</a></h5>
-                        <span>Coming soon...</span>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Button -->
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="browse-btn2 text-center mt-50">
-                    <a href= "{% url 'findsub' %}" class="border-btn2">
-                        Start Learning Now 🎯
-                    </a>
-                </div>
-            </div>
-        </div>
-
-    </div>
-</div>
-<!-- 🔥 Tutorain Categories End -->
-
-
-
-
-        <!-- Online CV Area Start -->
-<!--<div class="online-cv cv-bg section-overly pt-90 pb-120" data-background="{% static 'website/img/gallery/cv_bg.jpg' %}">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-xl-10">
-                        <div class="cv-caption text-center">
-                            <h1 class="pera1">Skill π Earn</h1>
-                            <p class="pera2"> Where Skill Meets Opportunity </p>
-                            <h1 class="pera1">a MA Product</h1>
-                            <a href="https://www.youtube.com/playlist?list=PLFhbPt_nHHPcB-LG1B-QNGz7184bYyyes" class="border-btn2 border-btn4" target="_blank" rel="noopener noreferrer"> For More Details Visit MA </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div> -->
-        <!-- Online CV Area End-->
-        <!-- Featured_job_start -->
-       <!-- <section class="featured-job-area feature-padding">
-            <div class="container">
-                 Section Tittle -->
-               <!-- <div class="row">
-                    <div class="col-lg-12">
-                        <div class="section-tittle text-center">
-                            
-                            <h2>In-App Features</h2>
-                            <span></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="row justify-content-center">
-                    <div class="col-xl-10">
-                         single-job-content -->
-                        <!--<div class="single-job-items mb-30">
-                            <div class="job-items">
-                                <div class="company-img">
-                                    <a href="job_details.html"><img src="{% static 'website/img/icon/job-list1.png' %}" alt=""></a>
-                                </div>
-                                <div class="job-tittle">
-                                    <a href="job_details.html"><h4>Digital Marketer</h4></a>
-                                    <ul>
-                                        <li>Creative Agency</li>
-                                        <li><i class="fas fa-map-marker-alt"></i>Athens, Greece</li>
-                                        <li>$3500 - $4000</li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="items-link f-right">
-                                <a href="job_details.html">Full Time</a>
-                                <span>7 hours ago</span>
-                            </div>  
-                        </div>
-                         single-job-content -->
-                       <!-- <div class="single-job-items mb-30">
-                            <div class="job-items">
-                                <div class="company-img">
-                                    <a href="job_details.html"><img src="{% static 'website/img/icon/job-list2.png' %}" alt=""></a>
-                                </div>
-                                <div class="job-tittle">
-                                    <a href="job_details.html"><h4>Digital Marketer</h4></a>
-                                    <ul>
-                                        <li>Creative Agency</li>
-                                        <li><i class="fas fa-map-marker-alt"></i>Athens, Greece</li>
-                                        <li>$3500 - $4000</li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="items-link f-right">
-                                <a href="job_details.html">Full Time</a>
-                                <span>7 hours ago</span>
-                            </div>
-                        </div> -->
-                         <!-- single-job-content -->
-                       <!-- <div class="single-job-items mb-30">
-                            <div class="job-items">
-                                <div class="company-img">
-                                    <a href="job_details.html"><img src="{% static 'website/img/icon/job-list3.png' %}" alt=""></a>
-                                </div>
-                                <div class="job-tittle">
-                                    <a href="job_details.html"><h4>Digital Marketer</h4></a>
-                                    <ul>
-                                        <li>Creative Agency</li>
-                                        <li><i class="fas fa-map-marker-alt"></i>Athens, Greece</li>
-                                        <li>$3500 - $4000</li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="items-link f-right">
-                                <a href="job_details.html">Full Time</a>
-                                <span>7 hours ago</span>
-                            </div>
-                        </div>
-                          single-job-content -->
-                       <!--  <div class="single-job-items mb-30">
-                            <div class="job-items">
-                                <div class="company-img">
-                                    <a href="job_details.html"><img src="{% static 'website/img/icon/job-list4.png' %}" alt=""></a>
-                                </div>
-                                <div class="job-tittle">
-                                    <a href="job_details.html"><h4>Digital Marketer</h4></a>
-                                    <ul>
-                                        <li>Creative Agency</li>
-                                        <li><i class="fas fa-map-marker-alt"></i>Athens, Greece</li>
-                                        <li>$3500 - $4000</li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="items-link f-right">
-                                <a href="job_details.html">Full Time</a>
-                                <span>7 hours ago</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section> -->
-        <!-- Featured_job_end -->
-        <!-- How  Apply Process Start--> 
-        
-        <div class="apply-process-area apply-bg pt-150 pb-150" data-background="{% static 'website/img/gallery/how-applybg.png' %}">
-            <div class="container">
-                <!-- Section Tittle -->
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="section-tittle white-text text-center">
-                            <h1 style="font-size: 2.5rem; margin: 0;"><span>Why Tutorain</span></h1>
-                            <h2> Designed to deliver smarter learning with real impact</h2>
-                        </div>
-                    </div>
-                </div>
-                <!-- Apply Process Caption -->
-                <div class="row">
-                    <div class="col-lg-4 col-md-6">
-                        <div class="single-process text-center mb-30">
-                            <div class="process-ion">
-                                <span class="flaticon-search"></span>
-                            </div>
-                            <div class="process-cap">
-                               <h5>1. Personalized Learning Analysis</h5>
-                               <p>We identify each student's weak areas and continuously refine their learning path for better results.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6">
-                        <div class="single-process text-center mb-30">
-                            <div class="process-ion">
-                                <span class="flaticon-curriculum-vitae"></span>
-                            </div>
-                            <div class="process-cap">
-                            <h5>2. Expert-Led Education</h5>
-                            <p>
-                            Learn from qualified and experienced educators dedicated to delivering high-quality teaching.
-                            </p></div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6">
-                        <div class="single-process text-center mb-30">
-                            <div class="process-ion">
-                                <span class="flaticon-tour"></span>
-                            </div>
-                            <div class="process-cap">
-                            <h5>3. Continuous Feedback System</h5>
-                            <p>
-                            Regular feedback from students and parents helps us improve performance and ensure steady growth.
-                            </p> </div>
-                        </div>
-                    </div>
-                </div>
-             </div>
-        </div>
-        
-
-
-
-   
-
-
-
-<!-- MACA SEO Section Start -->
-<div class="support-company-area section-padding">
-    <div class="container">
-        <div class="row align-items-center">
-            
-            <!-- Left Content -->
-            <div class="col-xl-6 col-lg-6">
-                <div class="right-caption">
-                    <div class="section-tittle section-tittle2">
-                        <span>MACA Initiative</span>
-                        <h2>Free Education for Students in Need</h2>
-                    </div>
-
-                    <div class="support-caption">
-                        <p>
-                            <strong>MA's Charity Affiliate (MACA)</strong> is an initiative by Tutorain focused on 
-                            providing <strong>free education support</strong> to students who have lost both parents.
-                        </p>
-
-                        <p>
-                            Through MACA Phase 1, we aim to empower deserving students with access to 
-                            quality learning, mentorship, and guidance — helping them build a brighter future.
-                        </p>
-
-                        <ul>
-                            <li>✔ 100% Free Education Support</li>
-                            <li>✔ Verified & Genuine Scholarship Program</li>
-                            <li>✔ Personalized Learning through Tutorain</li>
-                        </ul>
-
-                        <!-- CTA Button -->
-                        <a href="{% url 'maca' %}" class="btn mt-20">
-                            Learn More & Apply
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Image -->
-            <div class="col-xl-6 col-lg-6">
-                <div class="support-location-img">
-                    <img src="{% static 'banner4.png' %}" alt="MACA Free Education Support">
-                </div>
-            </div>
-
-        </div>
-    </div>
-</div>
-<!-- MACA SEO Section End -->
-
-
-
-
-
-    </main>
-   <footer>
-        <!-- Footer Start-->
-        <div class="footer-area footer-bg footer-padding">
-            <div class="container">
-                <div class="row d-flex justify-content-between">
-                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
-                       <div class="single-footer-caption mb-50">
-                         <div class="single-footer-caption mb-30">
-                             <div class="footer-tittle">
-                                 <h4>About Us</h4>
-                                 <div class="footer-pera">
-                                     <p>Tutorain-it's a MA Product</p>
-                                </div>
-                             </div>
-                         </div>
-
-                       </div>
-                    </div>
-                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-5">
-                        <div class="single-footer-caption mb-50">
-                            <div class="footer-tittle">
-                                <h4>Contact Info</h4>
-                                    <ul>
-                                        <li><a href="tel:+919497200270"> Phone: +91 9497200270</a></li>
-
-                                        <li><a href="mailto:ma.ceo@tutorain.com"> CEO: ma.ceo@tutorain.com</a></li>
-                                        <li><a href="mailto:hr@tutorain.com"> HR: hr@tutorain.com</a></li>
-                                        <li><a href="mailto:support@tutorain.com"> Support: support@tutorain.com</a></li>
-                                    </ul>
-                            </div>
-
-                        </div>
-                    </div>
-                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-5">
-                        <div class="single-footer-caption mb-50">
-                            <div class="footer-tittle">
-                                <h4>Important Link</h4>
-                                <ul>
-                                    <li><a href="{% url 'home' %}"> Home</a></li>
-                                    <li><a href="{% url 'contact' %}">Contact Us</a></li>
-                                    <li><a href="{% url 'comingsoon' %}">Testimonial</a></li>
-                                    <li><a href="{% url 'comingsoon' %}">Proparties</a></li>
-                                    <li><a href="{% url 'contact' %}">Support</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-5">
-                        <div class="single-footer-caption mb-50">
-                            <div class="footer-tittle">
-                                <h4>Newsletter</h4>
-                                <div class="footer-pera footer-pera2">
-                                 <p>Feedback Here</p>
-                             </div>
-                             <!-- Form -->
-                             <div class="footer-form" >
-                                 <div id="mc_embed_signup">
-                                     <form target="_blank" action="https://spondonit.us12.list-manage.com/subscribe/post?u=1462626880ade1ac87bd9c93a&amp;id=92a4423d01"
-                                     method="get" class="subscribe_form relative mail_part">
-                                         <input type="email" name="email" id="newsletter-form-email" placeholder="Email Address"
-                                         class="placeholder hide-on-focus" onfocus="this.placeholder = ''"
-                                         onblur="this.placeholder = ' Email Address '">
-                                         <div class="form-icon">
-                                             <button type="submit" name="submit" id="newsletter-submit"
-                                             class="email_icon newsletter-submit button-contactForm"><img src="{% static 'website/img/icon/form.png' %}" alt=""></button>
-                                         </div>
-                                         <div class="mt-10 info"></div>
-                                     </form>
-                                 </div>
-                             </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-               <!--  -->
-               <div class="row footer-wejed justify-content-between">
-                       <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
-                          <!-- logo -->
-                          <div class="footer-logo mb-20">
-                            <a href=""{% url 'home' %}""><img src="{% static 'blogo.png' %}" alt=""></a>
-                          </div>
-                       </div>
-                      <!-- <div class="col-xl-3 col-lg-3 col-md-4 col-sm-5">
-                        <div class="footer-tittle-bottom">
-                            <span>5000+</span>
-                            <p>Talented Hunter</p>
-                        </div>
-                       </div>
-                       <div class="col-xl-3 col-lg-3 col-md-4 col-sm-5">
-                            <div class="footer-tittle-bottom">
-                                <span>451</span>
-                                <p>Talented Hunter</p>
-                            </div>
-                       </div>
-                       <div class="col-xl-3 col-lg-3 col-md-4 col-sm-5"> -->
-                            <!-- Footer Bottom Tittle -->
-                            <!--<div class="footer-tittle-bottom">
-                                <span>568</span>
-                                <p>Talented Hunter</p>
-                            </div>
-                       </div>
-               </div>
-            </div>
-        </div> -->
-        <!-- footer-bottom area -->
-        <div class="footer-bottom-area footer-bg">
-            <div class="container">
-                <div class="footer-border">
-                     <div class="row d-flex justify-content-between align-items-center">
-                         <div class="col-xl-10 col-lg-10 ">
-                             <div class="footer-copy-right">
-                                 <p><!-- Link back to Colorlib caπt be removed. Template is licensed under CC BY 3.0. -->
-  Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-  <!-- Link back to Colorlib caπt be removed. Template is licensed under CC BY 3.0. --></p>
-                             </div>
-                         </div>
-                         <div class="col-xl-2 col-lg-2">
-                             <div class="footer-social f-right">
-                                 <a href="#"><i class="fab fa-facebook-f"></i></a>
-                                 <a href="#"><i class="fab fa-twitter"></i></a>
-                                 <a href="#}"><i class="fas fa-globe"></i></a>
-                                 <a href="#"><i class="fab fa-behance"></i></a>
-                             </div>
-                         </div>
-                     </div>
-                </div>
-            </div>
-        </div>
-        <!-- Footer End-->
-    </footer>
-
-
-
-
-
-
-
-
-
-
-
-  <!-- JS here -->
-	
-		<!-- All JS Custom Plugins Link Here here -->
-        
-		<!-- Jquery, Popper, Bootstrap -->
-	
-
-<script src="{% static 'website/js/vendor/jquery-1.12.4.min.js' %}"></script>
-<script src="{% static 'website/js/popper.min.js' %}"></script>
-<script src="{% static 'website/js/bootstrap.min.js' %}"></script>
-
-<!-- Jquery Mobile Menu -->
-<script src="{% static 'website/js/jquery.slicknav.min.js' %}"></script>
-
-<!-- Jquery Slick , Owl-Carousel Plugins -->
-<script src="{% static 'website/js/owl.carousel.min.js' %}"></script>
-<script src="{% static 'website/js/slick.min.js' %}"></script>
-<script src="{% static 'website/js/price_rangs.js' %}"></script>
-<script src="{% static 'website/js/vendor/modernizr-3.5.0.min.js' %}"></script>
-
-<!-- One Page, Animated-HeadLine -->
-<script src="{% static 'website/js/wow.min.js' %}"></script>
-<script src="{% static 'website/js/animated.headline.js' %}"></script>
-<script src="{% static 'website/js/jquery.magnific-popup.js' %}"></script>
-
-<!-- Scrollup, nice-select, sticky -->
-<script src="{% static 'website/js/jquery.scrollUp.min.js' %}"></script>
-<script src="{% static 'website/js/jquery.nice-select.min.js' %}"></script>
-<script src="{% static 'website/js/jquery.sticky.js' %}"></script>
-
-<!-- Contact JS -->
-<script src="{% static 'website/js/contact.js' %}"></script>
-<script src="{% static 'website/js/jquery.form.js' %}"></script>
-<script src="{% static 'website/js/jquery.validate.min.js' %}"></script>
-<script src="{% static 'website/js/mail-script.js' %}"></script>
-<script src="{% static 'website/js/jquery.ajaxchimp.min.js' %}"></script>
-
-<!-- Jquery Plugins, Main Jquery -->
-<script src="{% static 'website/js/plugins.js' %}"></script>
-<script src="{% static 'website/js/main.js' %}"></script>
-
-
-<!-- extra for responsive view-->
-<script src="{% static 'website/js/vendor/jquery-1.12.4.min.js' %}"></script>
-<script src="{% static 'website/js/popper.min.js' %}"></script>
-<script src="{% static 'website/js/bootstrap.min.js' %}"></script>
-
-
-
-<!--Start of Tawk.to Script-->
-<script type="text/javascript">
-var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-(function(){
-var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-s1.async=true;
-s1.src='https://embed.tawk.to/6851cd093779dc190d3062cf/1itvohrvu';
-s1.charset='UTF-8';
-s1.setAttribute('crossorigin','*');
-s0.parentNode.insertBefore(s1,s0);
-})();
-</script>
-<!--End of Tawk.to Script-->
-
-
-
-        
-    </body>
 </html>
+```
