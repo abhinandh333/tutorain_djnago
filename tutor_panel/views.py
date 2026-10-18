@@ -319,19 +319,21 @@ def manage_tutors(request):
                         subject=(
                             "Congratulations! Your Tutorain Account Is Approved"
                         ),
-                        message=(
+                        message = (
                             f"Hello {tutor_name},\n\n"
                             "Congratulations!\n\n"
                             "Your Tutorain tutor account has been approved "
                             "by the administrator.\n\n"
                             "You can now log in to the Tutorain Tutor Portal "
                             "using your registered email address and password.\n\n"
+                            "Login to the Tutor Portal:\n"
+                            "https://www.tutorain.com/tutor_panel/\n\n"
                             "If you have not set your password yet, please "
                             "complete the password setup process first.\n\n"
                             "We look forward to working with you.\n\n"
                             "Regards,\n"
                             "Tutorain Team"
-                        ),
+                        )
                         from_email=settings.DEFAULT_FROM_EMAIL,
                         recipient_list=[tutor_email],
                         fail_silently=False,
