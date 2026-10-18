@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Tutorain | Tutor Dashboard</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #1e293b;
+        }
+
+        header {
+            background: #173b70;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        header h2 {
+            margin: 0;
+        }
+
+        .logout {
+            color: white;
+            background: #e05252;
+            padding: 10px 16px;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+
+        main {
+            max-width: 1000px;
+            margin: 35px auto;
+            padding: 20px;
+        }
+
+        .welcome {
+            margin-bottom: 25px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .card h3 {
+            color: #173b70;
+            margin-top: 0;
+        }
+
+        .card p {
+            color: #64748b;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h2>Tutorain Tutor Portal</h2>
+    <a class="logout" href="{% url 'tutor_panel:logout' %}">Logout</a>
+</header>
+
+<main>
+    <section class="welcome">
+        <h1>Welcome to your dashboard!</h1>
+        <p>You are logged in as <strong>{{ tutor_email }}</strong>.</p>
+    </section>
+
+    <section class="cards">
+
+        <div class="card">
+            <h3>👨‍🎓 My Students</h3>
+            <p>View the students assigned to you.</p>
+        </div>
+
+        <div class="card">
+            <h3>📋 Attendance</h3>
+            <p>Record and review class attendance.</p>
+        </div>
+
+        <div class="card">
+            <h3>🕒 Class Timings</h3>
+            <p>View your scheduled classes.</p>
+        </div>
+
+        <div class="card">
+            <h3>🎥 Revision Videos</h3>
+            <p>Access recorded lessons and revision videos.</p>
+        </div>
+
+    </section>
+</main>
+
+</body>
+</html>

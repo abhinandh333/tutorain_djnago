@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Tutor Management | Tutorain</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 25px;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #243047;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            color: #173b72;
+        }
+
+        .subtitle {
+            color: #68758a;
+            margin: 0;
+        }
+
+        .back-button {
+            background: #173b72;
+            color: white;
+            text-decoration: none;
+            padding: 11px 16px;
+            border-radius: 8px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 14px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #173b72;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        label {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d7deea;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        input:focus {
+            outline: 2px solid #b7d1ff;
+            border-color: #2865b8;
+        }
+
+        .submit-button {
+            margin-top: 22px;
+            padding: 13px 22px;
+            border: none;
+            border-radius: 8px;
+            background: #176b45;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .submit-button:hover {
+            background: #105536;
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 18px;
+            background: #e7f7ed;
+            color: #176b45;
+        }
+
+        .error {
+            background: #ffe9e9;
+            color: #a21d1d;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 850px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 14px 12px;
+            border-bottom: 1px solid #e9edf4;
+        }
+
+        th {
+            background: #f4f7fb;
+            color: #173b72;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .pending {
+            background: #fff3cd;
+            color: #805d00;
+        }
+
+        .approved {
+            background: #d8f5e3;
+            color: #176b45;
+        }
+
+        .rejected {
+            background: #ffe0e0;
+            color: #a21d1d;
+        }
+
+        .action-form {
+            display: inline-block;
+            margin: 3px 3px 3px 0;
+        }
+
+        .action-button {
+            padding: 8px 11px;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .approve-button {
+            background: #176b45;
+        }
+
+        .approve-button:hover {
+            background: #105536;
+        }
+
+        .reject-button {
+            background: #c0392b;
+        }
+
+        .reject-button:hover {
+            background: #922b21;
+        }
+
+        .pending-button {
+            background: #667085;
+        }
+
+        .pending-button:hover {
+            background: #475467;
+        }
+
+        @media (max-width: 650px) {
+            body {
+                padding: 14px;
+            }
+
+            .card {
+                padding: 18px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <div class="header">
+        <div>
+            <h1>Tutor Management</h1>
+            <p class="subtitle">
+                Register tutors and manage their approval status.
+            </p>
+        </div>
+
+        <a href="{% url 'tutor_panel:admin_dashboard' %}"
+           class="back-button">
+            ← Admin Dashboard
+        </a>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="message {% if message.tags == 'error' %}error{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Add New Tutor -->
+    <div class="card">
+        <h2>Add New Tutor</h2>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="form-grid">
+
+                <div class="field">
+                    <label for="name">Tutor Name *</label>
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        required
+                        maxlength="100"
+                        placeholder="Enter tutor's full name">
+                </div>
+
+                <div class="field">
+                    <label for="email">Email Address *</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        required
+                        maxlength="254"
+                        placeholder="tutor@example.com">
+                </div>
+
+                <div class="field">
+                    <label for="phone">Phone Number *</label>
+                    <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        required
+                        maxlength="20"
+                        placeholder="Enter phone number">
+                </div>
+
+                <div class="field">
+                    <label for="subject">Subject *</label>
+                    <input
+                        type="text"
+                        id="subject"
+                        name="subject"
+                        required
+                        maxlength="100"
+                        placeholder="e.g. Mathematics">
+                </div>
+
+            </div>
+
+            <button type="submit" class="submit-button">
+                Save Tutor
+            </button>
+        </form>
+    </div>
+
+    <!-- Registered Tutors -->
+    <div class="card">
+        <h2>Registered Tutors</h2>
+
+        {% if tutors %}
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Subject</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for tutor in tutors %}
+                            <tr>
+                                <td>{{ tutor.name }}</td>
+                                <td>{{ tutor.email }}</td>
+                                <td>{{ tutor.phone }}</td>
+                                <td>{{ tutor.subject }}</td>
+
+                                <td>
+                                    <span class="status
+                                        {% if tutor.status == 'Approved' %}
+                                            approved
+                                        {% elif tutor.status == 'Rejected' %}
+                                            rejected
+                                        {% else %}
+                                            pending
+                                        {% endif %}">
+                                        {{ tutor.status|default:"Pending" }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <!-- Approve tutor -->
+                                    {% if tutor.status != 'Approved' %}
+                                        <form method="POST" class="action-form">
+                                            {% csrf_token %}
+
+                                            <input
+                                                type="hidden"
+                                                name="action"
+                                                value="approve">
+
+                                            <input
+                                                type="hidden"
+                                                name="tutor_email"
+                                                value="{{ tutor.email }}">
+
+                                            <button
+                                                type="submit"
+                                                class="action-button approve-button">
+                                                Approve
+                                            </button>
+                                        </form>
+                                    {% endif %}
+
+                                    <!-- Reject tutor -->
+                                    {% if tutor.status != 'Rejected' %}
+                                        <form method="POST" class="action-form">
+                                            {% csrf_token %}
+
+                                            <input
+                                                type="hidden"
+                                                name="action"
+                                                value="reject">
+
+                                            <input
+                                                type="hidden"
+                                                name="tutor_email"
+                                                value="{{ tutor.email }}">
+
+                                            <button
+                                                type="submit"
+                                                class="action-button reject-button">
+                                                Reject
+                                            </button>
+                                        </form>
+                                    {% endif %}
+
+                                    <!-- Return tutor to Pending -->
+                                    {% if tutor.status == 'Rejected' %}
+                                        <form method="POST" class="action-form">
+                                            {% csrf_token %}
+
+                                            <input
+                                                type="hidden"
+                                                name="action"
+                                                value="pending">
+
+                                            <input
+                                                type="hidden"
+                                                name="tutor_email"
+                                                value="{{ tutor.email }}">
+
+                                            <button
+                                                type="submit"
+                                                class="action-button pending-button">
+                                                Set Pending
+                                            </button>
+                                        </form>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p>No tutors have been added yet.</p>
+        {% endif %}
+    </div>
+
+</div>
+</body>
+</html>

@@ -48,4 +48,8 @@ urlpatterns = [
 
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='sitemap'),
 
+    path('tutor_panel/', include('tutor_panel.urls')),
+
+    
+
 ]

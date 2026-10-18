@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'api',
     'corsheaders',
     'django.contrib.sitemaps',
+    'tutor_panel',
     
 ]
 
@@ -169,7 +170,15 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
+# Only these email addresses can access the tutor portal.
+APPROVED_TUTOR_EMAILS = [
+    "abc@gmail.com",
+    "abhinandhrnair333@gmail.com",
+]
 
+ADMIN_EMAILS = [
+    "tutorain333@gmail.com",
+]
 
  
 
@@ -190,8 +199,8 @@ LOGIN_REDIRECT_URL = '/dashboard/'
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-DEBUG =False
-SECURE_SSL_REDIRECT =True
+DEBUG =True
+SECURE_SSL_REDIRECT =False
 USE_X_FORWARDED_HOST = True
 CSRF_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_SAMESITE = 'Lax'
@@ -203,5 +212,17 @@ SESSION_COOKIE_AGE = 60 * 60 * 24 * 30   # 30 days
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
 SESSION_SAVE_EVERY_REQUEST = True
+
+# Gmail configuration for Tutorain invitation emails
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = "tutorain333@gmail.com"
+EMAIL_HOST_PASSWORD = os.environ.get("TUTORAIN_EMAIL_APP_PASSWORD")
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
