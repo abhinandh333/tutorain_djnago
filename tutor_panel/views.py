@@ -333,7 +333,7 @@ def manage_tutors(request):
                             "We look forward to working with you.\n\n"
                             "Regards,\n"
                             "Tutorain Team"
-                        )
+                        ),
                         from_email=settings.DEFAULT_FROM_EMAIL,
                         recipient_list=[tutor_email],
                         fail_silently=False,
