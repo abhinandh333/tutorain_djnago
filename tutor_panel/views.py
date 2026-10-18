@@ -228,9 +228,15 @@ def manage_tutors(request):
 
     user_email = request.session.get("firebase_email", "").lower()
 
+    admin_emails = getattr(settings, "ADMIN_EMAILS", [])
+
+    if isinstance(admin_emails, str):
+        admin_emails = [admin_emails]
+
     admin_emails = [
-        email.lower()
-        for email in getattr(settings, "ADMIN_EMAILS", [])
+        email.strip().lower()
+        for email in admin_emails
+        if email and email.strip()
     ]
 
     if user_email not in admin_emails:
@@ -359,21 +365,28 @@ def manage_tutors(request):
 
         new_user = None
         firestore_saved = False
+        stage = "starting"
 
         try:
-            # Create Firebase Authentication account
+            # Step 1: Create the Firebase Authentication account
+            stage = "creating Firebase Authentication user"
+
             new_user = auth.create_user(
                 email=email,
                 app=get_app(),
             )
 
-            # Generate Firebase password-reset link
+            # Step 2: Generate the password-setting link
+            stage = "generating password-setting link"
+
             password_link = auth.generate_password_reset_link(
                 email,
                 app=get_app(),
             )
 
-            # Save tutor details
+            # Step 3: Save tutor details in Firestore
+            stage = "saving tutor details to Firestore"
+
             tutor_ref.set({
                 "name": name,
                 "email": email,
@@ -386,7 +399,9 @@ def manage_tutors(request):
 
             firestore_saved = True
 
-            # Send invitation email
+            # Step 4: Send the invitation email
+            stage = "sending invitation email"
+
             email_sent = send_mail(
                 subject="Welcome to Tutorain - Set Your Password",
                 message=(
@@ -413,30 +428,43 @@ def manage_tutors(request):
             )
 
         except Exception as e:
-            print("TUTOR REGISTRATION ERROR:", repr(e))
+            print(
+                f"TUTOR REGISTRATION ERROR at stage '{stage}': "
+                f"{type(e).__name__}: {e}",
+                flush=True,
+            )
 
-            # Clean up the Firestore record if registration failed
+            # Remove the Firestore record if it was saved
             if firestore_saved:
                 try:
                     tutor_ref.delete()
                 except Exception as cleanup_error:
-                    print("FIRESTORE CLEANUP ERROR:", repr(cleanup_error))
+                    print(
+                        "FIRESTORE CLEANUP ERROR:",
+                        repr(cleanup_error),
+                        flush=True,
+                    )
 
-            # Clean up the Firebase account created by this attempt
+            # Remove the Firebase account created by this attempt
             if new_user is not None:
                 try:
                     auth.delete_user(new_user.uid, app=get_app())
                 except Exception as cleanup_error:
-                    print("FIREBASE CLEANUP ERROR:", repr(cleanup_error))
+                    print(
+                        "FIREBASE CLEANUP ERROR:",
+                        repr(cleanup_error),
+                        flush=True,
+                    )
 
             messages.error(
                 request,
-                "Tutor registration failed. Please check the Django terminal "
-                "for details. The email may already have a Firebase account."
+                "Tutor registration failed. Check the Cloud Run logs "
+                "for the exact error."
             )
 
         return redirect("tutor_panel:manage_tutors")
 
+    
     # 4. Retrieve tutors for GET requests
     tutors = []
 
