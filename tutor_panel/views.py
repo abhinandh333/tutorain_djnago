@@ -28,135 +28,160 @@ def firebase_login(request):
     stage = "starting"
 
     try:
+        # 1. Read the request
         stage = "reading request"
         data = json.loads(request.body)
         id_token = data.get("idToken")
 
         if not id_token:
-            return JsonResponse(
-                {"success": False, "error": "Missing login token."},
-                status=400,
-            )
+            return JsonResponse({
+                "success": False,
+                "error": "Missing login token."
+            }, status=400)
 
-        # 1. Verify Firebase login token
+        # 2. Verify Firebase Authentication
         stage = "verifying Firebase token"
+
         decoded_token = auth.verify_id_token(
             id_token,
-            app=get_app(),
+            app=get_app()
         )
 
         uid = decoded_token["uid"]
-        email = decoded_token.get("email", "").lower()
+        email = (decoded_token.get("email") or "").strip().lower()
 
         if not email:
-            return JsonResponse(
-                {"success": False, "error": "Email address not found."},
-                status=401,
-            )
+            return JsonResponse({
+                "success": False,
+                "error": "Email address not found."
+            }, status=401)
 
-        # Use the same Firebase app for all Firestore operations
+        # 3. Check admin BEFORE checking Firestore tutor documents
+        admin_emails = getattr(settings, "ADMIN_EMAILS", [])
+
+        if isinstance(admin_emails, str):
+            admin_emails = [admin_emails]
+
+        admin_emails = [
+            address.strip().lower()
+            for address in admin_emails
+            if address and address.strip()
+        ]
+
+        if email in admin_emails:
+            request.session.flush()
+
+            request.session["firebase_uid"] = uid
+            request.session["firebase_email"] = email
+            request.session["user_role"] = "admin"
+
+            return JsonResponse({
+                "success": True,
+                "redirect_url": "/tutor_panel/admin/"
+            })
+
+        # 4. Check the tutor in Firestore
         stage = "connecting to Firestore"
         db = firestore.client(app=get_app())
 
-        # 2. Read tutor document
         stage = "reading tutor document"
         tutor_ref = db.collection("tutors").document(email)
         tutor_doc = tutor_ref.get()
 
         if not tutor_doc.exists:
-            return JsonResponse(
-                {
-                    "success": False,
-                    "error": (
-                        "Your tutor account was not found. "
-                        "Please contact the administrator."
-                    ),
-                },
-                status=403,
-            )
-
-        tutor_data = tutor_doc.to_dict()
-        tutor_status = tutor_data.get("status", "").strip().lower()
-
-        # 3. Check whether the user is an administrator
-        admin_emails = [
-            e.lower()
-            for e in getattr(settings, "ADMIN_EMAILS", [])
-        ]
-
-        if email in admin_emails:
-            request.session.flush()
-            request.session["firebase_uid"] = uid
-            request.session["firebase_email"] = email
-
             return JsonResponse({
-                "success": True,
-                "redirect_url": "/tutor_panel/admin/",
-            })
+                "success": False,
+                "error": (
+                    "Your tutor account was not found. "
+                    "Please contact the administrator."
+                )
+            }, status=403)
 
-        # 4. Check tutor approval
+        tutor_data = tutor_doc.to_dict() or {}
+
+        tutor_status = (
+            tutor_data.get("status") or ""
+        ).strip().lower()
+
+        # 5. Check tutor approval
         if tutor_status != "approved":
-            return JsonResponse(
-                {
-                    "success": False,
-                    "error": (
-                        "Your account is pending approval. "
-                        "Please contact the administrator."
-                    ),
-                },
-                status=403,
-            )
+            return JsonResponse({
+                "success": False,
+                "error": (
+                    "Your account is pending approval. "
+                    "Please contact the administrator."
+                )
+            }, status=403)
 
-        # 5. Update password setup status
-        if not tutor_data.get("password_setup_completed", False):
-            stage = "updating password setup status"
-            tutor_ref.update({
-                "password_setup_completed": True,
-                "password_setup_completed_at": datetime.now(timezone.utc),
-            })
-
-        # 6. Create secure session
-        stage = "creating session"
+        # 6. Create the tutor session
         request.session.flush()
+
         request.session["firebase_uid"] = uid
         request.session["firebase_email"] = email
+        request.session["user_role"] = "tutor"
 
         return JsonResponse({
             "success": True,
-            "redirect_url": "/tutor_panel/dashboard/",
+            "redirect_url": "/tutor_panel/dashboard/"
         })
+
+    except json.JSONDecodeError:
+        return JsonResponse({
+            "success": False,
+            "error": "Invalid request data."
+        }, status=400)
 
     except Exception as e:
         print(
-            f"FIREBASE LOGIN ERROR at stage '{stage}': {type(e).__name__}: {e}",
-            flush=True,
+            f"FIREBASE LOGIN ERROR at stage '{stage}': "
+            f"{type(e).__name__}: {e}",
+            flush=True
         )
 
-        return JsonResponse(
-            {
-                "success": False,
-                "error": "Login failed. Please try again or contact the administrator.",
-            },
-            status=401,
-        )
+        return JsonResponse({
+            "success": False,
+            "error": (
+                "Login failed. Please try again "
+                "or contact the administrator."
+            )
+        }, status=401)
 
 def dashboard(request):
     if not request.session.get("firebase_uid"):
         return redirect("tutor_panel:login")
 
     email = request.session.get("firebase_email", "").lower()
-    approved_emails = [
-        e.lower()
-        for e in getattr(settings, "APPROVED_TUTOR_EMAILS", [])
-    ]
 
-    if email not in approved_emails:
-        request.session.flush()
+    # Only tutors can access this dashboard
+    if request.session.get("user_role") != "tutor":
+        return redirect("tutor_panel:admin_dashboard")
+
+    try:
+        db = firestore.client(app=get_app())
+        tutor_ref = db.collection("tutors").document(email)
+        tutor_doc = tutor_ref.get()
+
+        if not tutor_doc.exists:
+            request.session.flush()
+            return redirect("tutor_panel:login")
+
+        tutor_data = tutor_doc.to_dict() or {}
+
+        if (tutor_data.get("status") or "").strip().lower() != "approved":
+            request.session.flush()
+            return redirect("tutor_panel:login")
+
+    except Exception as e:
+        print("DASHBOARD ERROR:", repr(e), flush=True)
         return redirect("tutor_panel:login")
 
-    return render(request, "tutor_panel/dashboard.html", {
-        "tutor_email": email,
-    })
+    return render(
+        request,
+        "tutor_panel/dashboard.html",
+        {
+            "tutor_email": email,
+        }
+    )
 
 
 
@@ -164,22 +189,31 @@ def admin_dashboard(request):
     if not request.session.get("firebase_uid"):
         return redirect("tutor_panel:login")
 
-    email = request.session.get("firebase_email", "").lower()
+    email = request.session.get("firebase_email", "").strip().lower()
+
+    admin_emails = getattr(settings, "ADMIN_EMAILS", [])
+
+    if isinstance(admin_emails, str):
+        admin_emails = [admin_emails]
 
     admin_emails = [
-        e.lower()
-        for e in getattr(settings, "ADMIN_EMAILS", [])
+        address.strip().lower()
+        for address in admin_emails
+        if address and address.strip()
     ]
 
-    if email not in admin_emails:
-        return redirect("tutor_panel:dashboard")
+    if (
+        request.session.get("user_role") != "admin"
+        or email not in admin_emails
+    ):
+        return redirect("tutor_panel:login")
 
     return render(
         request,
         "tutor_panel/admin_dashboard.html",
         {
             "admin_email": email,
-        },
+        }
     )
 
 
@@ -203,7 +237,7 @@ def manage_tutors(request):
         return redirect("tutor_panel:admin_dashboard")
 
     # 2. Connect to Firestore
-    db = firestore.client()
+    db = firestore.client(app=get_app())
 
     # 3. Handle POST requests
     if request.method == "POST":
@@ -534,7 +568,7 @@ def notify_admin(request):
 
         tutor_data = tutor_doc.to_dict() or {}
 
-        if tutor_data.get("status") != "Pending":
+        if (tutor_data.get("status") or "").strip().lower() != "pending":
             return JsonResponse({
                 "success": False,
                 "error": "This notification is only available for pending accounts."
