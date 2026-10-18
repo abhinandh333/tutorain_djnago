@@ -22,11 +22,13 @@ def login_page(request):
 
     return render(request, "tutor_panel/login.html")
 
-
 @require_POST
 @csrf_protect
 def firebase_login(request):
+    stage = "starting"
+
     try:
+        stage = "reading request"
         data = json.loads(request.body)
         id_token = data.get("idToken")
 
@@ -36,7 +38,8 @@ def firebase_login(request):
                 status=400,
             )
 
-        # Verify the Firebase login token
+        # 1. Verify Firebase login token
+        stage = "verifying Firebase token"
         decoded_token = auth.verify_id_token(
             id_token,
             app=get_app(),
@@ -45,48 +48,22 @@ def firebase_login(request):
         uid = decoded_token["uid"]
         email = decoded_token.get("email", "").lower()
 
-        # Automatically mark password setup as completed after Firebase login
-        if email:
-            db = firestore.client(app=get_app())
-            tutor_ref = db.collection("tutors").document(email)
-            tutor_doc = tutor_ref.get()
-
-            if tutor_doc.exists:
-                tutor_ref.update({
-                    "password_setup_completed": True,
-                    "password_setup_completed_at": datetime.now(timezone.utc),
-                })
-
         if not email:
             return JsonResponse(
                 {"success": False, "error": "Email address not found."},
                 status=401,
             )
 
-        # Get administrator email addresses
-        admin_emails = [
-            e.lower()
-            for e in getattr(settings, "ADMIN_EMAILS", [])
-        ]
+        # Use the same Firebase app for all Firestore operations
+        stage = "connecting to Firestore"
+        db = firestore.client(app=get_app())
 
-        # Administrators can access the admin dashboard
-        if email in admin_emails:
-            request.session.flush()
-            request.session["firebase_uid"] = uid
-            request.session["firebase_email"] = email
-
-            return JsonResponse({
-                "success": True,
-                "redirect_url": "/tutor_panel/admin/",
-            })
-
-        # Check tutor approval status in Firestore
-        db = firestore.client()
-
+        # 2. Read tutor document
+        stage = "reading tutor document"
         tutor_ref = db.collection("tutors").document(email)
-        tutor_document = tutor_ref.get()
+        tutor_doc = tutor_ref.get()
 
-        if not tutor_document.exists:
+        if not tutor_doc.exists:
             return JsonResponse(
                 {
                     "success": False,
@@ -98,10 +75,26 @@ def firebase_login(request):
                 status=403,
             )
 
-        tutor_data = tutor_document.to_dict()
+        tutor_data = tutor_doc.to_dict()
         tutor_status = tutor_data.get("status", "").strip().lower()
 
-        # Allow access only to approved tutors
+        # 3. Check whether the user is an administrator
+        admin_emails = [
+            e.lower()
+            for e in getattr(settings, "ADMIN_EMAILS", [])
+        ]
+
+        if email in admin_emails:
+            request.session.flush()
+            request.session["firebase_uid"] = uid
+            request.session["firebase_email"] = email
+
+            return JsonResponse({
+                "success": True,
+                "redirect_url": "/tutor_panel/admin/",
+            })
+
+        # 4. Check tutor approval
         if tutor_status != "approved":
             return JsonResponse(
                 {
@@ -114,7 +107,16 @@ def firebase_login(request):
                 status=403,
             )
 
-        # Create a secure session for the approved tutor
+        # 5. Update password setup status
+        if not tutor_data.get("password_setup_completed", False):
+            stage = "updating password setup status"
+            tutor_ref.update({
+                "password_setup_completed": True,
+                "password_setup_completed_at": datetime.now(timezone.utc),
+            })
+
+        # 6. Create secure session
+        stage = "creating session"
         request.session.flush()
         request.session["firebase_uid"] = uid
         request.session["firebase_email"] = email
@@ -125,16 +127,18 @@ def firebase_login(request):
         })
 
     except Exception as e:
-        print("FIREBASE LOGIN ERROR:", repr(e))
+        print(
+            f"FIREBASE LOGIN ERROR at stage '{stage}': {type(e).__name__}: {e}",
+            flush=True,
+        )
 
         return JsonResponse(
             {
                 "success": False,
-                "error": "Login failed. Check the Django terminal for details.",
+                "error": "Login failed. Please try again or contact the administrator.",
             },
             status=401,
         )
-
 
 def dashboard(request):
     if not request.session.get("firebase_uid"):
