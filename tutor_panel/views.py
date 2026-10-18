@@ -226,8 +226,11 @@ def manage_tutors(request):
     if not request.session.get("firebase_uid"):
         return redirect("tutor_panel:login")
 
-    user_email = request.session.get("firebase_email", "").lower()
+    user_email = (
+        request.session.get("firebase_email") or ""
+    ).strip().lower()
 
+    # Get administrator email addresses safely
     admin_emails = getattr(settings, "ADMIN_EMAILS", [])
 
     if isinstance(admin_emails, str):
@@ -239,7 +242,10 @@ def manage_tutors(request):
         if email and email.strip()
     ]
 
-    if user_email not in admin_emails:
+    if (
+        request.session.get("user_role") != "admin"
+        or user_email not in admin_emails
+    ):
         return redirect("tutor_panel:admin_dashboard")
 
     # 2. Connect to Firestore
@@ -248,10 +254,14 @@ def manage_tutors(request):
     # 3. Handle POST requests
     if request.method == "POST":
 
-        action = request.POST.get("action", "").strip()
-        tutor_email = request.POST.get("tutor_email", "").strip().lower()
+        action = request.POST.get("action", "").strip().lower()
+        tutor_email = (
+            request.POST.get("tutor_email") or ""
+        ).strip().lower()
 
-        # Approve, reject, or set an existing tutor to pending
+        # --------------------------------------------------
+        # A. APPROVE, REJECT, OR SET TUTOR TO PENDING
+        # --------------------------------------------------
         if action in ["approve", "reject", "pending"]:
 
             if not tutor_email:
@@ -265,19 +275,11 @@ def manage_tutors(request):
                 messages.error(request, "Tutor not found.")
                 return redirect("tutor_panel:manage_tutors")
 
-            tutor_data = tutor_document.to_dict()
+            tutor_data = tutor_document.to_dict() or {}
 
-            # Require completed password setup before approval
+            # Determine the new status.
+            # Password setup is not required for administrator approval.
             if action == "approve":
-
-                if not tutor_data.get("password_setup_completed", False):
-                    messages.error(
-                        request,
-                        f"{tutor_email} cannot be approved yet. "
-                        "The tutor must complete password setup first."
-                    )
-                    return redirect("tutor_panel:manage_tutors")
-
                 new_status = "Approved"
 
             elif action == "reject":
@@ -286,17 +288,37 @@ def manage_tutors(request):
             else:
                 new_status = "Pending"
 
-            # Update status
-            tutor_ref.update({"status": new_status})
+            # Update tutor status in Firestore
+            try:
+                tutor_ref.update({
+                    "status": new_status
+                })
 
-            # Send approval email
+            except Exception as e:
+                print(
+                    "TUTOR STATUS UPDATE ERROR:",
+                    repr(e),
+                    flush=True,
+                )
+
+                messages.error(
+                    request,
+                    "Could not update the tutor status. "
+                    "Please try again."
+                )
+
+                return redirect("tutor_panel:manage_tutors")
+
+            # Send approval email when approved
             if new_status == "Approved":
 
                 tutor_name = tutor_data.get("name", "Tutor")
 
                 try:
                     email_sent = send_mail(
-                        subject="Congratulations! Your Tutorain Account Is Approved",
+                        subject=(
+                            "Congratulations! Your Tutorain Account Is Approved"
+                        ),
                         message=(
                             f"Hello {tutor_name},\n\n"
                             "Congratulations!\n\n"
@@ -304,6 +326,8 @@ def manage_tutors(request):
                             "by the administrator.\n\n"
                             "You can now log in to the Tutorain Tutor Portal "
                             "using your registered email address and password.\n\n"
+                            "If you have not set your password yet, please "
+                            "complete the password setup process first.\n\n"
                             "We look forward to working with you.\n\n"
                             "Regards,\n"
                             "Tutorain Team"
@@ -316,23 +340,28 @@ def manage_tutors(request):
                     if email_sent == 1:
                         messages.success(
                             request,
-                            f"{tutor_name} has been approved. "
-                            "The approval email was sent successfully."
+                            f"{tutor_name} has been approved, "
+                            "and the approval email was sent successfully."
                         )
+
                     else:
                         messages.warning(
                             request,
-                            f"{tutor_name} has been approved, but the email "
-                            "could not be confirmed as sent."
+                            f"{tutor_name} has been approved, "
+                            "but the email could not be confirmed as sent."
                         )
 
                 except Exception as e:
-                    print("TUTOR APPROVAL EMAIL ERROR:", repr(e))
+                    print(
+                        "TUTOR APPROVAL EMAIL ERROR:",
+                        repr(e),
+                        flush=True,
+                    )
 
                     messages.warning(
                         request,
                         f"{tutor_name} has been approved, but the approval "
-                        "email could not be sent. Check the Django terminal."
+                        "email could not be sent."
                     )
 
             else:
@@ -343,138 +372,197 @@ def manage_tutors(request):
 
             return redirect("tutor_panel:manage_tutors")
 
-        # Register a new tutor
-        name = request.POST.get("name", "").strip()
-        email = request.POST.get("email", "").strip().lower()
-        phone = request.POST.get("phone", "").strip()
-        subject = request.POST.get("subject", "").strip()
+        # --------------------------------------------------
+        # B. REGISTER A NEW TUTOR
+        # --------------------------------------------------
+        elif action == "register":
 
-        if not all([name, email, phone, subject]):
-            messages.error(request, "Please fill in all required fields.")
-            return redirect("tutor_panel:manage_tutors")
+            name = (request.POST.get("name") or "").strip()
+            email = (
+                request.POST.get("email") or ""
+            ).strip().lower()
+            phone = (request.POST.get("phone") or "").strip()
+            subject = (request.POST.get("subject") or "").strip()
 
-        tutor_ref = db.collection("tutors").document(email)
+            # Validate required fields
+            if not all([name, email, phone, subject]):
+                messages.error(
+                    request,
+                    "Please fill in all required fields."
+                )
+                return redirect("tutor_panel:manage_tutors")
 
-        # Prevent duplicate Firestore records
-        if tutor_ref.get().exists:
-            messages.error(
-                request,
-                "A tutor with this email already exists in Firestore."
-            )
-            return redirect("tutor_panel:manage_tutors")
+            # Basic email validation
+            from django.core.validators import validate_email
+            from django.core.exceptions import ValidationError
 
-        new_user = None
-        firestore_saved = False
-        stage = "starting"
+            try:
+                validate_email(email)
+            except ValidationError:
+                messages.error(
+                    request,
+                    "Please enter a valid email address."
+                )
+                return redirect("tutor_panel:manage_tutors")
 
-        try:
-            # Step 1: Create the Firebase Authentication account
-            stage = "creating Firebase Authentication user"
+            tutor_ref = db.collection("tutors").document(email)
 
-            new_user = auth.create_user(
-                email=email,
-                app=get_app(),
-            )
+            # Prevent duplicate Firestore records
+            if tutor_ref.get().exists:
+                messages.error(
+                    request,
+                    "A tutor with this email already exists in Firestore."
+                )
+                return redirect("tutor_panel:manage_tutors")
 
-            # Step 2: Generate the password-setting link
-            stage = "generating password-setting link"
+            new_user = None
+            firestore_saved = False
+            stage = "starting"
 
-            password_link = auth.generate_password_reset_link(
-                email,
-                app=get_app(),
-            )
+            try:
+                # Step 1: Create Firebase Authentication account
+                stage = "creating Firebase Authentication user"
 
-            # Step 3: Save tutor details in Firestore
-            stage = "saving tutor details to Firestore"
+                new_user = auth.create_user(
+                    email=email,
+                    app=get_app(),
+                )
 
-            tutor_ref.set({
-                "name": name,
-                "email": email,
-                "phone": phone,
-                "subject": subject,
-                "status": "Pending",
-                "password_setup_completed": False,
-                "created_at": datetime.now(timezone.utc),
-            })
+                # Step 2: Generate password-setting link
+                stage = "generating password-setting link"
 
-            firestore_saved = True
+                password_link = auth.generate_password_reset_link(
+                    email,
+                    app=get_app(),
+                )
 
-            # Step 4: Send the invitation email
-            stage = "sending invitation email"
+                # Step 3: Save tutor details in Firestore
+                stage = "saving tutor details to Firestore"
 
-            email_sent = send_mail(
-                subject="Welcome to Tutorain - Set Your Password",
-                message=(
-                    f"Hello {name},\n\n"
-                    "Your Tutorain tutor account has been created.\n\n"
-                    "Please use the link below to set your password:\n\n"
-                    f"{password_link}\n\n"
-                    "Your account is currently pending administrator approval.\n\n"
-                    "Regards,\n"
-                    "Tutorain Team"
-                ),
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[email],
-                fail_silently=False,
-            )
+                tutor_ref.set({
+                    "name": name,
+                    "email": email,
+                    "phone": phone,
+                    "subject": subject,
+                    "status": "Pending",
+                    "password_setup_completed": False,
+                    "created_at": datetime.now(timezone.utc),
+                })
 
-            if email_sent != 1:
-                raise RuntimeError("The invitation email was not sent.")
+                firestore_saved = True
 
-            messages.success(
-                request,
-                f"Tutor {name} was registered successfully. "
-                "A password-setting invitation has been emailed to them."
-            )
+                # Step 4: Send invitation email
+                stage = "sending invitation email"
 
-        except Exception as e:
-            print(
-                f"TUTOR REGISTRATION ERROR at stage '{stage}': "
-                f"{type(e).__name__}: {e}",
-                flush=True,
-            )
+                email_sent = send_mail(
+                    subject="Welcome to Tutorain - Set Your Password",
+                    message=(
+                        f"Hello {name},\n\n"
+                        "Your Tutorain tutor account has been created.\n\n"
+                        "Please use the link below to set your password:\n\n"
+                        f"{password_link}\n\n"
+                        "Your account is currently pending administrator approval.\n\n"
+                        "Regards,\n"
+                        "Tutorain Team"
+                    ),
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[email],
+                    fail_silently=False,
+                )
 
-            # Remove the Firestore record if it was saved
-            if firestore_saved:
-                try:
-                    tutor_ref.delete()
-                except Exception as cleanup_error:
-                    print(
-                        "FIRESTORE CLEANUP ERROR:",
-                        repr(cleanup_error),
-                        flush=True,
+                if email_sent != 1:
+                    raise RuntimeError(
+                        "The invitation email was not sent."
                     )
 
-            # Remove the Firebase account created by this attempt
-            if new_user is not None:
-                try:
-                    auth.delete_user(new_user.uid, app=get_app())
-                except Exception as cleanup_error:
-                    print(
-                        "FIREBASE CLEANUP ERROR:",
-                        repr(cleanup_error),
-                        flush=True,
-                    )
+                messages.success(
+                    request,
+                    f"Tutor {name} was registered successfully. "
+                    "A password-setting invitation has been emailed to them."
+                )
 
+            except Exception as e:
+                print(
+                    f"TUTOR REGISTRATION ERROR at stage '{stage}': "
+                    f"{type(e).__name__}: {e}",
+                    flush=True,
+                )
+
+                # Clean up Firestore record if saved
+                if firestore_saved:
+                    try:
+                        tutor_ref.delete()
+
+                    except Exception as cleanup_error:
+                        print(
+                            "FIRESTORE CLEANUP ERROR:",
+                            repr(cleanup_error),
+                            flush=True,
+                        )
+
+                # Clean up Firebase account created by this attempt
+                if new_user is not None:
+                    try:
+                        auth.delete_user(
+                            new_user.uid,
+                            app=get_app(),
+                        )
+
+                    except Exception as cleanup_error:
+                        print(
+                            "FIREBASE CLEANUP ERROR:",
+                            repr(cleanup_error),
+                            flush=True,
+                        )
+
+                messages.error(
+                    request,
+                    "Tutor registration failed. Please check the Cloud Run "
+                    "logs for the exact error."
+                )
+
+            return redirect("tutor_panel:manage_tutors")
+
+        else:
             messages.error(
                 request,
-                "Tutor registration failed. Check the Cloud Run logs "
-                "for the exact error."
+                "Invalid action. Please try again."
             )
+            return redirect("tutor_panel:manage_tutors")
 
-        return redirect("tutor_panel:manage_tutors")
-
-    
-    # 4. Retrieve tutors for GET requests
+    # --------------------------------------------------
+    # C. DISPLAY EXISTING TUTORS
+    # --------------------------------------------------
     tutors = []
 
-    for document in db.collection("tutors").stream():
-        tutor = document.to_dict()
-        tutors.append(tutor)
+    try:
+        for document in db.collection("tutors").stream():
+            tutor = document.to_dict() or {}
 
-    tutors.sort(key=lambda tutor: tutor.get("name", "").lower())
+            # Include the document ID as the email fallback
+            tutor.setdefault("email", document.id)
 
-    # 5. Return the management page
+            tutors.append(tutor)
+
+        tutors.sort(
+            key=lambda tutor: (
+                tutor.get("name") or ""
+            ).lower()
+        )
+
+    except Exception as e:
+        print(
+            "TUTOR LIST ERROR:",
+            repr(e),
+            flush=True,
+        )
+
+        messages.error(
+            request,
+            "Could not load the tutor list. Please try again."
+        )
+
+    # Render tutor management page
     return render(
         request,
         "tutor_panel/manage_tutors.html",
