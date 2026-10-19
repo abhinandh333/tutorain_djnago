@@ -2697,12 +2697,42 @@ html[data-theme="dark"]
 
                 <!-- STUDENT LOGIN -->
 
-                <a
-                    class="btn btn-primary btn-sm student-login-btn"
-                    href="{% url 'login' %}"
-                >
-                    👤 Student Login
-                </a>
+<div class="dropdown tutorain-login-dropdown">
+    <button
+        class="btn btn-primary btn-sm dropdown-toggle"
+        type="button"
+        id="tutorainLoginDropdown"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+    >
+        👤 Login
+    </button>
+
+    <ul class="dropdown-menu dropdown-menu-end"
+        aria-labelledby="tutorainLoginDropdown">
+
+        <li>
+            <a class="dropdown-item" href="{% url 'login' %}">
+                🎓 Login as Student
+            </a>
+        </li>
+
+        <li>
+            <a class="dropdown-item"
+               href="https://www.tutorain.com/tutor_panel/">
+                👨‍👩‍👧 Login as Parent
+            </a>
+        </li>
+
+        <li>
+            <a class="dropdown-item"
+               href="https://www.tutorain.com/tutor_panel/">
+                👨‍🏫 Login as Tutor
+            </a>
+        </li>
+
+    </ul>
+</div>
 
             </div>
 
