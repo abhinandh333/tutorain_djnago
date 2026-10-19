@@ -7,11 +7,14 @@ from django.core.mail import send_mail
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
 from firebase_admin import auth, get_app, firestore
 from tutorain import firebase_config
 
+from django.core.mail import EmailMultiAlternatives
+from django.utils.html import escape
 
 
 
@@ -89,11 +92,28 @@ def firebase_login(request):
         tutor_doc = tutor_ref.get()
 
         if not tutor_doc.exists:
+            # Parent accounts are matched to guardian_email on student records.
+            parent_matches = list(
+                db.collection("students").where("guardian_email", "==", email).stream()
+            )
+            active_matches = [
+                doc for doc in parent_matches
+                if (doc.to_dict() or {}).get("status", "Active").strip().lower() == "active"
+            ]
+            if active_matches:
+                request.session.flush()
+                request.session["firebase_uid"] = uid
+                request.session["firebase_email"] = email
+                request.session["user_role"] = "parent"
+                return JsonResponse({
+                    "success": True,
+                    "redirect_url": "/tutor_panel/parent/"
+                })
             return JsonResponse({
                 "success": False,
                 "error": (
-                    "Your tutor account was not found. "
-                    "Please contact the administrator."
+                    "Your tutor or parent account was not found. "
+                    "Ask Tutorain administration to add your email to the student record."
                 )
             }, status=403)
 
@@ -738,3 +758,1464 @@ def notify_admin(request):
             "success": False,
             "error": "Unable to send notification. Please try again later."
         }, status=500)
+
+# ------------------------------------------------------------
+# STUDENT MANAGEMENT
+# ------------------------------------------------------------
+def _is_tutorain_admin(request):
+    if not request.session.get("firebase_uid") or request.session.get("user_role") != "admin":
+        return False
+    email = (request.session.get("firebase_email") or "").strip().lower()
+    admin_emails = getattr(settings, "ADMIN_EMAILS", [])
+    if isinstance(admin_emails, str):
+        admin_emails = [admin_emails]
+    admin_emails = [item.strip().lower() for item in admin_emails if item and item.strip()]
+    return email in admin_emails
+
+
+def manage_students(request):
+    """Administrator-only student registration, editing and status management."""
+    if not request.session.get("firebase_uid"):
+        return redirect("tutor_panel:login")
+    if not _is_tutorain_admin(request):
+        return redirect("tutor_panel:admin_dashboard")
+
+    db = firestore.client(app=get_app())
+    students_ref = db.collection("students")
+
+    if request.method == "POST":
+        action = (request.POST.get("action") or "create").strip().lower()
+        student_id = (request.POST.get("student_id") or "").strip()
+
+        if action in {"create", "update"}:
+            name = (request.POST.get("name") or "").strip()
+            student_class = (request.POST.get("student_class") or "").strip()
+            subjects = (request.POST.get("subjects") or "").strip()
+            guardian_name = (request.POST.get("guardian_name") or "").strip()
+            guardian_phone = (request.POST.get("guardian_phone") or "").strip()
+            guardian_email = (request.POST.get("guardian_email") or "").strip().lower()
+            tutor_email = (request.POST.get("tutor_email") or "").strip().lower()
+            status = (request.POST.get("status") or "Active").strip().title()
+
+            if not all([name, student_class, guardian_name, guardian_phone, tutor_email]):
+                messages.error(request, "Please complete all required student fields.")
+                return redirect("tutor_panel:manage_students")
+            if status not in {"Active", "Inactive"}:
+                status = "Active"
+
+            tutor_doc = db.collection("tutors").document(tutor_email).get()
+            tutor_data = tutor_doc.to_dict() or {} if tutor_doc.exists else {}
+            if not tutor_doc.exists or (tutor_data.get("status") or "").strip().lower() != "approved":
+                messages.error(request, "Please select an approved tutor.")
+                return redirect("tutor_panel:manage_students")
+
+            record = {
+                "name": name,
+                "student_class": student_class,
+                "subjects": subjects,
+                "guardian_name": guardian_name,
+                "guardian_phone": guardian_phone,
+                "guardian_email": guardian_email,
+                "tutor_email": tutor_email,
+                "status": status,
+                "updated_at": datetime.now(timezone.utc),
+            }
+            if action == "create":
+                record["created_at"] = datetime.now(timezone.utc)
+                new_ref = students_ref.document()
+                record["student_id"] = new_ref.id
+                new_ref.set(record)
+                messages.success(request, f"Student {name} added successfully. Student ID: {new_ref.id}")
+            else:
+                if not student_id:
+                    messages.error(request, "Student ID is missing.")
+                    return redirect("tutor_panel:manage_students")
+                student_ref = students_ref.document(student_id)
+                if not student_ref.get().exists:
+                    messages.error(request, "Student record was not found.")
+                    return redirect("tutor_panel:manage_students")
+                student_ref.update(record)
+                messages.success(request, f"Student {name} updated successfully.")
+            return redirect("tutor_panel:manage_students")
+
+        if action == "toggle_status":
+            if not student_id:
+                messages.error(request, "Student ID is missing.")
+            else:
+                student_ref = students_ref.document(student_id)
+                student_doc = student_ref.get()
+                if not student_doc.exists:
+                    messages.error(request, "Student record was not found.")
+                else:
+                    current = (student_doc.to_dict() or {}).get("status", "Active")
+                    new_status = "Inactive" if str(current).lower() == "active" else "Active"
+                    student_ref.update({"status": new_status, "updated_at": datetime.now(timezone.utc)})
+                    messages.success(request, f"Student status changed to {new_status}.")
+            return redirect("tutor_panel:manage_students")
+
+        messages.error(request, "Invalid student action.")
+        return redirect("tutor_panel:manage_students")
+
+    students = []
+    for document in students_ref.stream():
+        student = document.to_dict() or {}
+        student.setdefault("student_id", document.id)
+        students.append(student)
+    students.sort(key=lambda item: (item.get("name") or "").lower())
+
+    tutors = []
+    for document in db.collection("tutors").stream():
+        tutor = document.to_dict() or {}
+        if (tutor.get("status") or "").strip().lower() == "approved":
+            tutors.append({"email": document.id, "name": tutor.get("name") or document.id})
+    tutors.sort(key=lambda item: item["name"].lower())
+
+    edit_id = (request.GET.get("edit") or "").strip()
+    edit_student = None
+    if edit_id:
+        edit_doc = students_ref.document(edit_id).get()
+        if edit_doc.exists:
+            edit_student = edit_doc.to_dict() or {}
+            edit_student["student_id"] = edit_doc.id
+
+    return render(request, "tutor_panel/manage_students.html", {
+        "students": students,
+        "tutors": tutors,
+        "edit_student": edit_student,
+    })
+
+
+def tutor_students(request):
+    """Tutors can see only records assigned to their signed-in email."""
+    if not request.session.get("firebase_uid"):
+        return redirect("tutor_panel:login")
+    if request.session.get("user_role") != "tutor":
+        return redirect("tutor_panel:admin_dashboard")
+
+    email = (request.session.get("firebase_email") or "").strip().lower()
+    db = firestore.client(app=get_app())
+    tutor_doc = db.collection("tutors").document(email).get()
+    if not tutor_doc.exists or (tutor_doc.to_dict() or {}).get("status", "").strip().lower() != "approved":
+        request.session.flush()
+        return redirect("tutor_panel:login")
+
+    students = []
+    # Filter on the server using the authenticated session email.
+    for document in db.collection("students").where("tutor_email", "==", email).stream():
+        student = document.to_dict() or {}
+        student.setdefault("student_id", document.id)
+        students.append(student)
+    students.sort(key=lambda item: (item.get("name") or "").lower())
+    return render(request, "tutor_panel/tutor_students.html", {"students": students, "tutor_email": email})
+
+
+# ------------------------------------------------------------
+# CLASS ATTENDANCE AND STUDENT EVALUATION
+# ------------------------------------------------------------
+def tutor_attendance(request):
+    """Allow an approved tutor to submit evaluations only for assigned students."""
+    if not request.session.get("firebase_uid"):
+        return redirect("tutor_panel:login")
+    if request.session.get("user_role") != "tutor":
+        return redirect("tutor_panel:admin_dashboard")
+
+    email = (request.session.get("firebase_email") or "").strip().lower()
+    db = firestore.client(app=get_app())
+
+    tutor_doc = db.collection("tutors").document(email).get()
+    tutor_data = tutor_doc.to_dict() or {} if tutor_doc.exists else {}
+    if not tutor_doc.exists or (tutor_data.get("status") or "").strip().lower() != "approved":
+        request.session.flush()
+        return redirect("tutor_panel:login")
+
+    students_ref = db.collection("students")
+    assigned_students = []
+    for doc in students_ref.where("tutor_email", "==", email).stream():
+        student = doc.to_dict() or {}
+        student.setdefault("student_id", doc.id)
+        if (student.get("status") or "Active").strip().lower() == "active":
+            assigned_students.append(student)
+    assigned_students.sort(key=lambda item: (item.get("name") or "").lower())
+
+    if request.method == "POST":
+        student_id = (request.POST.get("student_id") or "").strip()
+        student_doc = students_ref.document(student_id).get() if student_id else None
+        student = student_doc.to_dict() or {} if student_doc and student_doc.exists else {}
+
+        # Always verify assignment on the server; never trust the selected student alone.
+        if not student_doc or not student_doc.exists or (student.get("tutor_email") or "").strip().lower() != email:
+            messages.error(request, "Please select a student assigned to your account.")
+            return redirect("tutor_panel:tutor_attendance")
+        if (student.get("status") or "Active").strip().lower() != "active":
+            messages.error(request, "Attendance cannot be recorded for an inactive student.")
+            return redirect("tutor_panel:tutor_attendance")
+
+        class_date = (request.POST.get("class_date") or "").strip()
+        subject = (request.POST.get("subject") or "").strip()
+        scheduled_time = (request.POST.get("scheduled_time") or "").strip()
+        actual_start_time = (request.POST.get("actual_start_time") or "").strip()
+        duration = (request.POST.get("duration") or "").strip()
+        attendance_status = (request.POST.get("attendance_status") or "").strip()
+        joined_on_time = (request.POST.get("joined_on_time") or "").strip()
+        late_minutes = (request.POST.get("late_minutes") or "").strip()
+        full_class = (request.POST.get("full_class") or "").strip()
+        homework_assigned = (request.POST.get("homework_assigned") or "").strip()
+        homework_status = (request.POST.get("homework_status") or "").strip()
+        homework_quality = (request.POST.get("homework_quality") or "").strip()
+        participation = (request.POST.get("participation") or "").strip()
+        attention = (request.POST.get("attention") or "").strip()
+        question_answering = (request.POST.get("question_answering") or "").strip()
+        topic_understanding = (request.POST.get("topic_understanding") or "").strip()
+        activities_completed = (request.POST.get("activities_completed") or "").strip()
+        topic_taught = (request.POST.get("topic_taught") or "").strip()
+        performance = (request.POST.get("performance") or "").strip()
+        revision_required = (request.POST.get("revision_required") or "").strip()
+        suggested_homework = (request.POST.get("suggested_homework") or "").strip()
+        recording_url = (request.POST.get("recording_url") or "").strip()
+        tutor_remarks = (request.POST.get("tutor_remarks") or "").strip()
+
+        required = {
+            "Class date": class_date,
+            "Subject": subject,
+            "Attendance status": attendance_status,
+        }
+        missing = [label for label, value in required.items() if not value]
+        if missing:
+            messages.error(request, "Please complete required fields: " + ", ".join(missing))
+            return redirect("tutor_panel:tutor_attendance")
+
+        allowed = {
+            "attendance_status": {"Present", "Absent"},
+            "joined_on_time": {"On time", "Late", "Not applicable"},
+            "full_class": {"Yes", "No", "Not applicable"},
+            "homework_assigned": {"Yes", "No"},
+            "homework_status": {"Fully completed", "Partially completed", "Not completed", "Not applicable"},
+            "homework_quality": {"Excellent", "Good", "Needs improvement", "Not checked", "Not applicable"},
+            "participation": {"Very active", "Active", "Average", "Inactive", "Not applicable"},
+            "attention": {"Always", "Mostly", "Sometimes", "Rarely", "Not applicable"},
+            "question_answering": {"Excellent", "Good", "Average", "Needs improvement", "Not applicable"},
+            "topic_understanding": {"Fully understood", "Partially understood", "Needs revision", "Not applicable"},
+            "activities_completed": {"Fully", "Partially", "Not completed", "Not applicable"},
+            "revision_required": {"Yes", "No"},
+        }
+        submitted_values = {
+            "attendance_status": attendance_status,
+            "joined_on_time": joined_on_time,
+            "full_class": full_class,
+            "homework_assigned": homework_assigned,
+            "homework_status": homework_status,
+            "homework_quality": homework_quality,
+            "participation": participation,
+            "attention": attention,
+            "question_answering": question_answering,
+            "topic_understanding": topic_understanding,
+            "activities_completed": activities_completed,
+            "revision_required": revision_required,
+        }
+        for field, value in submitted_values.items():
+            if value and value not in allowed[field]:
+                messages.error(request, "An invalid option was submitted. Please try again.")
+                return redirect("tutor_panel:tutor_attendance")
+
+        # Allow standard YouTube watch, short, and embed URLs only.
+        if recording_url:
+            from urllib.parse import urlparse, parse_qs
+            parsed = urlparse(recording_url)
+            host = (parsed.hostname or "").lower()
+            valid_youtube_host = host in {"youtube.com", "www.youtube.com", "m.youtube.com", "youtu.be", "www.youtube-nocookie.com"}
+            if parsed.scheme != "https" or not valid_youtube_host:
+                messages.error(request, "Please enter a valid HTTPS YouTube recording link.")
+                return redirect("tutor_panel:tutor_attendance")
+
+        report = {
+            "student_id": student_id,
+            "student_name": student.get("name", ""),
+            "student_class": student.get("student_class", ""),
+            "tutor_email": email,
+            "subject": subject,
+            "class_date": class_date,
+            "scheduled_time": scheduled_time,
+            "actual_start_time": actual_start_time,
+            "duration_minutes": duration,
+            "attendance_status": attendance_status,
+            "joined_on_time": joined_on_time,
+            "late_minutes": late_minutes if joined_on_time == "Late" else "",
+            "full_class": full_class,
+            "homework_assigned": homework_assigned,
+            "homework_status": homework_status,
+            "homework_quality": homework_quality,
+            "participation": participation,
+            "attention": attention,
+            "question_answering": question_answering,
+            "topic_understanding": topic_understanding,
+            "activities_completed": activities_completed,
+            "topic_taught": topic_taught,
+            "performance": performance,
+            "revision_required": revision_required,
+            "suggested_homework": suggested_homework,
+            "recording_url": recording_url,
+            "tutor_remarks": tutor_remarks,
+            "created_at": datetime.now(timezone.utc),
+        }
+        db.collection("class_reports").add(report)
+        messages.success(request, f"Class report saved for {student.get('name', 'student')}.")
+        return redirect("tutor_panel:tutor_attendance")
+
+    reports = []
+    for doc in db.collection("class_reports").where("tutor_email", "==", email).stream():
+        item = doc.to_dict() or {}
+        item["report_id"] = doc.id
+        reports.append(item)
+    reports.sort(key=lambda item: item.get("class_date", ""), reverse=True)
+
+    return render(request, "tutor_panel/tutor_attendance.html", {
+        "students": assigned_students,
+        "reports": reports[:50],
+        "today": datetime.now().date().isoformat(),
+        "tutor_email": email,
+    })
+
+
+# ------------------------------------------------------------
+# ADMIN WEEKLY STUDENT PROGRESS REPORTS
+# ------------------------------------------------------------
+def weekly_student_reports(request):
+    """Administrator-only weekly summary generated from saved class_reports."""
+    from datetime import date, timedelta
+
+    if not request.session.get("firebase_uid"):
+        return redirect("tutor_panel:login")
+    if not _is_tutorain_admin(request):
+        return redirect("tutor_panel:admin_dashboard")
+
+    today = date.today()
+    default_start = today - timedelta(days=today.weekday())
+    raw_start = (request.GET.get("week_start") or default_start.isoformat()).strip()
+    try:
+        week_start = date.fromisoformat(raw_start)
+    except ValueError:
+        week_start = default_start
+    week_end = week_start + timedelta(days=6)
+    start_text = week_start.isoformat()
+    end_text = week_end.isoformat()
+
+    db = firestore.client(app=get_app())
+    student_map = {}
+    for doc in db.collection("students").stream():
+        student = doc.to_dict() or {}
+        student_id = student.get("student_id") or doc.id
+        student["student_id"] = student_id
+        student_map[student_id] = student
+
+    grouped = {}
+    # class_date is saved as YYYY-MM-DD by the attendance form.
+    for doc in db.collection("class_reports").stream():
+        report = doc.to_dict() or {}
+        class_date = str(report.get("class_date") or "")[:10]
+        if not (start_text <= class_date <= end_text):
+            continue
+        sid = str(report.get("student_id") or "")
+        student = student_map.get(sid, {})
+        key = sid or (str(report.get("student_name") or ""),)
+        if key not in grouped:
+            grouped[key] = {
+                "student_id": sid,
+                "student_name": report.get("student_name") or student.get("name") or "Unknown student",
+                "student_class": report.get("student_class") or student.get("student_class") or "",
+                "tutor_email": report.get("tutor_email") or student.get("tutor_email") or "",
+                "guardian_name": student.get("guardian_name") or "",
+                "guardian_phone": student.get("guardian_phone") or "",
+                "total_classes": 0, "present": 0, "absent": 0,
+                "late": 0, "homework_values": [], "participation_values": [],
+                "attention_values": [], "understanding_values": [],
+                "revision_topics": [], "topics": [], "remarks": [],
+                "recordings": [],
+            }
+        row = grouped[key]
+        row["total_classes"] += 1
+        status = str(report.get("attendance_status") or "").lower()
+        if status == "present":
+            row["present"] += 1
+        elif status == "absent":
+            row["absent"] += 1
+        if str(report.get("joined_on_time") or "").lower() == "late":
+            row["late"] += 1
+        for field, target in [
+            ("homework_status", "homework_values"),
+            ("participation", "participation_values"),
+            ("attention", "attention_values"),
+            ("topic_understanding", "understanding_values"),
+        ]:
+            value = str(report.get(field) or "").strip()
+            if value and value.lower() != "not applicable":
+                row[target].append(value)
+        if str(report.get("revision_required") or "").lower() == "yes":
+            topic = str(report.get("topic_taught") or "").strip()
+            row["revision_topics"].append(topic or "Revision recommended")
+        topic = str(report.get("topic_taught") or "").strip()
+        if topic:
+            row["topics"].append(topic)
+        remark = str(report.get("tutor_remarks") or "").strip()
+        if remark:
+            row["remarks"].append(f"{class_date}: {remark}")
+        recording = str(report.get("recording_url") or "").strip()
+        if recording:
+            row["recordings"].append({"date": class_date, "url": recording, "subject": report.get("subject", "")})
+
+    reports = list(grouped.values())
+    reports.sort(key=lambda item: item["student_name"].lower())
+    for row in reports:
+        row["attendance_rate"] = round(row["present"] / row["total_classes"] * 100) if row["total_classes"] else 0
+        row["topics"] = list(dict.fromkeys(row["topics"]))
+        row["revision_topics"] = list(dict.fromkeys(row["revision_topics"]))
+        row["homework_summary"] = ", ".join(row["homework_values"]) or "No data"
+        row["participation_summary"] = ", ".join(row["participation_values"]) or "No data"
+        row["attention_summary"] = ", ".join(row["attention_values"]) or "No data"
+        row["understanding_summary"] = ", ".join(row["understanding_values"]) or "No data"
+
+    return render(request, "tutor_panel/weekly_student_reports.html", {
+        "reports": reports,
+        "week_start": start_text,
+        "week_end": end_text,
+    })
+
+
+# ------------------------------------------------------------
+# PARENT PORTAL
+# ------------------------------------------------------------
+def parent_portal(request):
+    """Show active students linked to the signed-in parent, with progress summaries."""
+    if not request.session.get("firebase_uid"):
+        return redirect("tutor_panel:login")
+    if request.session.get("user_role") != "parent":
+        return redirect("tutor_panel:dashboard")
+
+    email = (request.session.get("firebase_email") or "").strip().lower()
+    db = firestore.client(app=get_app())
+    students = []
+
+    for doc in db.collection("students").where("guardian_email", "==", email).stream():
+        student = doc.to_dict() or {}
+        if (student.get("status") or "Active").strip().lower() != "active":
+            continue
+
+        student_id = student.get("student_id") or doc.id
+        reports = []
+        for report_doc in db.collection("class_reports").where("student_id", "==", student_id).stream():
+            report = report_doc.to_dict() or {}
+            report["report_id"] = report_doc.id
+            reports.append(report)
+        reports.sort(key=lambda item: str(item.get("class_date") or ""), reverse=True)
+
+        # Resolve tutor name from the existing tutors collection.
+        tutor_email = (student.get("tutor_email") or "").strip().lower()
+        tutor_name = tutor_email or "Not assigned"
+        if tutor_email:
+            tutor_doc = db.collection("tutors").document(tutor_email).get()
+            if tutor_doc.exists:
+                tutor_data = tutor_doc.to_dict() or {}
+                tutor_name = (tutor_data.get("name") or tutor_data.get("full_name")
+                              or tutor_data.get("display_name") or tutor_email)
+
+        total_classes = len(reports)
+        present = sum(1 for r in reports if str(r.get("attendance_status") or "").strip().lower() == "present")
+        absent = sum(1 for r in reports if str(r.get("attendance_status") or "").strip().lower() == "absent")
+        attendance_recorded = present + absent
+        attendance_rate = round(present * 100 / attendance_recorded) if attendance_recorded else 0
+
+        homework_values = [str(r.get("homework_status") or "").strip() for r in reports]
+        homework_values = [x for x in homework_values if x and x.lower() != "not applicable"]
+        homework_completed = sum(1 for x in homework_values if x.lower() == "fully completed")
+        homework_partial = sum(1 for x in homework_values if x.lower() == "partially completed")
+        homework_incomplete = sum(1 for x in homework_values if x.lower() == "not completed")
+
+        understanding_values = [str(r.get("topic_understanding") or "").strip() for r in reports]
+        understanding_values = [x for x in understanding_values if x and x.lower() != "not applicable"]
+        understanding_summary = []
+        for label in ("Fully understood", "Partially understood", "Needs revision"):
+            count = sum(1 for x in understanding_values if x.lower() == label.lower())
+            understanding_summary.append({"label": label, "count": count,
+                                          "percent": round(count * 100 / len(understanding_values)) if understanding_values else 0})
+
+        student["student_id"] = student_id
+        student["tutor_name"] = tutor_name
+        student["reports"] = reports[:30]
+        student["progress"] = {
+            "total_classes": total_classes,
+            "present": present,
+            "absent": absent,
+            "attendance_rate": attendance_rate,
+            "attendance_recorded": attendance_recorded,
+            "homework_recorded": len(homework_values),
+            "homework_completed": homework_completed,
+            "homework_partial": homework_partial,
+            "homework_incomplete": homework_incomplete,
+            "understanding_summary": understanding_summary,
+        }
+        students.append(student)
+
+    students.sort(key=lambda item: (item.get("name") or "").lower())
+    return render(request, "tutor_panel/parent_portal.html", {
+        "students": students,
+        "parent_email": email,
+    })
+
+
+# ------------------------------------------------------------
+# ADMIN TUTOR PAYMENT MANAGEMENT
+# ------------------------------------------------------------
+def tutor_payments(request):
+    """Admin payment ledger: earnings are based only on Present class reports."""
+    from datetime import date
+    from decimal import Decimal, InvalidOperation
+
+    if not request.session.get("firebase_uid"):
+        return redirect("tutor_panel:login")
+    if not _is_tutorain_admin(request):
+        return redirect("tutor_panel:admin_dashboard")
+
+    today = date.today()
+    month = (request.GET.get("month") or today.strftime("%Y-%m")).strip()
+    try:
+        month_date = date.fromisoformat(month + "-01")
+        month = month_date.strftime("%Y-%m")
+    except ValueError:
+        month = today.strftime("%Y-%m")
+
+    db = firestore.client(app=get_app())
+    tutors_ref = db.collection("tutors")
+    payments_ref = db.collection("tutor_payments")
+
+    if request.method == "POST":
+        action = (request.POST.get("action") or "").strip().lower()
+        tutor_email = (request.POST.get("tutor_email") or "").strip().lower()
+        posted_month = (request.POST.get("month") or month).strip()
+        try:
+            date.fromisoformat(posted_month + "-01")
+        except ValueError:
+            messages.error(request, "Please select a valid payment month.")
+            return redirect("tutor_panel:tutor_payments")
+
+        tutor_ref = tutors_ref.document(tutor_email) if tutor_email else None
+        tutor_doc = tutor_ref.get() if tutor_ref else None
+        if not tutor_email or not tutor_doc or not tutor_doc.exists:
+            messages.error(request, "Please select a valid tutor.")
+            return redirect(f"/tutor_panel/tutor-payments/?month={posted_month}")
+
+        tutor_data = tutor_doc.to_dict() or {}
+        if action == "set_rate":
+            try:
+                rate = Decimal((request.POST.get("rate_per_class") or "").strip())
+                if not rate.is_finite() or rate < 0 or rate > Decimal("1000000"):
+                    raise InvalidOperation
+                rate = rate.quantize(Decimal("0.01"))
+            except (InvalidOperation, ValueError):
+                messages.error(request, "Enter a valid non-negative class rate.")
+                return redirect(f"/tutor_panel/tutor-payments/?month={posted_month}")
+            tutor_ref.update({"rate_per_class": float(rate)})
+            messages.success(request, f"Class rate updated for {tutor_data.get('name') or tutor_email}.")
+            return redirect(f"/tutor_panel/tutor-payments/?month={posted_month}")
+
+        if action == "record_payment":
+            try:
+                amount = Decimal((request.POST.get("amount") or "").strip())
+                if not amount.is_finite() or amount <= 0 or amount > Decimal("100000000"):
+                    raise InvalidOperation
+                amount = amount.quantize(Decimal("0.01"))
+            except (InvalidOperation, ValueError):
+                messages.error(request, "Enter a valid payment amount greater than zero.")
+                return redirect(f"/tutor_panel/tutor-payments/?month={posted_month}")
+
+            payment_date = (request.POST.get("payment_date") or today.isoformat()).strip()
+            try:
+                date.fromisoformat(payment_date)
+            except ValueError:
+                messages.error(request, "Enter a valid payment date.")
+                return redirect(f"/tutor_panel/tutor-payments/?month={posted_month}")
+            note = (request.POST.get("note") or "").strip()[:500]
+            payment_record = {
+                "tutor_email": tutor_email,
+                "tutor_name": tutor_data.get("name") or tutor_email,
+                "month": posted_month,
+                "amount": float(amount),
+                "payment_date": payment_date,
+                "note": note,
+                "created_at": datetime.now(timezone.utc),
+                "recorded_by": (request.session.get("firebase_email") or "").strip().lower(),
+            }
+            payments_ref.add(payment_record)
+            messages.success(request, f"Payment of ₹{amount:,.2f} recorded for {tutor_data.get('name') or tutor_email}.")
+            return redirect(f"/tutor_panel/tutor-payments/?month={posted_month}")
+
+        messages.error(request, "Invalid payment action.")
+        return redirect(f"/tutor_panel/tutor-payments/?month={posted_month}")
+
+    tutors = []
+    for doc in tutors_ref.stream():
+        data = doc.to_dict() or {}
+        if (data.get("status") or "").strip().lower() != "approved":
+            continue
+        try:
+            rate = float(data.get("rate_per_class") or 0)
+        except (TypeError, ValueError):
+            rate = 0.0
+        tutors.append({"email": doc.id, "name": data.get("name") or doc.id, "rate_per_class": rate})
+    tutors.sort(key=lambda x: x["name"].lower())
+
+    earnings = {t["email"]: {"present_classes": 0, "earned": 0.0, "paid": 0.0, "balance": 0.0} for t in tutors}
+    # Class reports use YYYY-MM-DD and tutor_email. Only Present counts as payable.
+    for doc in db.collection("class_reports").stream():
+        report = doc.to_dict() or {}
+        report_month = str(report.get("class_date") or "")[:7]
+        email = (report.get("tutor_email") or "").strip().lower()
+        if report_month == month and email in earnings and str(report.get("attendance_status") or "").strip().lower() == "present":
+            earnings[email]["present_classes"] += 1
+
+    payments = []
+    for doc in payments_ref.where("month", "==", month).stream():
+        item = doc.to_dict() or {}
+        item["payment_id"] = doc.id
+        email = (item.get("tutor_email") or "").strip().lower()
+        if email in earnings:
+            try:
+                earnings[email]["paid"] += float(item.get("amount") or 0)
+            except (TypeError, ValueError):
+                pass
+            payments.append(item)
+    payments.sort(key=lambda x: str(x.get("payment_date") or ""), reverse=True)
+
+    for tutor in tutors:
+        row = earnings[tutor["email"]]
+        row["earned"] = round(row["present_classes"] * tutor["rate_per_class"], 2)
+        row["paid"] = round(row["paid"], 2)
+        row["balance"] = round(row["earned"] - row["paid"], 2)
+        tutor.update(row)
+
+    # Sort payments newest first; the template displays only records for selected month.
+    total_earned = round(sum(t["earned"] for t in tutors), 2)
+    total_paid = round(sum(t["paid"] for t in tutors), 2)
+    return render(request, "tutor_panel/tutor_payments.html", {
+        "tutors": tutors,
+        "payments": payments,
+        "month": month,
+        "today": today.isoformat(),
+        "total_earned": total_earned,
+        "total_paid": total_paid,
+        "total_balance": round(total_earned - total_paid, 2),
+    })
+
+
+# ------------------------------------------------------------
+# ADMIN TUTOR PAYMENT MANAGEMENT — PER-STUDENT RATE
+# ------------------------------------------------------------
+def tutor_payments(request):
+    """Month-end tutor payments using each student's individual rate and Present attendance only."""
+    from datetime import date
+    from decimal import Decimal, InvalidOperation
+
+    if not request.session.get("firebase_uid"):
+        return redirect("tutor_panel:login")
+    if not _is_tutorain_admin(request):
+        return redirect("tutor_panel:admin_dashboard")
+
+    today = date.today()
+    month = (request.GET.get("month") or today.strftime("%Y-%m")).strip()
+    try:
+        month = date.fromisoformat(month + "-01").strftime("%Y-%m")
+    except ValueError:
+        month = today.strftime("%Y-%m")
+
+    db = firestore.client(app=get_app())
+    tutors_ref = db.collection("tutors")
+    students_ref = db.collection("students")
+    payments_ref = db.collection("tutor_payments")
+
+    def month_redirect(value):
+        return redirect(f"/tutor_panel/tutor-payments/?month={value}")
+
+    if request.method == "POST":
+        action = (request.POST.get("action") or "").strip().lower()
+        posted_month = (request.POST.get("month") or month).strip()
+        try:
+            posted_month = date.fromisoformat(posted_month + "-01").strftime("%Y-%m")
+        except ValueError:
+            messages.error(request, "Please select a valid payment month.")
+            return month_redirect(month)
+
+        if action == "set_student_rate":
+            student_id = (request.POST.get("student_id") or "").strip()
+            try:
+                rate = Decimal((request.POST.get("rate_per_class") or "").strip())
+                if not rate.is_finite() or rate < 0 or rate > Decimal("1000000"):
+                    raise InvalidOperation
+                rate = rate.quantize(Decimal("0.01"))
+            except (InvalidOperation, ValueError):
+                messages.error(request, "Enter a valid non-negative payment rate.")
+                return month_redirect(posted_month)
+            student_ref = students_ref.document(student_id) if student_id else None
+            student_doc = student_ref.get() if student_ref else None
+            if not student_doc or not student_doc.exists:
+                messages.error(request, "Student record was not found.")
+                return month_redirect(posted_month)
+            student_ref.update({"tutor_rate_per_class": float(rate)})
+            student_data = student_doc.to_dict() or {}
+            messages.success(request, f"Tutor rate saved for {student_data.get('name') or student_id}.")
+            return month_redirect(posted_month)
+
+        if action == "record_payment":
+            tutor_email = (request.POST.get("tutor_email") or "").strip().lower()
+            tutor_doc = tutors_ref.document(tutor_email).get() if tutor_email else None
+            if not tutor_doc or not tutor_doc.exists:
+                messages.error(request, "Please select a valid tutor.")
+                return month_redirect(posted_month)
+            tutor_data = tutor_doc.to_dict() or {}
+            try:
+                amount = Decimal((request.POST.get("amount") or "").strip())
+                if not amount.is_finite() or amount <= 0 or amount > Decimal("100000000"):
+                    raise InvalidOperation
+                amount = amount.quantize(Decimal("0.01"))
+            except (InvalidOperation, ValueError):
+                messages.error(request, "Enter a valid payment amount greater than zero.")
+                return month_redirect(posted_month)
+            payment_date = (request.POST.get("payment_date") or today.isoformat()).strip()
+            try:
+                date.fromisoformat(payment_date)
+            except ValueError:
+                messages.error(request, "Enter a valid payment date.")
+                return month_redirect(posted_month)
+            payments_ref.add({
+                "tutor_email": tutor_email,
+                "tutor_name": tutor_data.get("name") or tutor_email,
+                "month": posted_month,
+                "amount": float(amount),
+                "payment_date": payment_date,
+                "note": (request.POST.get("note") or "").strip()[:500],
+                "created_at": datetime.now(timezone.utc),
+                "recorded_by": (request.session.get("firebase_email") or "").strip().lower(),
+            })
+            messages.success(request, f"Payment of ₹{amount:,.2f} recorded for {tutor_data.get('name') or tutor_email}.")
+            return month_redirect(posted_month)
+
+        messages.error(request, "Invalid payment action.")
+        return month_redirect(posted_month)
+
+    tutors = {}
+    for doc in tutors_ref.stream():
+        data = doc.to_dict() or {}
+        if (data.get("status") or "").strip().lower() == "approved":
+            tutors[doc.id.strip().lower()] = {"email": doc.id, "name": data.get("name") or doc.id,
+                                              "present_classes": 0, "earned": 0.0, "paid": 0.0, "balance": 0.0}
+
+    students = []
+    student_by_id = {}
+    for doc in students_ref.stream():
+        data = doc.to_dict() or {}
+        tutor_email = (data.get("tutor_email") or "").strip().lower()
+        if tutor_email not in tutors or str(data.get("status") or "active").strip().lower() not in ("active", "approved", ""):
+            continue
+        try:
+            rate = float(data.get("tutor_rate_per_class") or 0)
+        except (TypeError, ValueError):
+            rate = 0.0
+        row = {"id": doc.id, "name": data.get("name") or doc.id,
+               "student_class": data.get("student_class") or "", "tutor_email": tutor_email,
+               "tutor_name": tutors[tutor_email]["name"], "rate_per_class": rate,
+               "present_classes": 0, "earned": 0.0}
+        students.append(row)
+        student_by_id[doc.id] = row
+    students.sort(key=lambda x: (x["tutor_name"].lower(), x["name"].lower()))
+
+    # Reports are matched to the student document ID. Only Present attendance is payable.
+    for doc in db.collection("class_reports").stream():
+        report = doc.to_dict() or {}
+        if str(report.get("class_date") or "")[:7] != month:
+            continue
+        if str(report.get("attendance_status") or "").strip().lower() != "present":
+            continue
+        student_id = str(report.get("student_id") or "").strip()
+        row = student_by_id.get(student_id)
+        # Fallback for older reports where the student ID may be absent: match name + tutor.
+        if row is None and report.get("student_name"):
+            report_tutor = (report.get("tutor_email") or "").strip().lower()
+            matches = [s for s in students if s["name"] == report.get("student_name") and s["tutor_email"] == report_tutor]
+            if len(matches) == 1:
+                row = matches[0]
+        if row:
+            row["present_classes"] += 1
+            row["earned"] = round(row["present_classes"] * row["rate_per_class"], 2)
+            tutors[row["tutor_email"]]["present_classes"] += 1
+            tutors[row["tutor_email"]]["earned"] += row["rate_per_class"]
+
+    payments = []
+    for doc in payments_ref.where("month", "==", month).stream():
+        item = doc.to_dict() or {}
+        email = (item.get("tutor_email") or "").strip().lower()
+        if email in tutors:
+            try:
+                tutors[email]["paid"] += float(item.get("amount") or 0)
+            except (TypeError, ValueError):
+                pass
+            item["payment_id"] = doc.id
+            payments.append(item)
+    payments.sort(key=lambda x: str(x.get("payment_date") or ""), reverse=True)
+
+    tutor_rows = sorted(tutors.values(), key=lambda x: x["name"].lower())
+    for tutor in tutor_rows:
+        tutor["earned"] = round(tutor["earned"], 2)
+        tutor["paid"] = round(tutor["paid"], 2)
+        tutor["balance"] = round(tutor["earned"] - tutor["paid"], 2)
+    total_earned = round(sum(t["earned"] for t in tutor_rows), 2)
+    total_paid = round(sum(t["paid"] for t in tutor_rows), 2)
+    return render(request, "tutor_panel/tutor_payments.html", {
+        "tutors": tutor_rows, "students": students, "payments": payments, "month": month,
+        "today": today.isoformat(), "total_earned": total_earned, "total_paid": total_paid,
+        "total_balance": round(total_earned - total_paid, 2),
+    })
+
+# ------------------------------------------------------------
+# AUTOMATIC WEEKLY EMAIL REPORTS TO PARENTS
+# ------------------------------------------------------------
+# AUTOMATIC WEEKLY EMAIL REPORTS TO PARENTS
+# ------------------------------------------------------------
+
+@csrf_exempt
+def send_weekly_parent_reports(request):
+    """Secured endpoint that emails parents the previous Monday-Sunday report."""
+
+    import hmac
+    from datetime import timedelta
+    from django.http import HttpResponse
+    from django.utils import timezone as django_timezone
+
+    # 1. Verify the secret token
+    expected = (
+        getattr(settings, "TUTORAIN_WEEKLY_EMAIL_TOKEN", "") or ""
+    ).strip()
+
+    supplied = (
+        request.headers.get("X-Tutorain-Weekly-Token") or ""
+    ).strip()
+
+    if not expected:
+        return HttpResponse(
+            "Weekly email token is not configured.",
+            status=503,
+        )
+
+    if not supplied or not hmac.compare_digest(expected, supplied):
+        return HttpResponse("Forbidden", status=403)
+
+    # 2. Calculate the previous Monday-Sunday reporting period
+    today = django_timezone.localdate()
+    this_monday = today - timedelta(days=today.weekday())
+
+    week_start = this_monday - timedelta(days=7)
+    week_end = week_start + timedelta(days=6)
+
+    start_text = week_start.isoformat()
+    end_text = week_end.isoformat()
+
+    # 3. Connect to Firestore
+    db = firestore.client(app=get_app())
+
+    student_map = {}
+
+    for doc in db.collection("students").stream():
+        student = doc.to_dict() or {}
+
+        student["student_id"] = str(
+            student.get("student_id") or doc.id
+        )
+
+        student_map[student["student_id"]] = (doc.id, student)
+
+    # 4. Collect class reports for the reporting period
+    grouped = {}
+
+    for doc in db.collection("class_reports").stream():
+        report = doc.to_dict() or {}
+
+        class_date = str(report.get("class_date") or "")[:10]
+
+        if not start_text <= class_date <= end_text:
+            continue
+
+        student_id = str(
+            report.get("student_id") or ""
+        ).strip()
+
+        match = student_map.get(student_id)
+
+        # Fallback for older reports without a matching student ID
+        if not match and report.get("student_name"):
+
+            report_tutor = str(
+                report.get("tutor_email") or ""
+            ).strip().lower()
+
+            candidates = [
+                (doc_id, student)
+                for doc_id, student in student_map.values()
+                if str(student.get("name") or "").strip()
+                == str(report.get("student_name") or "").strip()
+                and str(student.get("tutor_email") or "").strip().lower()
+                == report_tutor
+            ]
+
+            if len(candidates) == 1:
+                match = candidates[0]
+
+        if not match:
+            continue
+
+        student_doc_id, student = match
+
+        parent_email = str(
+            student.get("guardian_email") or ""
+        ).strip().lower()
+
+        if not parent_email:
+            continue
+
+        if str(student.get("status") or "Active").strip().lower() != "active":
+            continue
+
+        grouped.setdefault(
+            student_doc_id,
+            {
+                "student": student,
+                "parent_email": parent_email,
+                "reports": [],
+            },
+        )["reports"].append((class_date, report))
+
+    # 5. Send weekly emails
+    logs = db.collection("weekly_parent_email_logs")
+
+    sent = 0
+    skipped = 0
+    errors = []
+
+    for student_doc_id, item in grouped.items():
+
+        student = item["student"]
+        parent_email = item["parent_email"]
+
+        # Prevent duplicate successful emails for the same week
+        log_ref = logs.document(
+            f"{start_text}_{student_doc_id}"
+        )
+
+        old_log = log_ref.get()
+
+        if (
+            old_log.exists
+            and (old_log.to_dict() or {}).get("status") == "sent"
+        ):
+            skipped += 1
+            continue
+
+        entries = sorted(
+            item["reports"],
+            key=lambda entry: entry[0],
+        )
+
+        # Attendance calculations
+        present = sum(
+            str(report.get("attendance_status") or "").strip().lower()
+            == "present"
+            for _, report in entries
+        )
+
+        absent = sum(
+            str(report.get("attendance_status") or "").strip().lower()
+            == "absent"
+            for _, report in entries
+        )
+
+        late = sum(
+            str(report.get("joined_on_time") or "").strip().lower()
+            == "late"
+            for _, report in entries
+        )
+
+        recorded = present + absent
+
+        attendance_rate = (
+            round(present * 100 / recorded)
+            if recorded else 0
+        )
+
+        # Topics, subjects, homework and remarks
+        topics = list(dict.fromkeys(
+            str(report.get("topic_taught") or "").strip()
+            for _, report in entries
+            if str(report.get("topic_taught") or "").strip()
+        ))
+
+        subjects = list(dict.fromkeys(
+            str(report.get("subject") or "").strip()
+            for _, report in entries
+            if str(report.get("subject") or "").strip()
+        ))
+
+        homework = [
+            str(report.get("homework_status") or "").strip()
+            for _, report in entries
+            if str(report.get("homework_status") or "").strip()
+            and str(report.get("homework_status") or "").strip().lower()
+            != "not applicable"
+        ]
+
+        remarks = [
+            f"{class_date}: {str(report.get('tutor_remarks') or '').strip()}"
+            for class_date, report in entries
+            if str(report.get("tutor_remarks") or "").strip()
+        ]
+
+        # Tutor details
+        tutor_email = str(
+            student.get("tutor_email") or ""
+        ).strip().lower()
+
+        tutor_name = tutor_email or "Not assigned"
+
+        if tutor_email:
+            tutor_doc = db.collection("tutors").document(
+                tutor_email
+            ).get()
+
+            if tutor_doc.exists:
+                tutor_name = (
+                    (tutor_doc.to_dict() or {}).get("name")
+                    or tutor_email
+                )
+
+        student_name = str(
+            student.get("name") or "your child"
+        )
+
+        parent_name = str(
+            student.get("guardian_name") or "Parent"
+        )
+
+        subjects_text = (
+            ", ".join(subjects)
+            if subjects
+            else "No subject details recorded"
+        )
+
+        topics_text = (
+            "\n".join(topics)
+            if topics
+            else "No topic details recorded."
+        )
+
+        homework_text = (
+            "\n".join(homework)
+            if homework
+            else "No homework details recorded."
+        )
+
+        remarks_text = (
+            "\n".join(remarks)
+            if remarks
+            else "No tutor remarks recorded."
+        )
+
+        # Email subject
+        subject_line = (
+            f"Tutorain Weekly Progress Report - "
+            f"{student_name} ({start_text} to {end_text})"
+        )
+
+        # Plain-text version for email clients that don't support HTML
+        plain_body = f"""
+Dear {parent_name},
+
+Here is the weekly learning progress report for {student_name}.
+
+Reporting period: {start_text} to {end_text}
+
+WEEKLY SUMMARY
+Classes recorded: {len(entries)}
+Present: {present}
+Absent: {absent}
+Late arrivals: {late}
+Attendance rate: {attendance_rate}%
+Subjects covered: {subjects_text}
+Tutor: {tutor_name}
+
+TOPICS COVERED
+{topics_text}
+
+HOMEWORK STATUS
+{homework_text}
+
+TUTOR REMARKS
+{remarks_text}
+
+Thank you for choosing Tutorain.
+
+Regards,
+Tutorain Team
+https://www.tutorain.com/
+""".strip()
+
+        # Professional HTML version using your existing helper
+        html_body = build_tutorain_weekly_email(
+            parent_name=parent_name,
+            student_name=student_name,
+            week_start=start_text,
+            week_end=end_text,
+            total_classes=len(entries),
+            present=present,
+            absent=absent,
+            late_arrivals=late,
+            attendance_rate=attendance_rate,
+            subjects=subjects_text,
+            tutor_name=tutor_name,
+            topics=topics_text,
+            homework=homework_text,
+            remarks=remarks_text,
+        )
+
+        # Record that sending has started
+        now = datetime.now(timezone.utc)
+
+        log_ref.set(
+            {
+                "student_id": student_doc_id,
+                "student_name": student_name,
+                "guardian_email": parent_email,
+                "week_start": start_text,
+                "week_end": end_text,
+                "status": "sending",
+                "updated_at": now,
+            },
+            merge=True,
+        )
+
+        # Send the HTML email with a plain-text fallback
+        try:
+            email = EmailMultiAlternatives(
+                subject=subject_line,
+                body=plain_body,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                to=[parent_email],
+            )
+
+            email.attach_alternative(
+                html_body,
+                "text/html",
+            )
+
+            result = email.send(fail_silently=False)
+
+            if result == 1:
+
+                log_ref.set(
+                    {
+                        "status": "sent",
+                        "sent_at": datetime.now(timezone.utc),
+                        "updated_at": datetime.now(timezone.utc),
+                    },
+                    merge=True,
+                )
+
+                sent += 1
+
+            else:
+
+                log_ref.set(
+                    {
+                        "status": "failed",
+                        "error": "Email backend did not confirm send.",
+                        "updated_at": datetime.now(timezone.utc),
+                    },
+                    merge=True,
+                )
+
+                errors.append(student_name)
+
+        except Exception as exc:
+
+            log_ref.set(
+                {
+                    "status": "failed",
+                    "error": f"{type(exc).__name__}: {exc}"[:500],
+                    "updated_at": datetime.now(timezone.utc),
+                },
+                merge=True,
+            )
+
+            errors.append(
+                f"{student_name} ({type(exc).__name__})"
+            )
+
+    # 6. Return a summary for Cloud Scheduler and logs
+    summary = (
+        f"Weekly parent emails for {start_text} to {end_text}. "
+        f"Sent: {sent}; duplicate skips: {skipped}; "
+        f"errors: {len(errors)}."
+    )
+
+    print(summary, flush=True)
+
+    if errors:
+        print(
+            "WEEKLY PARENT EMAIL ERRORS: " + "; ".join(errors),
+            flush=True,
+        )
+
+    return HttpResponse(summary, status=200)
+
+
+def build_tutorain_weekly_email(
+    parent_name,
+    student_name,
+    week_start,
+    week_end,
+    total_classes,
+    present,
+    absent,
+    late_arrivals,
+    attendance_rate,
+    subjects,
+    tutor_name,
+    topics,
+    homework,
+    remarks,
+):
+    parent_name = escape(str(parent_name or "Parent"))
+    student_name = escape(str(student_name or "Student"))
+    tutor_name = escape(str(tutor_name or "Tutor"))
+    subjects = escape(str(subjects or "Not recorded"))
+    week_start = escape(str(week_start))
+    week_end = escape(str(week_end))
+    topics = "<br>".join(
+        escape(line)
+        for line in str(topics or "No topic details recorded.").splitlines()
+    )
+
+    homework = "<br>".join(
+        escape(line)
+        for line in str(homework or "No homework details recorded.").splitlines()
+    )
+
+    remarks = "<br>".join(
+        escape(line)
+        for line in str(remarks or "No tutor remarks recorded.").splitlines()
+    )
+
+    return f"""
+    <!DOCTYPE html>
+    <html>
+    <body style="margin:0;padding:0;background:#f3f6fb;
+                 font-family:Arial,Helvetica,sans-serif;color:#263247;">
+
+      <div style="display:none;max-height:0;overflow:hidden;">
+        Weekly learning progress report for {student_name}.
+      </div>
+
+      <table role="presentation" width="100%" cellspacing="0" cellpadding="0"
+             style="background:#f3f6fb;padding:28px 10px;">
+        <tr>
+          <td align="center">
+
+            <table role="presentation" width="600" cellspacing="0"
+                   cellpadding="0"
+                   style="width:100%;max-width:600px;background:#ffffff;
+                          border-radius:16px;overflow:hidden;">
+
+              <tr>
+                <td style="background:#173b70;padding:30px 32px;color:#ffffff;">
+                  <div style="font-size:27px;font-weight:bold;letter-spacing:.3px;">
+                    Tutorain
+                  </div>
+                  <div style="font-size:13px;color:#d8e7ff;margin-top:7px;">
+                    LEARNING PROGRESS REPORT
+                  </div>
+                </td>
+              </tr>
+
+              <tr>
+                <td style="padding:30px 32px 18px;">
+                  <p style="font-size:15px;margin:0 0 12px;">
+                    Dear {parent_name},
+                  </p>
+
+                  <h1 style="font-size:25px;color:#173b70;margin:0 0 12px;">
+                    Weekly learning update
+                  </h1>
+
+                  <p style="font-size:14px;line-height:1.7;color:#627086;">
+                    Here is the learning progress report for
+                    <strong style="color:#263247;">{student_name}</strong>.
+                    Review the attendance and learning activities from this week.
+                  </p>
+
+                  <div style="background:#edf4ff;border-radius:10px;
+                              padding:15px 18px;margin-top:20px;">
+                    <div style="font-size:12px;color:#627086;">
+                      REPORTING PERIOD
+                    </div>
+                    <div style="font-size:15px;font-weight:bold;
+                                color:#173b70;margin-top:5px;">
+                      {week_start} &ndash; {week_end}
+                    </div>
+                  </div>
+                </td>
+              </tr>
+
+              <tr>
+                <td style="padding:8px 32px 24px;">
+                  <h2 style="font-size:17px;color:#173b70;margin:0 0 14px;">
+                    Attendance overview
+                  </h2>
+
+                  <table role="presentation" width="100%" cellspacing="0"
+                         cellpadding="0">
+                    <tr>
+                      <td width="50%" style="padding:5px;">
+                        <div style="background:#f0f5ff;padding:17px;
+                                    border-radius:10px;">
+                          <div style="font-size:12px;color:#627086;">
+                            CLASSES RECORDED
+                          </div>
+                          <div style="font-size:27px;font-weight:bold;
+                                      color:#173b70;margin-top:7px;">
+                            {total_classes}
+                          </div>
+                        </div>
+                      </td>
+
+                      <td width="50%" style="padding:5px;">
+                        <div style="background:#eaf8f0;padding:17px;
+                                    border-radius:10px;">
+                          <div style="font-size:12px;color:#347451;">
+                            PRESENT
+                          </div>
+                          <div style="font-size:27px;font-weight:bold;
+                                      color:#18794e;margin-top:7px;">
+                            {present}
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td width="50%" style="padding:5px;">
+                        <div style="background:#fff2ed;padding:17px;
+                                    border-radius:10px;">
+                          <div style="font-size:12px;color:#a64c36;">
+                            ABSENT
+                          </div>
+                          <div style="font-size:27px;font-weight:bold;
+                                      color:#b54732;margin-top:7px;">
+                            {absent}
+                          </div>
+                        </div>
+                      </td>
+
+                      <td width="50%" style="padding:5px;">
+                        <div style="background:#f4efff;padding:17px;
+                                    border-radius:10px;">
+                          <div style="font-size:12px;color:#6950a1;">
+                            ATTENDANCE RATE
+                          </div>
+                          <div style="font-size:27px;font-weight:bold;
+                                      color:#6941c6;margin-top:7px;">
+                            {attendance_rate}%
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  </table>
+
+                  <p style="font-size:13px;color:#627086;margin:12px 5px 0;">
+                    Late arrivals: <strong>{late_arrivals}</strong>
+                  </p>
+                </td>
+              </tr>
+
+              <tr>
+                <td style="padding:0 32px 22px;">
+                  <div style="border-top:1px solid #e7ecf3;padding-top:22px;">
+                    <h2 style="font-size:17px;color:#173b70;margin:0 0 12px;">
+                      Learning details
+                    </h2>
+
+                    <p style="font-size:13px;color:#627086;margin-bottom:5px;">
+                      SUBJECTS COVERED
+                    </p>
+                    <p style="font-size:14px;line-height:1.7;margin-top:0;">
+                      {subjects}
+                    </p>
+
+                    <p style="font-size:13px;color:#627086;margin-bottom:5px;">
+                      TOPICS COVERED
+                    </p>
+                    <div style="font-size:14px;line-height:1.8;
+                                background:#f8fafc;border-radius:8px;
+                                padding:13px 15px;">
+                      {topics}
+                    </div>
+                  </div>
+                </td>
+              </tr>
+
+              <tr>
+                <td style="padding:0 32px 22px;">
+                  <h2 style="font-size:17px;color:#173b70;margin:0 0 12px;">
+                    Homework status
+                  </h2>
+                  <div style="font-size:14px;line-height:1.8;
+                              background:#f8fafc;border-radius:8px;
+                              padding:13px 15px;">
+                    {homework}
+                  </div>
+                </td>
+              </tr>
+
+              <tr>
+                <td style="padding:0 32px 28px;">
+                  <h2 style="font-size:17px;color:#173b70;margin:0 0 12px;">
+                    Tutor's feedback
+                  </h2>
+                  <div style="font-size:14px;line-height:1.8;
+                              background:#fff8e8;border-left:4px solid #e6ad38;
+                              padding:15px;border-radius:4px;">
+                    {remarks}
+                  </div>
+
+                  <p style="font-size:14px;color:#627086;margin-top:18px;">
+                    <strong>Class tutor:</strong> {tutor_name}
+                  </p>
+                </td>
+              </tr>
+
+              <tr>
+                <td style="background:#173b70;padding:25px 32px;
+                           text-align:center;color:#ffffff;">
+                  <div style="font-size:17px;font-weight:bold;">
+                    Tutorain
+                  </div>
+                  <p style="font-size:12px;line-height:1.7;color:#d8e7ff;">
+                    Thank you for choosing Tutorain.<br>
+                    Supporting every student's learning journey.
+                  </p>
+                  <a href="https://www.tutorain.com/"
+                     style="color:#ffffff;font-size:13px;">
+                    www.tutorain.com
+                  </a>
+                </td>
+              </tr>
+
+            </table>
+          </td>
+        </tr>
+      </table>
+    </body>
+    </html>
+    """

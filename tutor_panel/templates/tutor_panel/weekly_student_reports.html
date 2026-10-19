@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tutorain Weekly Student Reports</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f4f6fb;color:#202938}
+header{background:#172554;color:white;padding:20px 5%;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+header a,.button{background:white;color:#172554;padding:10px 14px;border-radius:8px;text-decoration:none;font-weight:bold;border:0;cursor:pointer}
+main{max-width:1200px;margin:25px auto;padding:0 16px}.panel{background:white;padding:20px;border-radius:12px;margin-bottom:18px;box-shadow:0 4px 15px #0000000a}
+form{display:flex;gap:12px;align-items:end;flex-wrap:wrap}label{display:block;font-weight:bold;margin-bottom:6px}input{padding:10px;border:1px solid #cbd5e1;border-radius:7px}
+.button{background:#172554;color:white}.report{border:1px solid #dbe2ef;border-radius:10px;padding:18px;margin:16px 0;overflow-wrap:anywhere}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}.metric{background:#f8fafc;padding:12px;border-radius:8px}
+h2,h3{margin-top:0;color:#172554}.muted{color:#64748b}.tag{display:inline-block;background:#dbeafe;padding:5px 8px;border-radius:20px;margin:3px}
+a{color:#1d4ed8}li{margin:6px 0}
+@media print{header form,.no-print{display:none}body{background:white}.panel,.report{box-shadow:none;break-inside:avoid}}
+</style>
+</head>
+<body>
+<header>
+  <div><h1 style="margin:0">Weekly Student Reports</h1><p style="margin-bottom:0">From {{ week_start }} to {{ week_end }}</p></div>
+  <a href="{% url 'tutor_panel:admin_dashboard' %}">← Admin Dashboard</a>
+</header>
+<main>
+  <section class="panel no-print">
+    <h2>Select a week</h2>
+    <form method="get">
+      <div><label for="week_start">Week starting (Monday)</label><input id="week_start" type="date" name="week_start" value="{{ week_start }}" required></div>
+      <button class="button" type="submit">Generate Report</button>
+      <button class="button" type="button" onclick="window.print()">Print / Save PDF</button>
+    </form>
+    <p class="muted">Choose a Monday to view the seven-day period. Reports are calculated from class evaluations already saved by tutors.</p>
+  </section>
+  {% if reports %}
+    <p><strong>{{ reports|length }}</strong> student report(s) found for this week.</p>
+    {% for r in reports %}
+    <article class="report">
+      <h2>{{ r.student_name }}{% if r.student_class %} <span class="muted">— {{ r.student_class }}</span>{% endif %}</h2>
+      <p class="muted">Tutor: {{ r.tutor_email|default:"Not available" }}{% if r.guardian_name %} · Parent/guardian: {{ r.guardian_name }}{% endif %}</p>
+      <div class="grid">
+        <div class="metric"><strong>Classes recorded</strong><br>{{ r.total_classes }}</div>
+        <div class="metric"><strong>Present / Absent</strong><br>{{ r.present }} / {{ r.absent }}</div>
+        <div class="metric"><strong>Attendance rate</strong><br>{{ r.attendance_rate }}%</div>
+        <div class="metric"><strong>Late arrivals</strong><br>{{ r.late }}</div>
+      </div>
+      <h3 style="margin-top:18px">Learning summary</h3>
+      <p><strong>Topics covered:</strong> {% if r.topics %}{% for topic in r.topics %}<span class="tag">{{ topic }}</span>{% endfor %}{% else %}No topic details recorded.{% endif %}</p>
+      <p><strong>Homework:</strong> {{ r.homework_summary }}</p>
+      <p><strong>Participation:</strong> {{ r.participation_summary }}</p>
+      <p><strong>Attention:</strong> {{ r.attention_summary }}</p>
+      <p><strong>Topic understanding:</strong> {{ r.understanding_summary }}</p>
+      <p><strong>Revision recommended:</strong> {% if r.revision_topics %}{% for topic in r.revision_topics %}<span class="tag">{{ topic }}</span>{% endfor %}{% else %}No revision flagged in the recorded classes.{% endif %}</p>
+      <h3> Tutor remarks</h3>
+      {% if r.remarks %}<ul>{% for remark in r.remarks %}<li>{{ remark }}</li>{% endfor %}</ul>{% else %}<p>No tutor remarks recorded.</p>{% endif %}
+      {% if r.recordings %}<h3>Class recordings</h3><ul>{% for recording in r.recordings %}<li>{{ recording.date }}{% if recording.subject %} — {{ recording.subject }}{% endif %}: <a href="{{ recording.url }}" target="_blank" rel="noopener noreferrer">Watch recording</a></li>{% endfor %}</ul>{% endif %}
+    </article>
+    {% endfor %}
+  {% else %}
+    <section class="panel"><h2>No reports found for this week</h2><p>No saved class evaluations were found between {{ week_start }} and {{ week_end }}. Try another week, or check that tutors have submitted attendance forms.</p></section>
+  {% endif %}
+</main>
+</body>
+</html>

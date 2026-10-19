@@ -91,14 +91,45 @@
 
     <section class="cards">
 
-        <div class="card">
-            <h3>👨‍🎓 My Students</h3>
-            <p>View the students assigned to you.</p>
-        </div>
+
+                <div class="card students-card">
+                    <div class="card-icon">
+                        👨‍🎓
+                    </div>
+
+                    <div class="card-content">
+                        <h3>My Students</h3>
+                        <p>View and manage the students assigned to you.</p>
+                    </div>
+
+                                            <a href="{% url 'tutor_panel:tutor_students' %}"
+                        style="
+                            display: inline-block;
+                            background-color: #007bff;
+                            color: white;
+                            padding: 12px 24px;
+                            border-radius: 8px;
+                            text-decoration: none;
+                            font-weight: 600;
+                            font-size: 15px;
+                            transition: background-color 0.3s ease;
+                        "
+                        onmouseover="this.style.backgroundColor='#0056b3'"
+                        onmouseout="this.style.backgroundColor='#007bff'">
+                            View My Students
+                        </a>
+                </div>
+
 
         <div class="card">
-            <h3>📋 Attendance</h3>
-            <p>Record and review class attendance.</p>
+            <h3>📋 Attendance & Class Reports</h3>
+            <p>Record attendance, homework, participation, class feedback and the YouTube recording link.</p>
+            <a href="{% url 'tutor_panel:tutor_attendance' %}"
+               style="display:inline-block;background:#007bff;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:600;"
+               onmouseover="this.style.backgroundColor='#0056b3'"
+               onmouseout="this.style.backgroundColor='#007bff'">
+                Mark Attendance
+            </a>
         </div>
 
         <div class="card">

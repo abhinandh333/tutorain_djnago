@@ -11,10 +11,13 @@ urlpatterns = [
     path("admin/", views.admin_dashboard, name="admin_dashboard"),
     path("manage-tutors/", views.manage_tutors, name="manage_tutors"),
     path("set-password/", views.set_password_page, name="set_password"),
-    path(
-    "password-setup-complete/",
-    views.password_setup_complete,
-    name="password_setup_complete",
-),
+    path("password-setup-complete/", views.password_setup_complete, name="password_setup_complete"),
     path("notify-admin/", views.notify_admin, name="notify_admin"),
+    path("manage-students/", views.manage_students, name="manage_students"),
+    path("students/", views.tutor_students, name="tutor_students"),
+    path("attendance/", views.tutor_attendance, name="tutor_attendance"),
+    path("weekly-reports/", views.weekly_student_reports, name="weekly_student_reports"),
+    path("parent/", views.parent_portal, name="parent_portal"),
+    path("tutor-payments/", views.tutor_payments, name="tutor_payments"),
+    path("weekly-parent-email-trigger/", views.send_weekly_parent_reports, name="weekly_parent_email_trigger"),
 ]
