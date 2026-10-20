@@ -1,14 +1,12 @@
 {% load static %}
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Login - Tutorain</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-
-    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
 
     <style>
@@ -19,11 +17,12 @@
             min-height: 100vh;
         }
 
-        .login-wrapper{
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            height: calc(100vh - 80px);
+        .login-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 80px);
+            padding: 25px 15px;
         }
 
         .login-container {
@@ -31,7 +30,7 @@
             padding: 40px 30px;
             border-radius: 20px;
             width: 100%;
-            max-width: 350px;
+            max-width: 380px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
 
@@ -50,7 +49,10 @@
             margin-bottom: 25px;
         }
 
-        input {
+        .login-container input[type="email"],
+        .login-container input[type="password"],
+        .login-container input[type="text"] {
+            box-sizing: border-box;
             width: 100%;
             padding: 12px;
             margin-bottom: 12px;
@@ -63,6 +65,10 @@
             position: relative;
         }
 
+        .password-box input {
+            padding-right: 45px !important;
+        }
+
         .toggle-eye {
             position: absolute;
             right: 12px;
@@ -72,7 +78,7 @@
             color: #555;
         }
 
-        button {
+        .login-button {
             width: 100%;
             padding: 12px;
             border: none;
@@ -83,31 +89,37 @@
             cursor: pointer;
         }
 
+        .login-button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
         .options {
             display: flex;
-            justify-content: space-between;
+            align-items: center;
             font-size: 13px;
             margin-bottom: 15px;
         }
 
+        .options input {
+            margin-right: 7px;
+        }
+
         .error {
-            color: red;
+            color: #c62828;
             font-size: 13px;
             text-align: center;
-            margin-top: 10px;
+            margin-top: 12px;
+            overflow-wrap: anywhere;
         }
 
         header {
             background: white;
         }
 
-        /* ================= LOADING OVERLAY ================= */
         #loadingOverlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             background: rgba(0,0,0,0.6);
             display: none;
             align-items: center;
@@ -136,149 +148,251 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 
 <body>
 
-<!-- HEADER START -->
 <header>
-<div class="container">
-  <div class="row align-items-center py-2">
-    <div class="col-6 col-lg-3">
-      <a class="navbar-brand" href="{% url 'home' %}">
-        <img src="{% static 'website/img/logo/logo1.png' %}" alt="Tutorain" style="height: 45px;">
-      </a>
-    </div>
+    <div class="container">
+        <div class="row align-items-center py-2">
+            <div class="col-6 col-lg-3">
+                <a class="navbar-brand" href="{% url 'home' %}">
+                    <img src="{% static 'website/img/logo/logo1.png' %}"
+                         alt="Tutorain" style="height: 45px;">
+                </a>
+            </div>
 
-    <div class="col-6 col-lg-9">
-      <nav class="navbar navbar-expand-lg navbar-light p-0">
+            <div class="col-6 col-lg-9">
+                <nav class="navbar navbar-expand-lg navbar-light p-0">
+                    <button class="navbar-toggler" type="button"
+                            data-toggle="collapse" data-target="#mainNavbar"
+                            aria-controls="mainNavbar" aria-expanded="false"
+                            aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
 
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNavbar">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
-          <ul class="navbar-nav">
-
-            <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'findsub' %}">Find Tutor</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact Us</a></li>
-
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">More</a>
-              <div class="dropdown-menu">
-                <a class="dropdown-item" href="{% url 'maca' %}">MACA</a>
-                <a class="dropdown-item" href="{% url 'comingsoon' %}">MAAI</a>
-                <a class="dropdown-item" href="{% url 'comingsoon' %}">Feedback</a>
-              </div>
-            </li>
-
-            <li class="nav-item">
-              <a class="btn btn-outline-primary btn-sm m-1" href="{% url 'findsub' %}">Join Tutorain</a>
-            </li>
-
-            <li class="nav-item">
-              <a class="btn btn-outline-primary btn-sm m-1" href="{% url 'login' %}">Login</a>
-            </li>
-
-          </ul>
+                    <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'home' %}">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'findsub' %}">Find Tutor</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'contact' %}">Contact Us</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">More</a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="{% url 'maca' %}">MACA</a>
+                                    <a class="dropdown-item" href="{% url 'comingsoon' %}">MAAI</a>
+                                    <a class="dropdown-item" href="{% url 'comingsoon' %}">Feedback</a>
+                                </div>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-outline-primary btn-sm m-1"
+                                   href="{% url 'findsub' %}">Join Tutorain</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-outline-primary btn-sm m-1"
+                                   href="{% url 'login' %}">Login</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
         </div>
-
-      </nav>
     </div>
-  </div>
-</div>
 </header>
-<!-- HEADER END -->
 
-
-<!-- LOGIN -->
 <div class="login-wrapper">
+    <div class="login-container">
+        <div class="logo">Tutorain</div>
+        <div class="subtitle">Learn Smart • Learn Anywhere</div>
 
-<div class="login-container">
+        <form id="loginForm">
+            {% csrf_token %}
 
-    <div class="logo">Tutorain</div>
-    <div class="subtitle">Learn Smart • Learn Anywhere</div>
+            <input type="email" id="email" name="email"
+                   placeholder="✉️ Student Email"
+                   autocomplete="username" required>
 
-    <form method="POST">
-        {% csrf_token %}
+            <div class="password-box">
+                <input type="password" id="password" name="password"
+                       placeholder="🔒 Password"
+                       autocomplete="current-password" required>
+                <span class="toggle-eye" id="toggleEye"
+                      role="button" tabindex="0"
+                      aria-label="Show or hide password">👁️‍🗨️</span>
+            </div>
 
-        <input type="text" name="mobile" id="mobile" placeholder="📱 Mobile Number" required>
+            <div class="options">
+                <label>
+                    <input type="checkbox" id="remember">
+                    Remember Me
+                </label>
+            </div>
 
-        <div class="password-box">
-            <input type="password" name="password" id="password" placeholder="🔒 Password" required>
-            <span class="toggle-eye" onclick="togglePassword()">👁️‍🗨️</span>
-        </div>
+            <button class="login-button" id="loginButton" type="submit">
+                Login
+            </button>
 
-        <div class="options">
-            <label>
-                <input type="checkbox" id="remember"> Remember Me
-            </label>
-        </div>
-
-        <button type="submit">Login</button>
-    </form>
-
-    {% if error %}
-        <div class="error">{{ error }}</div>
-    {% endif %}
-
+            <div class="error" id="errorMessage" role="alert" aria-live="polite"></div>
+        </form>
+    </div>
 </div>
 
-</div>
-
-<!-- LOADING OVERLAY -->
 <div id="loadingOverlay">
     <div class="loader-box">
         <div class="spinner"></div>
-        <p>Connecting...</p>
+        <p>Connecting securely...</p>
     </div>
 </div>
 
-<!-- JS -->
-<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 
-<script>
-function togglePassword() {
-    const pass = document.getElementById("password");
-    pass.type = pass.type === "password" ? "text" : "password";
-}
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+    import {
+        getAuth,
+        signInWithEmailAndPassword
+    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
-// Remember mobile
-const mobileInput = document.getElementById("mobile");
-const rememberCheck = document.getElementById("remember");
+    // Replace these values with your Firebase Web App configuration.
+    const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "tutorain-tutor-portal.firebaseapp.com",
+        projectId: "tutorain-tutor-portal",
+        appId: "YOUR_APP_ID"
+    };
 
-window.onload = function() {
-    const savedMobile = localStorage.getItem("mobile");
-    if (savedMobile) {
-        mobileInput.value = savedMobile;
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const form = document.getElementById("loginForm");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const rememberCheck = document.getElementById("remember");
+    const loginButton = document.getElementById("loginButton");
+    const overlay = document.getElementById("loadingOverlay");
+    const errorMessage = document.getElementById("errorMessage");
+
+    function togglePassword() {
+        passwordInput.type =
+            passwordInput.type === "password" ? "text" : "password";
+    }
+
+    document.getElementById("toggleEye").addEventListener("click", togglePassword);
+    document.getElementById("toggleEye").addEventListener("keydown", event => {
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            togglePassword();
+        }
+    });
+
+    // Remember only the email address, never the password.
+    const savedEmail = localStorage.getItem("tutorain_student_email");
+    if (savedEmail) {
+        emailInput.value = savedEmail;
         rememberCheck.checked = true;
     }
-};
 
-// LOADING LOGIC
-const form = document.querySelector("form");
-const overlay = document.getElementById("loadingOverlay");
-
-form.addEventListener("submit", function () {
-    overlay.style.display = "flex";
-    form.querySelector("button").disabled = true;
-    form.querySelector("button").innerText = "Logging in...";
-});
-
-// Save mobile
-document.querySelector("form").addEventListener("submit", function() {
-    if (rememberCheck.checked) {
-        localStorage.setItem("mobile", mobileInput.value);
-    } else {
-        localStorage.removeItem("mobile");
+    function getCookie(name) {
+        const cookies = document.cookie ? document.cookie.split(";") : [];
+        for (const cookie of cookies) {
+            const item = cookie.trim();
+            if (item.startsWith(name + "=")) {
+                return decodeURIComponent(item.substring(name.length + 1));
+            }
+        }
+        return "";
     }
-});
+
+    function friendlyFirebaseError(error) {
+        switch (error.code) {
+            case "auth/invalid-credential":
+            case "auth/wrong-password":
+            case "auth/user-not-found":
+                return "Incorrect email or password.";
+            case "auth/invalid-email":
+                return "Please enter a valid email address.";
+            case "auth/too-many-requests":
+                return "Too many attempts. Please try again later.";
+            case "auth/network-request-failed":
+                return "Network error. Check your internet connection.";
+            case "auth/operation-not-allowed":
+                return "Email/password login is not enabled in Firebase.";
+            default:
+                return "Login failed. Please try again or contact Tutorain support.";
+        }
+    }
+
+    form.addEventListener("submit", async event => {
+        event.preventDefault();
+
+        errorMessage.textContent = "";
+        loginButton.disabled = true;
+        loginButton.textContent = "Logging in...";
+        overlay.style.display = "flex";
+
+        try {
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+
+            if (rememberCheck.checked) {
+                localStorage.setItem("tutorain_student_email", email);
+            } else {
+                localStorage.removeItem("tutorain_student_email");
+            }
+
+            // Authenticate with Firebase Authentication.
+            const userCredential = await signInWithEmailAndPassword(
+                auth, email, password
+            );
+
+            const idToken = await userCredential.user.getIdToken(true);
+
+            // Send the verified-token candidate to Django.
+            const response = await fetch("/firebase-student-login/", {
+                method: "POST",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": getCookie("csrftoken")
+                },
+                body: JSON.stringify({ idToken })
+            });
+
+            const result = await response.json();
+
+            if (!response.ok || !result.success) {
+                throw new Error(result.error || "Student login could not be completed.");
+            }
+
+            window.location.assign(
+                result.redirect_url || "/firebase-student-dashboard/"
+            );
+
+        } catch (error) {
+            console.error("Tutorain student login error:", error);
+
+            if (error.code && error.code.startsWith("auth/")) {
+                errorMessage.textContent = friendlyFirebaseError(error);
+            } else {
+                errorMessage.textContent =
+                    error.message || "Login failed. Please try again.";
+            }
+        } finally {
+            overlay.style.display = "none";
+            loginButton.disabled = false;
+            loginButton.textContent = "Login";
+        }
+    });
 </script>
 
 </body>

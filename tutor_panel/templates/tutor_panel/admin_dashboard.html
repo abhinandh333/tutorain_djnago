@@ -171,11 +171,13 @@
             <span class="status">Coming next</span>
         </div>
 
-        <div class="card">
-            <h3>📅 Attendance</h3>
-            <p>Review tutor attendance records and completed classes.</p>
-            <span class="status">Coming next</span>
-        </div>
+            <div class="card">
+                <h3>📊 Attendance Summary</h3>
+                <p>View student attendance records and track attendance statistics.</p>
+                <a href="{% url 'tutor_panel:attendance_summary' %}" class="card-button">
+                    View Attendance Summary →
+                </a>
+            </div>
 
         <div class="card">
             <h3>💰 Tutor Payments</h3>
@@ -183,11 +185,13 @@
             <a href="{% url 'tutor_panel:tutor_payments' %}" class="card-button">Manage Payments →</a>
         </div>
 
-        <div class="card">
-            <h3>📊 Reports</h3>
-            <p>Review student progress and weekly attendance reports.</p>
-            <span class="status">Coming next</span>
-        </div>
+<div class="card">
+    <h3>📊 Reports</h3>
+    <p>Review student progress and weekly attendance reports.</p>
+    <a href="{% url 'tutor_panel:weekly_student_reports' %}" class="card-button">
+        View Reports →
+    </a>
+</div>
 
     </section>
 

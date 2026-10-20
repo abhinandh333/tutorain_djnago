@@ -14,6 +14,46 @@
 <div><label for="guardian_name">Parent / Guardian name *</label><input id="guardian_name" name="guardian_name" required value="{{ edit_student.guardian_name|default:'' }}"></div>
 <div><label for="guardian_phone">Parent / Guardian phone *</label><input id="guardian_phone" name="guardian_phone" type="tel" required value="{{ edit_student.guardian_phone|default:'' }}"></div>
 <div><label for="guardian_email">Parent / Guardian email (for portal) *</label><input id="guardian_email" name="guardian_email" type="email" required value="{{ edit_student.guardian_email|default:'' }}" placeholder="parent@example.com"></div>
+
+<div>
+    <label for="student_email">Student Login Email *</label>
+    <input
+        id="student_email"
+        name="student_email"
+        type="email"
+        required
+        value="{% if edit_student %}{{ edit_student.student_email|default:'' }}{% endif %}"
+        placeholder="student@tutorain.com"
+        autocomplete="off"
+    >
+</div>
+
+
+
+<div>
+    <label for="student_password">
+        {% if edit_student %}New Student Password{% else %}Student Login Password *{% endif %}
+    </label>
+    <input
+        id="student_password"
+        name="student_password"
+        type="password"
+        {% if not edit_student %}required{% endif %}
+        minlength="8"
+        placeholder="{% if edit_student %}Leave blank to keep the current password{% else %}Create a temporary password{% endif %}"
+        autocomplete="new-password"
+    >
+    <small class="muted">
+        {% if edit_student %}
+            Leave blank to keep the current password. Enter a new password only if you want to reset it.
+        {% else %}
+            Give this password to the student securely.
+        {% endif %}
+    </small>
+</div>
+
+
+
 <div><label for="tutor_email">Assigned tutor *</label><select id="tutor_email" name="tutor_email" required><option value="">Select an approved tutor</option>{% for tutor in tutors %}<option value="{{ tutor.email }}" {% if edit_student.tutor_email == tutor.email %}selected{% endif %}>{{ tutor.name }} — {{ tutor.email }}</option>{% endfor %}</select></div>
 <div><label for="status">Status</label><select id="status" name="status"><option value="Active" {% if not edit_student or edit_student.status == 'Active' %}selected{% endif %}>Active</option><option value="Inactive" {% if edit_student.status == 'Inactive' %}selected{% endif %}>Inactive</option></select></div>
 </div><button type="submit">{% if edit_student %}Save Changes{% else %}Add Student{% endif %}</button>{% if edit_student %} <a class="button cancel" href="{% url 'tutor_panel:manage_students' %}">Cancel</a>{% endif %}</form></section>

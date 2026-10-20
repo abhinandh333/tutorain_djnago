@@ -1,0 +1,401 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration | Tutorain</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 25px 15px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f1f5f9;
+            font-family: Arial, sans-serif;
+        }
+
+        .registration-card {
+            width: 100%;
+            max-width: 440px;
+            padding: 30px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .logo {
+            text-align: center;
+            color: #2563eb;
+            font-size: 30px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .description {
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 7px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #334155;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+
+        button {
+            width: 100%;
+            margin-top: 18px;
+            padding: 13px;
+            border: none;
+            border-radius: 8px;
+            background: #2563eb;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        button:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        #verificationSection {
+            display: none;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        #statusMessage {
+            display: none;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 18px;
+            font-size: 14px;
+            line-height: 1.5;
+            overflow-wrap: anywhere;
+        }
+
+        #statusMessage.success {
+            display: block;
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        #statusMessage.error {
+            display: block;
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 22px;
+            font-size: 14px;
+        }
+
+        .login-link a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .small-note {
+            font-size: 12px;
+            color: #64748b;
+            line-height: 1.5;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="registration-card">
+
+    <div class="logo">Tutorain</div>
+
+    <h2>Student Registration</h2>
+
+    <p class="description">
+        Create your student login using your existing Tutorain student record.
+    </p>
+
+    <form id="registrationForm">
+        {% csrf_token %}
+
+        <label for="student_id">Student ID</label>
+        <input
+            type="text"
+            id="student_id"
+            name="student_id"
+            placeholder="Enter your Student ID"
+            required
+        >
+
+        <label for="guardian_email">Registered Guardian Email</label>
+        <input
+            type="email"
+            id="guardian_email"
+            name="guardian_email"
+            placeholder="Enter the guardian email already registered"
+            required
+        >
+
+        <button type="button" id="sendCodeButton">
+            Send Verification Code
+        </button>
+
+        <div id="verificationSection">
+
+            <label for="student_email">Your Email Address</label>
+            <input
+                type="email"
+                id="student_email"
+                name="student_email"
+                placeholder="Enter your own email"
+                autocomplete="email"
+                required
+            >
+
+            <label for="password">Create Password</label>
+            <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="At least 8 characters"
+                minlength="8"
+                autocomplete="new-password"
+                required
+            >
+
+            <label for="confirm_password">Confirm Password</label>
+            <input
+                type="password"
+                id="confirm_password"
+                name="confirm_password"
+                placeholder="Enter your password again"
+                minlength="8"
+                autocomplete="new-password"
+                required
+            >
+
+            <label for="verification_code">Email Verification Code</label>
+            <input
+                type="text"
+                id="verification_code"
+                name="verification_code"
+                placeholder="Enter the 6-digit code"
+                inputmode="numeric"
+                pattern="[0-9]{6}"
+                maxlength="6"
+                required
+            >
+
+            <p class="small-note">
+                Enter the verification code sent to your registered guardian email.
+            </p>
+
+            <button type="submit" id="registerButton">
+                Create Student Account
+            </button>
+
+        </div>
+    </form>
+
+    <div id="statusMessage" role="status" aria-live="polite"></div>
+
+    <div class="login-link">
+        Already registered?
+        <a href="/tutor_panel/">Go to Login</a>
+    </div>
+
+</div>
+
+<script>
+    const form = document.getElementById("registrationForm");
+    const sendCodeButton = document.getElementById("sendCodeButton");
+    const registerButton = document.getElementById("registerButton");
+    const verificationSection = document.getElementById("verificationSection");
+    const statusMessage = document.getElementById("statusMessage");
+
+    function showMessage(message, type) {
+        statusMessage.textContent = message;
+        statusMessage.className = type;
+    }
+
+    function getCsrfToken() {
+        const csrfInput = form.querySelector(
+            'input[name="csrfmiddlewaretoken"]'
+        );
+        return csrfInput ? csrfInput.value : "";
+    }
+
+    async function postForm(url, data) {
+        const response = await fetch(url, {
+            method: "POST",
+            credentials: "same-origin",
+            headers: {
+                "X-CSRFToken": getCsrfToken()
+            },
+            body: data
+        });
+
+        let result;
+
+        try {
+            result = await response.json();
+        } catch (error) {
+            throw new Error(
+                "The server returned an unexpected response. Check your Django server logs."
+            );
+        }
+
+        if (!response.ok) {
+            throw new Error(
+                result.error || result.message || "Something went wrong."
+            );
+        }
+
+        return result;
+    }
+
+    sendCodeButton.addEventListener("click", async function () {
+        const studentId = document.getElementById("student_id").value.trim();
+        const guardianEmail = document.getElementById("guardian_email").value.trim();
+
+        if (!studentId || !guardianEmail) {
+            showMessage(
+                "Please enter your Student ID and registered guardian email.",
+                "error"
+            );
+            return;
+        }
+
+        if (!document.getElementById("guardian_email").checkValidity()) {
+            showMessage("Please enter a valid guardian email address.", "error");
+            return;
+        }
+
+        sendCodeButton.disabled = true;
+        sendCodeButton.textContent = "Sending Code...";
+
+        try {
+            const data = new FormData();
+
+            data.append("student_id", studentId);
+            data.append("guardian_email", guardianEmail);
+
+            const result = await postForm(
+                "/tutor_panel/student-register/send-code/",
+                data
+            );
+
+            verificationSection.style.display = "block";
+
+            showMessage(
+                result.message || "Verification code sent. Check your guardian email.",
+                "success"
+            );
+        } catch (error) {
+            showMessage(error.message, "error");
+        } finally {
+            sendCodeButton.disabled = false;
+            sendCodeButton.textContent = "Send Verification Code";
+        }
+    });
+
+    form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        if (!form.reportValidity()) {
+            return;
+        }
+
+        const password = document.getElementById("password").value;
+        const confirmPassword = document.getElementById("confirm_password").value;
+
+        if (password.length < 8) {
+            showMessage("Your password must contain at least 8 characters.", "error");
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            showMessage("The passwords do not match.", "error");
+            return;
+        }
+
+        registerButton.disabled = true;
+        registerButton.textContent = "Creating Account...";
+
+        try {
+            const data = new FormData(form);
+
+            const result = await postForm(
+                "/tutor_panel/student-register/complete/",
+                data
+            );
+
+            showMessage(
+                result.message || "Your account has been created successfully. Please log in.",
+                "success"
+            );
+
+            form.reset();
+            verificationSection.style.display = "none";
+            sendCodeButton.style.display = "none";
+
+            const loginLink = document.querySelector(".login-link");
+            loginLink.innerHTML =
+                'Registration complete! <a href="/tutor_panel/">Log in now</a>';
+
+        } catch (error) {
+            showMessage(error.message, "error");
+        } finally {
+            registerButton.disabled = false;
+            registerButton.textContent = "Create Student Account";
+        }
+    });
+</script>
+
+</body>
+</html>

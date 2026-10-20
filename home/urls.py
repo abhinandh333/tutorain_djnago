@@ -2,6 +2,8 @@ from django.urls import path
 from . import views
 from .views import index, contact, student_login_web, dashboard,comingsoon,findsub,maca,accounts_login_redirect,download,auto_login,free_classes,abhinandh,ceo
 from django.contrib.auth import views as auth_views
+from home.views import firebase_student_dashboard
+from .views import firebase_student_login
 
 urlpatterns = [
     path('', index, name='home'),
@@ -30,6 +32,18 @@ urlpatterns = [
     "free_classes/<str:class_name>/<str:subject>/",
     views.subject_details,
     name="subject_details"
+),
+
+path(
+    "firebase-student-dashboard/",
+    firebase_student_dashboard,
+    name="firebase_student_dashboard"
+),
+
+path(
+    "firebase-student-login/",
+    firebase_student_login,
+    name="firebase_student_login",
 ),
     
 
