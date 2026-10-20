@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +7,12 @@
 
     <title>Tutor Management | Tutorain</title>
 
+    <!-- Bootstrap CSS -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
     <style>
         * {
             box-sizing: border-box;
@@ -13,18 +20,83 @@
 
         body {
             margin: 0;
-            padding: 25px;
+            padding: 0;
             font-family: Arial, sans-serif;
             background: #f4f7fb;
             color: #243047;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: auto;
+        /* Tutorain Main Website Header */
+        .tutorain-main-header {
+            background: #ffffff;
+            color: #202938;
+            padding: 0;
+            display: block;
+            border-bottom: 1px solid #e5e7eb;
         }
 
-        .header {
+        .tutorain-main-header .navbar-brand img {
+            max-width: 100%;
+            object-fit: contain;
+        }
+
+        .tutorain-main-header .navbar-nav {
+            align-items: center;
+            gap: 4px;
+        }
+
+        .tutorain-main-header .navbar-nav .nav-link {
+            color: #202938;
+            padding: 10px 12px;
+            font-weight: 500;
+            background: transparent;
+            border-radius: 0;
+        }
+
+        .tutorain-main-header .navbar-nav .nav-link:hover {
+            color: #2563eb;
+        }
+
+        .tutorain-main-header .dropdown-menu {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px #00000010;
+        }
+
+        .tutorain-main-header .dropdown-item {
+            color: #202938;
+            background: transparent;
+            padding: 9px 16px;
+        }
+
+        .tutorain-main-header .dropdown-item:hover {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .tutorain-main-header .btn {
+            padding: 7px 12px;
+            margin: 4px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .tutorain-main-header .navbar-toggler {
+            margin: 0;
+            padding: 6px 10px;
+            background: transparent;
+            color: #202938;
+            border: 1px solid #cbd5e1;
+        }
+
+        /* Main Tutor Management Content */
+        .tutor-management-container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 25px;
+        }
+
+        .management-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -33,9 +105,10 @@
             margin-bottom: 25px;
         }
 
-        h1 {
+        .management-header h1 {
             margin: 0 0 8px;
             color: #173b72;
+            font-size: 32px;
         }
 
         .subtitle {
@@ -51,6 +124,12 @@
             border-radius: 8px;
         }
 
+        .back-button:hover {
+            background: #24549a;
+            color: white;
+            text-decoration: none;
+        }
+
         .card {
             background: white;
             padding: 25px;
@@ -59,9 +138,10 @@
             box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
         }
 
-        h2 {
+        .card h2 {
             margin-top: 0;
             color: #173b72;
+            font-size: 24px;
         }
 
         .form-grid {
@@ -76,12 +156,12 @@
             gap: 7px;
         }
 
-        label {
+        .field label {
             font-weight: bold;
             font-size: 14px;
         }
 
-        input {
+        .field input {
             width: 100%;
             padding: 12px;
             border: 1px solid #d7deea;
@@ -89,7 +169,7 @@
             font-size: 15px;
         }
 
-        input:focus {
+        .field input:focus {
             outline: 2px solid #b7d1ff;
             border-color: #2865b8;
         }
@@ -118,7 +198,7 @@
             color: #176b45;
         }
 
-        .error {
+        .message.error {
             background: #ffe9e9;
             color: #a21d1d;
         }
@@ -127,19 +207,20 @@
             overflow-x: auto;
         }
 
-        table {
+        .table-wrapper table {
             width: 100%;
             border-collapse: collapse;
             min-width: 850px;
         }
 
-        th, td {
+        .table-wrapper th,
+        .table-wrapper td {
             text-align: left;
             padding: 14px 12px;
             border-bottom: 1px solid #e9edf4;
         }
 
-        th {
+        .table-wrapper th {
             background: #f4f7fb;
             color: #173b72;
         }
@@ -206,8 +287,24 @@
             background: #475467;
         }
 
+        @media (max-width: 991px) {
+            .tutorain-main-header .navbar-nav {
+                align-items: stretch;
+                padding-top: 10px;
+            }
+
+            .tutorain-main-header .navbar-nav .nav-link {
+                padding: 9px 0;
+            }
+
+            .tutorain-main-header .navbar-nav .btn {
+                display: inline-block;
+                margin-left: 0;
+            }
+        }
+
         @media (max-width: 650px) {
-            body {
+            .tutor-management-container {
                 padding: 14px;
             }
 
@@ -218,14 +315,134 @@
             .form-grid {
                 grid-template-columns: 1fr;
             }
+
+            .management-header h1 {
+                font-size: 26px;
+            }
         }
     </style>
 </head>
 
 <body>
-<div class="container">
 
-    <div class="header">
+<!-- TUTORAIN MAIN WEBSITE HEADER -->
+<header class="tutorain-main-header">
+    <div class="container">
+        <div class="row align-items-center py-2">
+
+            <div class="col-6 col-lg-3">
+                <a class="navbar-brand" href="{% url 'home' %}">
+                    <img
+                        src="{% static 'website/img/logo/logo1.png' %}"
+                        alt="Tutorain"
+                        style="height: 45px;"
+                    >
+                </a>
+            </div>
+
+            <div class="col-6 col-lg-9">
+                <nav class="navbar navbar-expand-lg navbar-light p-0">
+
+                    <button
+                        class="navbar-toggler"
+                        type="button"
+                        data-toggle="collapse"
+                        data-target="#mainNavbar"
+                        aria-controls="mainNavbar"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation"
+                    >
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div
+                        class="collapse navbar-collapse justify-content-end"
+                        id="mainNavbar"
+                    >
+                        <ul class="navbar-nav">
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'home' %}">
+                                    Home
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'findsub' %}">
+                                    Find Tutor
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'contact' %}">
+                                    Contact Us
+                                </a>
+                            </li>
+
+                            <li class="nav-item dropdown">
+                                <a
+                                    class="nav-link dropdown-toggle"
+                                    href="#"
+                                    data-toggle="dropdown"
+                                >
+                                    More
+                                </a>
+
+                                <div class="dropdown-menu">
+                                    <a
+                                        class="dropdown-item"
+                                        href="{% url 'maca' %}"
+                                    >
+                                        MACA
+                                    </a>
+
+                                    <a
+                                        class="dropdown-item"
+                                        href="{% url 'comingsoon' %}"
+                                    >
+                                        MAAI
+                                    </a>
+
+                                    <a
+                                        class="dropdown-item"
+                                        href="{% url 'comingsoon' %}"
+                                    >
+                                        Feedback
+                                    </a>
+                                </div>
+                            </li>
+
+                            <li class="nav-item">
+                                <a
+                                    class="btn btn-outline-primary btn-sm"
+                                    href="{% url 'findsub' %}"
+                                >
+                                    Join Tutorain
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a
+                                    class="btn btn-outline-primary btn-sm"
+                                    href="https://www.tutorain.com/tutor_panel/"
+                                >
+                                    Login
+                                </a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+
+        </div>
+    </div>
+</header>
+
+<!-- TUTOR MANAGEMENT PAGE -->
+<div class="tutor-management-container">
+
+    <div class="management-header">
         <div>
             <h1>Tutor Management</h1>
             <p class="subtitle">
@@ -233,12 +450,15 @@
             </p>
         </div>
 
-        <a href="{% url 'tutor_panel:admin_dashboard' %}"
-           class="back-button">
+        <a
+            href="{% url 'tutor_panel:admin_dashboard' %}"
+            class="back-button"
+        >
             ← Admin Dashboard
         </a>
     </div>
 
+    <!-- DJANGO MESSAGES -->
     {% if messages %}
         {% for message in messages %}
             <div class="message {% if message.tags == 'error' %}error{% endif %}">
@@ -247,12 +467,13 @@
         {% endfor %}
     {% endif %}
 
-    <!-- Add New Tutor -->
+    <!-- ADD NEW TUTOR -->
     <div class="card">
         <h2>Add New Tutor</h2>
 
         <form method="POST">
             {% csrf_token %}
+
             <input type="hidden" name="action" value="register">
 
             <div class="form-grid">
@@ -265,7 +486,8 @@
                         name="name"
                         required
                         maxlength="100"
-                        placeholder="Enter tutor's full name">
+                        placeholder="Enter tutor's full name"
+                    >
                 </div>
 
                 <div class="field">
@@ -276,7 +498,8 @@
                         name="email"
                         required
                         maxlength="254"
-                        placeholder="tutor@example.com">
+                        placeholder="tutor@example.com"
+                    >
                 </div>
 
                 <div class="field">
@@ -287,7 +510,8 @@
                         name="phone"
                         required
                         maxlength="20"
-                        placeholder="Enter phone number">
+                        placeholder="Enter phone number"
+                    >
                 </div>
 
                 <div class="field">
@@ -298,7 +522,8 @@
                         name="subject"
                         required
                         maxlength="100"
-                        placeholder="e.g. Mathematics">
+                        placeholder="e.g. Mathematics"
+                    >
                 </div>
 
             </div>
@@ -309,7 +534,7 @@
         </form>
     </div>
 
-    <!-- Registered Tutors -->
+    <!-- REGISTERED TUTORS -->
     <div class="card">
         <h2>Registered Tutors</h2>
 
@@ -336,20 +561,13 @@
                                 <td>{{ tutor.subject }}</td>
 
                                 <td>
-                                    <span class="status
-                                        {% if tutor.status == 'Approved' %}
-                                            approved
-                                        {% elif tutor.status == 'Rejected' %}
-                                            rejected
-                                        {% else %}
-                                            pending
-                                        {% endif %}">
+                                    <span class="status {% if tutor.status == 'Approved' %}approved{% elif tutor.status == 'Rejected' %}rejected{% else %}pending{% endif %}">
                                         {{ tutor.status|default:"Pending" }}
                                     </span>
                                 </td>
 
                                 <td>
-                                    <!-- Approve tutor -->
+                                    <!-- APPROVE TUTOR -->
                                     {% if tutor.status != 'Approved' %}
                                         <form method="POST" class="action-form">
                                             {% csrf_token %}
@@ -357,22 +575,25 @@
                                             <input
                                                 type="hidden"
                                                 name="action"
-                                                value="approve">
+                                                value="approve"
+                                            >
 
                                             <input
                                                 type="hidden"
                                                 name="tutor_email"
-                                                value="{{ tutor.email }}">
+                                                value="{{ tutor.email }}"
+                                            >
 
                                             <button
                                                 type="submit"
-                                                class="action-button approve-button">
+                                                class="action-button approve-button"
+                                            >
                                                 Approve
                                             </button>
                                         </form>
                                     {% endif %}
 
-                                    <!-- Reject tutor -->
+                                    <!-- REJECT TUTOR -->
                                     {% if tutor.status != 'Rejected' %}
                                         <form method="POST" class="action-form">
                                             {% csrf_token %}
@@ -380,22 +601,25 @@
                                             <input
                                                 type="hidden"
                                                 name="action"
-                                                value="reject">
+                                                value="reject"
+                                            >
 
                                             <input
                                                 type="hidden"
                                                 name="tutor_email"
-                                                value="{{ tutor.email }}">
+                                                value="{{ tutor.email }}"
+                                            >
 
                                             <button
                                                 type="submit"
-                                                class="action-button reject-button">
+                                                class="action-button reject-button"
+                                            >
                                                 Reject
                                             </button>
                                         </form>
                                     {% endif %}
 
-                                    <!-- Return tutor to Pending -->
+                                    <!-- RETURN TUTOR TO PENDING -->
                                     {% if tutor.status == 'Rejected' %}
                                         <form method="POST" class="action-form">
                                             {% csrf_token %}
@@ -403,16 +627,19 @@
                                             <input
                                                 type="hidden"
                                                 name="action"
-                                                value="pending">
+                                                value="pending"
+                                            >
 
                                             <input
                                                 type="hidden"
                                                 name="tutor_email"
-                                                value="{{ tutor.email }}">
+                                                value="{{ tutor.email }}"
+                                            >
 
                                             <button
                                                 type="submit"
-                                                class="action-button pending-button">
+                                                class="action-button pending-button"
+                                            >
                                                 Set Pending
                                             </button>
                                         </form>
@@ -423,12 +650,17 @@
                     </tbody>
                 </table>
             </div>
+
         {% else %}
             <p>No tutors have been added yet.</p>
         {% endif %}
     </div>
 
 </div>
+
+<!-- Bootstrap JS and jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

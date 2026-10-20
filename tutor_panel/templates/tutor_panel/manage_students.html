@@ -1,62 +1,740 @@
+{% load static %}
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Manage Students | Tutorain</title><style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f4f6fb;color:#202938}header{background:#172554;color:white;padding:20px 6%;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}header h1{margin:0;font-size:23px}header a{color:#172554;background:white;padding:10px 14px;border-radius:8px;text-decoration:none;font-weight:bold}main{padding:28px 6%;max-width:1300px;margin:auto}.panel{background:white;padding:22px;border-radius:14px;border:1px solid #e5e7eb;box-shadow:0 5px 20px #00000008;margin-bottom:22px}.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}label{display:block;font-weight:bold;font-size:14px;margin-bottom:6px}input,select,textarea{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:8px;font:inherit}button,.button{display:inline-block;border:0;border-radius:8px;padding:11px 15px;background:#172554;color:white;font-weight:bold;text-decoration:none;cursor:pointer;margin-top:12px}button:hover,.button:hover{background:#2563eb}.messages{padding:0;list-style:none}.messages li{background:#dcfce7;padding:12px;border-radius:8px;margin-bottom:8px}.messages .error{background:#fee2e2}table{width:100%;border-collapse:collapse;min-width:800px}th,td{text-align:left;padding:12px;border-bottom:1px solid #e5e7eb;vertical-align:top}th{background:#eff6ff} .table-wrap{overflow-x:auto}.muted{color:#64748b}.pill{display:inline-block;background:#dbeafe;color:#1d4ed8;border-radius:20px;padding:5px 9px;font-size:12px;font-weight:bold}.inactive{background:#fee2e2;color:#991b1b}.actions{display:flex;gap:8px;flex-wrap:wrap}.actions button{margin:0;padding:8px 10px}.cancel{background:#64748b}@media(max-width:600px){main{padding:18px 4%}.panel{padding:16px}}
-</style></head><body>
-<header><div><h1>Tutorain · Student Management</h1><p>Register students and assign approved tutors.</p></div><a href="{% url 'tutor_panel:admin_dashboard' %}">← Admin Dashboard</a></header>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Manage Students | Tutorain</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6fb;
+            color: #202938;
+        }
+
+        /* Tutorain Main Website Header */
+        .tutorain-main-header {
+            background: #ffffff;
+            color: #202938;
+            padding: 0;
+            display: block;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .tutorain-main-header .navbar-brand img {
+            max-width: 100%;
+            object-fit: contain;
+        }
+
+        .tutorain-main-header .navbar-nav {
+            align-items: center;
+            gap: 4px;
+        }
+
+        .tutorain-main-header .navbar-nav .nav-link {
+            color: #202938;
+            padding: 10px 12px;
+            font-weight: 500;
+            background: transparent;
+            border-radius: 0;
+        }
+
+        .tutorain-main-header .navbar-nav .nav-link:hover {
+            color: #2563eb;
+        }
+
+        .tutorain-main-header .dropdown-menu {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px #00000010;
+        }
+
+        .tutorain-main-header .dropdown-item {
+            color: #202938;
+            background: transparent;
+            padding: 9px 16px;
+        }
+
+        .tutorain-main-header .dropdown-item:hover {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .tutorain-main-header .btn {
+            padding: 7px 12px;
+            margin: 4px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .tutorain-main-header .navbar-toggler {
+            margin: 0;
+            padding: 6px 10px;
+            background: transparent;
+            color: #202938;
+            border: 1px solid #cbd5e1;
+        }
+
+        /* Student Management Page Header */
+        .student-management-header {
+            background: #172554;
+            color: white;
+            padding: 20px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .student-management-header h1 {
+            margin: 0;
+            font-size: 23px;
+        }
+
+        .student-management-header p {
+            margin: 6px 0 0;
+        }
+
+        .student-management-header a {
+            color: #172554;
+            background: white;
+            padding: 10px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .student-management-header a:hover {
+            background: #eff6ff;
+            text-decoration: none;
+        }
+
+        main {
+            padding: 28px 6%;
+            max-width: 1300px;
+            margin: auto;
+        }
+
+        .panel {
+            background: white;
+            padding: 22px;
+            border-radius: 14px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 5px 20px #00000008;
+            margin-bottom: 22px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font: inherit;
+        }
+
+        button,
+        .button {
+            display: inline-block;
+            border: 0;
+            border-radius: 8px;
+            padding: 11px 15px;
+            background: #172554;
+            color: white;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+
+        button:hover,
+        .button:hover {
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+        }
+
+        .messages {
+            padding: 0;
+            list-style: none;
+        }
+
+        .messages li {
+            background: #dcfce7;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .messages .error {
+            background: #fee2e2;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+            vertical-align: top;
+        }
+
+        th {
+            background: #eff6ff;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        .muted {
+            color: #64748b;
+        }
+
+        .pill {
+            display: inline-block;
+            background: #dbeafe;
+            color: #1d4ed8;
+            border-radius: 20px;
+            padding: 5px 9px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .inactive {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .actions button {
+            margin: 0;
+            padding: 8px 10px;
+        }
+
+        .actions .button {
+            margin: 0;
+            padding: 8px 10px;
+        }
+
+        .cancel {
+            background: #64748b;
+        }
+
+        @media (max-width: 991px) {
+            .tutorain-main-header .navbar-nav {
+                align-items: stretch;
+                padding-top: 10px;
+            }
+
+            .tutorain-main-header .navbar-nav .nav-link {
+                padding: 9px 0;
+            }
+
+            .tutorain-main-header .navbar-nav .btn {
+                display: inline-block;
+                margin-left: 0;
+            }
+        }
+
+        @media (max-width: 600px) {
+            main {
+                padding: 18px 4%;
+            }
+
+            .panel {
+                padding: 16px;
+            }
+
+            .student-management-header {
+                padding: 18px 4%;
+            }
+
+            .student-management-header h1 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- TUTORAIN MAIN WEBSITE HEADER -->
+<header class="tutorain-main-header">
+    <div class="container">
+        <div class="row align-items-center py-2">
+
+            <div class="col-6 col-lg-3">
+                <a class="navbar-brand" href="{% url 'home' %}">
+                    <img
+                        src="{% static 'website/img/logo/logo1.png' %}"
+                        alt="Tutorain"
+                        style="height: 45px;"
+                    >
+                </a>
+            </div>
+
+            <div class="col-6 col-lg-9">
+                <nav class="navbar navbar-expand-lg navbar-light p-0">
+
+                    <button
+                        class="navbar-toggler"
+                        type="button"
+                        data-toggle="collapse"
+                        data-target="#mainNavbar"
+                        aria-controls="mainNavbar"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation"
+                    >
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div
+                        class="collapse navbar-collapse justify-content-end"
+                        id="mainNavbar"
+                    >
+                        <ul class="navbar-nav">
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'home' %}">
+                                    Home
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'findsub' %}">
+                                    Find Tutor
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'contact' %}">
+                                    Contact Us
+                                </a>
+                            </li>
+
+                            <li class="nav-item dropdown">
+                                <a
+                                    class="nav-link dropdown-toggle"
+                                    href="#"
+                                    data-toggle="dropdown"
+                                >
+                                    More
+                                </a>
+
+                                <div class="dropdown-menu">
+                                    <a
+                                        class="dropdown-item"
+                                        href="{% url 'maca' %}"
+                                    >
+                                        MACA
+                                    </a>
+
+                                    <a
+                                        class="dropdown-item"
+                                        href="{% url 'comingsoon' %}"
+                                    >
+                                        MAAI
+                                    </a>
+
+                                    <a
+                                        class="dropdown-item"
+                                        href="{% url 'comingsoon' %}"
+                                    >
+                                        Feedback
+                                    </a>
+                                </div>
+                            </li>
+
+                            <li class="nav-item">
+                                <a
+                                    class="btn btn-outline-primary btn-sm"
+                                    href="{% url 'findsub' %}"
+                                >
+                                    Join Tutorain
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a
+                                    class="btn btn-outline-primary btn-sm"
+                                    href="https://www.tutorain.com/tutor_panel/"
+                                >
+                                    Login
+                                </a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+
+        </div>
+    </div>
+</header>
+
+<!-- STUDENT MANAGEMENT PAGE HEADER -->
+<header class="student-management-header">
+    <div>
+        <h1>Tutorain · Student Management</h1>
+        <p>Register students and assign approved tutors.</p>
+    </div>
+
+    <a href="{% url 'tutor_panel:admin_dashboard' %}">
+        ← Admin Dashboard
+    </a>
+</header>
+
 <main>
-{% if messages %}<ul class="messages">{% for message in messages %}<li class="{{ message.tags }}">{{ message }}</li>{% endfor %}</ul>{% endif %}
-<section class="panel"><h2>{% if edit_student %}Edit Student{% else %}Register a Student{% endif %}</h2>
-<form method="post">{% csrf_token %}<input type="hidden" name="action" value="{% if edit_student %}update{% else %}create{% endif %}">{% if edit_student %}<input type="hidden" name="student_id" value="{{ edit_student.student_id }}">{% endif %}
-<div class="form-grid">
-<div><label for="name">Student name *</label><input id="name" name="name" required value="{{ edit_student.name|default:'' }}"></div>
-<div><label for="student_class">Class / Grade *</label><input id="student_class" name="student_class" required placeholder="e.g. Class 8" value="{{ edit_student.student_class|default:'' }}"></div>
-<div><label for="subjects">Subjects</label><input id="subjects" name="subjects" placeholder="e.g. Maths, Science" value="{{ edit_student.subjects|default:'' }}"></div>
-<div><label for="guardian_name">Parent / Guardian name *</label><input id="guardian_name" name="guardian_name" required value="{{ edit_student.guardian_name|default:'' }}"></div>
-<div><label for="guardian_phone">Parent / Guardian phone *</label><input id="guardian_phone" name="guardian_phone" type="tel" required value="{{ edit_student.guardian_phone|default:'' }}"></div>
-<div><label for="guardian_email">Parent / Guardian email (for portal) *</label><input id="guardian_email" name="guardian_email" type="email" required value="{{ edit_student.guardian_email|default:'' }}" placeholder="parent@example.com"></div>
 
-<div>
-    <label for="student_email">Student Login Email *</label>
-    <input
-        id="student_email"
-        name="student_email"
-        type="email"
-        required
-        value="{% if edit_student %}{{ edit_student.student_email|default:'' }}{% endif %}"
-        placeholder="student@tutorain.com"
-        autocomplete="off"
-    >
-</div>
+    <!-- DJANGO MESSAGES -->
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li class="{{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 
+    <!-- REGISTER / EDIT STUDENT -->
+    <section class="panel">
 
+        <h2>
+            {% if edit_student %}
+                Edit Student
+            {% else %}
+                Register a Student
+            {% endif %}
+        </h2>
 
-<div>
-    <label for="student_password">
-        {% if edit_student %}New Student Password{% else %}Student Login Password *{% endif %}
-    </label>
-    <input
-        id="student_password"
-        name="student_password"
-        type="password"
-        {% if not edit_student %}required{% endif %}
-        minlength="8"
-        placeholder="{% if edit_student %}Leave blank to keep the current password{% else %}Create a temporary password{% endif %}"
-        autocomplete="new-password"
-    >
-    <small class="muted">
-        {% if edit_student %}
-            Leave blank to keep the current password. Enter a new password only if you want to reset it.
-        {% else %}
-            Give this password to the student securely.
-        {% endif %}
-    </small>
-</div>
+        <form method="post">
+            {% csrf_token %}
 
+            <input
+                type="hidden"
+                name="action"
+                value="{% if edit_student %}update{% else %}create{% endif %}"
+            >
 
+            {% if edit_student %}
+                <input
+                    type="hidden"
+                    name="student_id"
+                    value="{{ edit_student.student_id }}"
+                >
+            {% endif %}
 
-<div><label for="tutor_email">Assigned tutor *</label><select id="tutor_email" name="tutor_email" required><option value="">Select an approved tutor</option>{% for tutor in tutors %}<option value="{{ tutor.email }}" {% if edit_student.tutor_email == tutor.email %}selected{% endif %}>{{ tutor.name }} — {{ tutor.email }}</option>{% endfor %}</select></div>
-<div><label for="status">Status</label><select id="status" name="status"><option value="Active" {% if not edit_student or edit_student.status == 'Active' %}selected{% endif %}>Active</option><option value="Inactive" {% if edit_student.status == 'Inactive' %}selected{% endif %}>Inactive</option></select></div>
-</div><button type="submit">{% if edit_student %}Save Changes{% else %}Add Student{% endif %}</button>{% if edit_student %} <a class="button cancel" href="{% url 'tutor_panel:manage_students' %}">Cancel</a>{% endif %}</form></section>
-<section class="panel"><h2>Student Records ({{ students|length }})</h2><p class="muted">Student IDs are generated automatically.</p><div class="table-wrap"><table><thead><tr><th>Student</th><th>Class / Subjects</th><th>Parent / Guardian</th><th>Parent Email</th><th>Assigned Tutor</th><th>Status</th><th>Actions</th></tr></thead><tbody>
-{% for student in students %}<tr><td><strong>{{ student.name }}</strong><br><small>{{ student.student_id }}</small></td><td>{{ student.student_class }}<br>{{ student.subjects|default:'—' }}</td><td>{{ student.guardian_name }}<br>{{ student.guardian_phone }}</td><td>{{ student.guardian_email|default:'Not added' }}</td><td>{{ student.tutor_email }}</td><td><span class="pill {% if student.status == 'Inactive' %}inactive{% endif %}">{{ student.status|default:'Active' }}</span></td><td><div class="actions"><a class="button" href="?edit={{ student.student_id }}">Edit</a><form method="post">{% csrf_token %}<input type="hidden" name="action" value="toggle_status"><input type="hidden" name="student_id" value="{{ student.student_id }}"><button type="submit">{% if student.status == 'Inactive' %}Activate{% else %}Deactivate{% endif %}</button></form></div></td></tr>{% empty %}<tr><td colspan="7">No students registered yet.</td></tr>{% endfor %}
-</tbody></table></div></section></main></body></html>
+            <div class="form-grid">
+
+                <div>
+                    <label for="name">Student name *</label>
+                    <input
+                        id="name"
+                        name="name"
+                        required
+                        value="{{ edit_student.name|default:'' }}"
+                    >
+                </div>
+
+                <div>
+                    <label for="student_class">Class / Grade *</label>
+                    <input
+                        id="student_class"
+                        name="student_class"
+                        required
+                        placeholder="e.g. Class 8"
+                        value="{{ edit_student.student_class|default:'' }}"
+                    >
+                </div>
+
+                <div>
+                    <label for="subjects">Subjects</label>
+                    <input
+                        id="subjects"
+                        name="subjects"
+                        placeholder="e.g. Maths, Science"
+                        value="{{ edit_student.subjects|default:'' }}"
+                    >
+                </div>
+
+                <div>
+                    <label for="guardian_name">Parent / Guardian name *</label>
+                    <input
+                        id="guardian_name"
+                        name="guardian_name"
+                        required
+                        value="{{ edit_student.guardian_name|default:'' }}"
+                    >
+                </div>
+
+                <div>
+                    <label for="guardian_phone">Parent / Guardian phone *</label>
+                    <input
+                        id="guardian_phone"
+                        name="guardian_phone"
+                        type="tel"
+                        required
+                        value="{{ edit_student.guardian_phone|default:'' }}"
+                    >
+                </div>
+
+                <div>
+                    <label for="guardian_email">
+                        Parent / Guardian email (for portal) *
+                    </label>
+                    <input
+                        id="guardian_email"
+                        name="guardian_email"
+                        type="email"
+                        required
+                        value="{{ edit_student.guardian_email|default:'' }}"
+                        placeholder="parent@example.com"
+                    >
+                </div>
+
+                <div>
+                    <label for="student_email">Student Login Email *</label>
+                    <input
+                        id="student_email"
+                        name="student_email"
+                        type="email"
+                        required
+                        value="{% if edit_student %}{{ edit_student.student_email|default:'' }}{% endif %}"
+                        placeholder="student@tutorain.com"
+                        autocomplete="off"
+                    >
+                </div>
+
+                <div>
+                    <label for="student_password">
+                        {% if edit_student %}
+                            New Student Password
+                        {% else %}
+                            Student Login Password *
+                        {% endif %}
+                    </label>
+
+                    <input
+                        id="student_password"
+                        name="student_password"
+                        type="password"
+                        {% if not edit_student %}required{% endif %}
+                        minlength="8"
+                        placeholder="{% if edit_student %}Leave blank to keep the current password{% else %}Create a temporary password{% endif %}"
+                        autocomplete="new-password"
+                    >
+
+                    <small class="muted">
+                        {% if edit_student %}
+                            Leave blank to keep the current password.
+                            Enter a new password only if you want to reset it.
+                        {% else %}
+                            Give this password to the student securely.
+                        {% endif %}
+                    </small>
+                </div>
+
+                <div>
+                    <label for="tutor_email">Assigned tutor *</label>
+                    <select id="tutor_email" name="tutor_email" required>
+                        <option value="">Select an approved tutor</option>
+
+                        {% for tutor in tutors %}
+                            <option
+                                value="{{ tutor.email }}"
+                                {% if edit_student.tutor_email == tutor.email %}selected{% endif %}
+                            >
+                                {{ tutor.name }} — {{ tutor.email }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label for="status">Status</label>
+                    <select id="status" name="status">
+                        <option
+                            value="Active"
+                            {% if not edit_student or edit_student.status == 'Active' %}selected{% endif %}
+                        >
+                            Active
+                        </option>
+
+                        <option
+                            value="Inactive"
+                            {% if edit_student.status == 'Inactive' %}selected{% endif %}
+                        >
+                            Inactive
+                        </option>
+                    </select>
+                </div>
+
+            </div>
+
+            <button type="submit">
+                {% if edit_student %}
+                    Save Changes
+                {% else %}
+                    Add Student
+                {% endif %}
+            </button>
+
+            {% if edit_student %}
+                <a
+                    class="button cancel"
+                    href="{% url 'tutor_panel:manage_students' %}"
+                >
+                    Cancel
+                </a>
+            {% endif %}
+        </form>
+
+    </section>
+
+    <!-- STUDENT RECORDS -->
+    <section class="panel">
+
+        <h2>Student Records ({{ students|length }})</h2>
+        <p class="muted">Student IDs are generated automatically.</p>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Class / Subjects</th>
+                        <th>Parent / Guardian</th>
+                        <th>Parent Email</th>
+                        <th>Assigned Tutor</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for student in students %}
+                        <tr>
+                            <td>
+                                <strong>{{ student.name }}</strong>
+                                <br>
+                                <small>{{ student.student_id }}</small>
+                            </td>
+
+                            <td>
+                                {{ student.student_class }}
+                                <br>
+                                {{ student.subjects|default:'—' }}
+                            </td>
+
+                            <td>
+                                {{ student.guardian_name }}
+                                <br>
+                                {{ student.guardian_phone }}
+                            </td>
+
+                            <td>
+                                {{ student.guardian_email|default:'Not added' }}
+                            </td>
+
+                            <td>{{ student.tutor_email }}</td>
+
+                            <td>
+                                <span class="pill {% if student.status == 'Inactive' %}inactive{% endif %}">
+                                    {{ student.status|default:'Active' }}
+                                </span>
+                            </td>
+
+                            <td>
+                                <div class="actions">
+
+                                    <a
+                                        class="button"
+                                        href="?edit={{ student.student_id }}"
+                                    >
+                                        Edit
+                                    </a>
+
+                                    <form method="post">
+                                        {% csrf_token %}
+
+                                        <input
+                                            type="hidden"
+                                            name="action"
+                                            value="toggle_status"
+                                        >
+
+                                        <input
+                                            type="hidden"
+                                            name="student_id"
+                                            value="{{ student.student_id }}"
+                                        >
+
+                                        <button type="submit">
+                                            {% if student.status == 'Inactive' %}
+                                                Activate
+                                            {% else %}
+                                                Deactivate
+                                            {% endif %}
+                                        </button>
+                                    </form>
+
+                                </div>
+                            </td>
+                        </tr>
+
+                    {% empty %}
+                        <tr>
+                            <td colspan="7">No students registered yet.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </section>
+
+</main>
+
+<!-- Bootstrap JS and jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

@@ -6,6 +6,11 @@
 
     <title>Tutorain | Tutor Dashboard</title>
 
+    {% load static %}
+
+    <!-- Bootstrap CSS for Tutorain website header -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+
     <style>
         * {
             box-sizing: border-box;
@@ -18,7 +23,46 @@
             color: #1e293b;
         }
 
-        header {
+        /* TUTORAIN WEBSITE HEADER */
+        .tutorain-main-header {
+            background: #ffffff;
+            color: #1e293b;
+            padding: 0;
+            display: block;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: relative;
+            z-index: 1000;
+        }
+
+        .tutorain-main-header h2 {
+            margin: 0;
+        }
+
+        .tutorain-main-header .navbar-nav {
+            align-items: center;
+        }
+
+        .tutorain-main-header .nav-link {
+            padding: 10px 12px !important;
+        }
+
+        .tutorain-main-header .btn {
+            white-space: nowrap;
+        }
+
+        @media (max-width: 991px) {
+            .tutorain-main-header .navbar-nav {
+                align-items: stretch;
+            }
+
+            .tutorain-main-header .navbar-collapse {
+                padding-top: 12px;
+                padding-bottom: 12px;
+            }
+        }
+
+        /* EXISTING TUTOR DASHBOARD HEADER */
+        .dashboard-header {
             background: #173b70;
             color: white;
             padding: 20px;
@@ -29,7 +73,7 @@
             gap: 12px;
         }
 
-        header h2 {
+        .dashboard-header h2 {
             margin: 0;
         }
 
@@ -78,12 +122,82 @@
 
 <body>
 
-<header>
+<!-- TUTORAIN WEBSITE HEADER -->
+<header class="tutorain-main-header">
+    <div class="container">
+        <div class="row align-items-center py-2">
+
+            <div class="col-6 col-lg-3">
+                <a class="navbar-brand" href="{% url 'home' %}">
+                    <img src="{% static 'website/img/logo/logo1.png' %}"
+                         alt="Tutorain" style="height: 45px;">
+                </a>
+            </div>
+
+            <div class="col-6 col-lg-9">
+                <nav class="navbar navbar-expand-lg navbar-light p-0">
+
+                    <button class="navbar-toggler" type="button"
+                            data-toggle="collapse" data-target="#mainNavbar"
+                            aria-controls="mainNavbar" aria-expanded="false"
+                            aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
+                        <ul class="navbar-nav">
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'home' %}">Home</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'findsub' %}">Find Tutor</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'contact' %}">Contact Us</a>
+                            </li>
+
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#"
+                                   data-toggle="dropdown">More</a>
+
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="{% url 'maca' %}">MACA</a>
+                                    <a class="dropdown-item" href="{% url 'comingsoon' %}">MAAI</a>
+                                    <a class="dropdown-item" href="{% url 'comingsoon' %}">Feedback</a>
+                                </div>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="btn btn-outline-primary btn-sm m-1"
+                                   href="{% url 'findsub' %}">Join Tutorain</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="btn btn-outline-primary btn-sm m-1"
+                                   href="https://www.tutorain.com/tutor_panel/">Login</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+
+        </div>
+    </div>
+</header>
+
+<!-- EXISTING TUTOR DASHBOARD HEADER -->
+<header class="dashboard-header">
     <h2>Tutorain Tutor Portal</h2>
     <a class="logout" href="{% url 'tutor_panel:logout' %}">Logout</a>
 </header>
 
+<!-- EXISTING DASHBOARD CONTENT -->
 <main>
+
     <section class="welcome">
         <h1>Welcome to your dashboard!</h1>
         <p>You are logged in as <strong>{{ tutor_email }}</strong>.</p>
@@ -91,39 +205,40 @@
 
     <section class="cards">
 
+        <div class="card students-card">
 
-                <div class="card students-card">
-                    <div class="card-icon">
-                        👨‍🎓
-                    </div>
+            <div class="card-icon">
+                👨‍🎓
+            </div>
 
-                    <div class="card-content">
-                        <h3>My Students</h3>
-                        <p>View and manage the students assigned to you.</p>
-                    </div>
+            <div class="card-content">
+                <h3>My Students</h3>
+                <p>View and manage the students assigned to you.</p>
+            </div>
 
-                                            <a href="{% url 'tutor_panel:tutor_students' %}"
-                        style="
-                            display: inline-block;
-                            background-color: #007bff;
-                            color: white;
-                            padding: 12px 24px;
-                            border-radius: 8px;
-                            text-decoration: none;
-                            font-weight: 600;
-                            font-size: 15px;
-                            transition: background-color 0.3s ease;
-                        "
-                        onmouseover="this.style.backgroundColor='#0056b3'"
-                        onmouseout="this.style.backgroundColor='#007bff'">
-                            View My Students
-                        </a>
-                </div>
+            <a href="{% url 'tutor_panel:tutor_students' %}"
+               style="
+                    display: inline-block;
+                    background-color: #007bff;
+                    color: white;
+                    padding: 12px 24px;
+                    border-radius: 8px;
+                    text-decoration: none;
+                    font-weight: 600;
+                    font-size: 15px;
+                    transition: background-color 0.3s ease;
+               "
+               onmouseover="this.style.backgroundColor='#0056b3'"
+               onmouseout="this.style.backgroundColor='#007bff'">
+                View My Students
+            </a>
 
+        </div>
 
         <div class="card">
-            <h3>📋 Attendance & Class Reports</h3>
+            <h3>📋 Attendance *&* Class Reports</h3>
             <p>Record attendance, homework, participation, class feedback and the YouTube recording link.</p>
+
             <a href="{% url 'tutor_panel:tutor_attendance' %}"
                style="display:inline-block;background:#007bff;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:600;"
                onmouseover="this.style.backgroundColor='#0056b3'"
@@ -143,7 +258,12 @@
         </div>
 
     </section>
+
 </main>
+
+<!-- Bootstrap JavaScript for mobile navigation and dropdowns -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

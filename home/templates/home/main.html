@@ -2697,42 +2697,15 @@ html[data-theme="dark"]
 
                 <!-- STUDENT LOGIN -->
 
-<div class="dropdown tutorain-login-dropdown">
-    <button
-        class="btn btn-primary btn-sm dropdown-toggle"
-        type="button"
-        id="tutorainLoginDropdown"
-        data-bs-toggle="dropdown"
-        aria-expanded="false"
-    >
-        👤 Login
-    </button>
 
-    <ul class="dropdown-menu dropdown-menu-end"
-        aria-labelledby="tutorainLoginDropdown">
+<!-- SINGLE LOGIN BUTTON -->
 
-        <li>
-            <a class="dropdown-item" href="{% url 'login' %}">
-                🎓 Login as Student
-            </a>
-        </li>
-
-        <li>
-            <a class="dropdown-item"
-               href="https://www.tutorain.com/tutor_panel/">
-                👨‍👩‍👧 Login as Parent
-            </a>
-        </li>
-
-        <li>
-            <a class="dropdown-item"
-               href="https://www.tutorain.com/tutor_panel/">
-                👨‍🏫 Login as Tutor
-            </a>
-        </li>
-
-    </ul>
-</div>
+<a
+    class="btn btn-primary btn-sm tutorain-login-btn"
+    href="https://www.tutorain.com/tutor_panel/"
+>
+    👤 Login
+</a>
 
             </div>
 
@@ -2912,19 +2885,14 @@ html[data-theme="dark"]
 
                 <!-- MAIN HEADING -->
 
-                <h1 class="tutorain-hero-title">
 
-                    Study smarter.
-                    <br>
+l
+<h1 class="tutorain-hero-title">
+    <span class="be-a-text">Be a</span>
+    <span class="tutorain-brand-text">Tutorain<span class="brand-dot">.</span></span>
+</h1>
 
-                    Learn
-                    <span>anytime.</span>
 
-                    <br>
-
-                    <strong>Anywhere.</strong>
-
-                </h1>
 
 
                 <!-- DESCRIPTION -->
@@ -3000,7 +2968,7 @@ html[data-theme="dark"]
 
 
                     <a
-                        href="{% url 'login' %}"
+                        href="https://www.tutorain.com/tutor_panel/"
                         class="tutorain-login-btn"
                     >
 
@@ -3292,6 +3260,52 @@ html[data-theme="dark"]
 
 
 <style>
+
+.tutorain-hero-title {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    font-family: 'Poppins', sans-serif;
+    line-height: 1;
+    font-weight: 800;
+}
+
+/* Be a — dark charcoal for a white background */
+.tutorain-hero-title .be-a-text {
+    font-size: clamp(3.5rem, 8vw, 6rem);
+    font-weight: 800;
+    letter-spacing: -2.5px;
+    color: #202923;
+    margin-bottom: 10px;
+}
+
+/* Tutorain — elegant forest green */
+.tutorain-hero-title .tutorain-brand-text {
+    font-size: clamp(3.8rem, 9.5vw, 7.5rem);
+    font-weight: 900;
+    letter-spacing: -4px;
+    color: #285943;
+    position: relative;
+}
+
+/* Subtle sage-green accent */
+.tutorain-hero-title .brand-dot {
+    color: #82977D;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .tutorain-hero-title .be-a-text {
+        font-size: clamp(3rem, 11vw, 4.5rem);
+        letter-spacing: -1.5px;
+    }
+
+    .tutorain-hero-title .tutorain-brand-text {
+        font-size: clamp(3.2rem, 12vw, 5.5rem);
+        letter-spacing: -2.5px;
+    }
+}
 
 /* =========================================================
    TUTORAIN HERO
