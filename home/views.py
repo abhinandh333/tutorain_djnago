@@ -502,69 +502,125 @@ def get_sheet_data():
 
 
 #correct
-def get_recorded_classes(student_email):
+
+def get_recorded_classes(student_email, student_doc_id=None):
     """
-    Retrieve recorded classes for a student from the
-    recorded_classes tab of the existing Google spreadsheet.
+    Get recorded classes from Google Sheets and Firestore class reports.
+    Only return recordings belonging to the logged-in student.
     """
 
-    if not student_email:
-        return []
-
-    # Read the recorded_classes tab, NOT the revision-video tab.
-    url = f"https://opensheet.elk.sh/{SHEET_ID}/recorded_classes"
-
-    try:
-        response = requests.get(url, timeout=15)
-        response.raise_for_status()
-        rows = response.json()
-    except (requests.RequestException, ValueError) as error:
-        print("Recorded classes sheet error:", error)
-        return []
-
-    student_email = str(student_email).strip().lower()
     recordings = []
+    seen_links = set()
 
-    for row in rows:
+    # Normalize email for matching.
+    student_email = str(student_email or "").strip().lower()
 
-        # Normalize column names and values.
-        row = {
-            str(key or "").strip().lower(): str(value or "").strip()
-            for key, value in row.items()
-        }
+    # --------------------------------------------------
+    # 1. GET RECORDINGS FROM GOOGLE SHEETS
+    # --------------------------------------------------
+    if student_email:
+        url = f"https://opensheet.elk.sh/{SHEET_ID}/recorded_classes"
 
-        # Match the Firebase email stored in the spreadsheet.
-        row_email = row.get("student_email", "").strip().lower()
+        try:
+            response = requests.get(url, timeout=15)
+            response.raise_for_status()
+            rows = response.json()
 
-        if row_email != student_email:
-            continue
+            for row in rows:
+                normalized_row = {
+                    str(key or "").strip().lower(): str(value or "").strip()
+                    for key, value in row.items()
+                }
 
-        video_link = (
-            row.get("video_link")
-            or row.get("video link")
-            or ""
-        ).strip()
+                row_email = normalized_row.get("student_email", "").lower()
 
-        if not video_link.startswith(("https://", "http://")):
-            continue
+                if row_email != student_email:
+                    continue
 
-        recordings.append({
-            "title": row.get("title") or "Recorded Class",
-            "class_date": (
-                row.get("date")
-                or row.get("duration")
-                or ""
-            ),
-            "video_link": video_link,
-            "tutor_name": (
-                row.get("tutor_name")
-                or row.get("tutor name")
-                or ""
-            ),
-        })
+                video_link = (
+                    normalized_row.get("video_link")
+                    or normalized_row.get("video link")
+                    or ""
+                ).strip()
 
-    print("Student email:", student_email)
-    print("Recorded classes found:", len(recordings))
+                if not video_link.startswith(("https://", "http://")):
+                    continue
+
+                if video_link in seen_links:
+                    continue
+
+                recordings.append({
+                    "title": normalized_row.get("title") or "Recorded Class",
+                    "class_date": (
+                        normalized_row.get("date")
+                        or normalized_row.get("class_date")
+                        or ""
+                    ),
+                    "video_link": video_link,
+                    "tutor_name": (
+                        normalized_row.get("tutor_name")
+                        or normalized_row.get("tutor name")
+                        or ""
+                    ),
+                })
+
+                seen_links.add(video_link)
+
+        except (requests.RequestException, ValueError) as error:
+            print("Google Sheets recording error:", error)
+
+    # --------------------------------------------------
+    # 2. GET RECORDINGS FROM FIRESTORE CLASS REPORTS
+    # --------------------------------------------------
+    if student_doc_id:
+        try:
+            db = firestore.client(app=app)
+
+            reports = (
+                db.collection("class_reports")
+                .where("student_id", "==", student_doc_id)
+                .stream()
+            )
+
+            for report_doc in reports:
+                report = report_doc.to_dict() or {}
+
+                # Tutor Portal field: recording_url
+                video_link = str(
+                    report.get("recording_url")
+                    or report.get("video_link")
+                    or ""
+                ).strip()
+
+                if not video_link.startswith(("https://", "http://")):
+                    continue
+
+                if video_link in seen_links:
+                    continue
+
+                recordings.append({
+                    "title": (
+                        report.get("subject")
+                        or report.get("topic_taught")
+                        or "Recorded Class"
+                    ),
+                    "class_date": str(report.get("class_date") or ""),
+                    "video_link": video_link,
+                    "tutor_name": str(report.get("tutor_name") or ""),
+                })
+
+                seen_links.add(video_link)
+
+        except Exception as error:
+            print("Firestore recording error:", error)
+
+    # Newest recordings first when dates are stored as YYYY-MM-DD.
+    recordings.sort(
+        key=lambda item: item.get("class_date", ""),
+        reverse=True
+    )
+
+    print("Recordings found for student:", len(recordings))
 
     return recordings
 
@@ -773,7 +829,10 @@ def firebase_student_dashboard(request):
     ).strip().lower()
 
     # Retrieve recordings belonging to this student
-    recorded_classes = get_recorded_classes(student_email)
+    recorded_classes = get_recorded_classes(
+        student_email,
+        student_doc_id=student_doc.id
+)
     # Get live classes using the same student email
     live_classes = get_live_classes(student_email)
     revision_videos = get_revision_videos(student_email)
