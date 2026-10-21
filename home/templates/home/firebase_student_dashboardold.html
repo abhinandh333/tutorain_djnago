@@ -1,0 +1,464 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tutorain | Student Dashboard</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.2/css/bootstrap.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root{
+    --navy:#0f1f3d;
+    --ink:#14213d;
+    --text:#3d4a63;
+    --muted:#6b778c;
+    --bg:#f5f7fa;
+    --white:#fff;
+    --line:#e3e8ef;
+    --accent:#2748c9;
+    --accent-dark:#1d37a0;
+    --accent-soft:#eaeffd;
+    --ok:#0f7b57;
+    --ok-soft:#e6f4ee;
+    --r:10px;
+    --shadow:0 1px 2px rgba(15,31,61,.05),0 4px 16px rgba(15,31,61,.04);
+}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"IBM Plex Sans",-apple-system,"Segoe UI",Arial,sans-serif;font-size:15px;line-height:1.6}
+h1,h2,h3{color:var(--ink)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* Site header */
+.site-header{background:var(--white);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+.site-header .nav-link{color:var(--ink);font-weight:500;font-size:14px}
+.site-header .nav-link:hover{color:var(--accent)}
+.site-header .btn-outline-primary{color:var(--accent);border-color:var(--accent);border-radius:8px;font-weight:600}
+.site-header .btn-outline-primary:hover{background:var(--accent);border-color:var(--accent);color:#fff}
+.site-header .dropdown-menu{border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.site-header .dropdown-item:active{background:var(--accent)}
+
+/* Layout */
+.dash{display:flex;align-items:flex-start;max-width:1280px;margin:0 auto;padding:28px 24px 8px;gap:28px}
+.side{width:220px;flex-shrink:0;position:sticky;top:92px;padding:8px 0}
+.side a{display:block;padding:9px 14px;margin-bottom:2px;border-left:3px solid transparent;color:var(--text);font-size:14px;font-weight:500;text-decoration:none;transition:color .15s,background .15s}
+.side a:hover{color:var(--accent);background:#eef1f7;text-decoration:none}
+.side a.active{border-left-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:600}
+.main{flex:1;min-width:0}
+
+/* Page header + summary */
+.page-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:18px}
+.page-head h1{margin:0;font-size:26px;font-weight:600;letter-spacing:-.015em}
+.page-head p{margin:2px 0 0;font-size:14px;color:var(--muted)}
+.summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:22px;background:var(--white);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.kpi{padding:22px 24px;border-left:1px solid var(--line)}
+.kpi:first-child{border-left:0}
+.kpi-label{font-size:13px;font-weight:500;color:var(--muted)}
+.kpi-num{margin-top:2px;font-size:32px;line-height:1.2;font-weight:600;letter-spacing:-.02em;color:var(--ink)}
+.bar{height:6px;margin-top:12px;border-radius:99px;background:#e6eaf1;overflow:hidden}
+.bar span{display:block;height:100%;max-width:100%;border-radius:99px;background:var(--accent)}
+
+/* Panels */
+.panel{margin-bottom:22px;scroll-margin-top:92px;background:var(--white);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.panel-head{padding:18px 26px;border-bottom:1px solid var(--line)}
+.panel-head h2{margin:0;font-size:17px;font-weight:600}
+.panel-head p{margin:1px 0 0;font-size:13px;color:var(--muted)}
+.panel-body{padding:24px 26px}
+
+/* Profile */
+.profile{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 40px;margin:0}
+.profile div{padding:13px 0;border-bottom:1px solid var(--line);min-width:0}
+.profile div:nth-last-child(-n+2){border-bottom:0}
+.profile dt{margin:0 0 1px;font-size:12px;font-weight:500;color:var(--muted)}
+.profile dd{margin:0;font-weight:500;color:var(--ink);overflow-wrap:anywhere}
+
+/* Reports */
+.toggle{display:flex;align-items:center;justify-content:space-between;width:100%;padding:11px 16px;border:1px solid var(--line);border-radius:8px;background:#fafbfd;color:var(--ink);font:inherit;font-weight:600;font-size:14px;cursor:pointer;transition:border-color .15s,background .15s}
+.toggle:hover{border-color:#b9c6ef;background:var(--accent-soft)}
+.toggle .chev{font-size:18px;line-height:1;color:var(--muted);transition:transform .2s}
+.toggle[aria-expanded="true"] .chev{transform:rotate(180deg)}
+#reportContent{padding-top:8px}
+#reportContent[hidden]{display:none}
+.report{padding:18px 0;border-bottom:1px solid var(--line)}
+.report:last-child{border-bottom:0;padding-bottom:0}
+.report-top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px;margin-bottom:10px}
+.report-top h3{margin:0;font-size:15px;font-weight:600}
+.report-top span{font-size:13px;color:var(--muted)}
+.report-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 32px;margin:0}
+.report-grid dt{font-size:12px;font-weight:500;color:var(--muted)}
+.report-grid dd{margin:0;overflow-wrap:anywhere}
+.report-grid .wide{grid-column:1/-1;padding:12px 14px;border-left:3px solid var(--accent);background:#f6f8fc;border-radius:0 6px 6px 0}
+
+/* Cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.item{display:flex;flex-direction:column;gap:14px;padding:20px;border:1px solid var(--line);border-radius:var(--r);background:var(--white);min-width:0;transition:border-color .2s,box-shadow .2s}
+.item:hover{border-color:#b9c6ef;box-shadow:var(--shadow)}
+.item h3{margin:0;font-size:16px;font-weight:600;line-height:1.35;overflow-wrap:anywhere}
+.item-meta{margin:2px 0 0;font-size:13px;color:var(--muted)}
+.badge-live{display:inline-flex;align-items:center;gap:6px;width:fit-content;padding:2px 10px;border-radius:99px;background:var(--ok-soft);color:var(--ok);font-size:12px;font-weight:600}
+.badge-live::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--ok)}
+.item .spacer{margin-top:auto}
+
+/* Buttons */
+.act{display:inline-flex;align-items:center;justify-content:center;width:100%;padding:10px 16px;border-radius:8px;background:var(--accent);color:#fff;font-size:14px;font-weight:600;text-decoration:none;transition:background .15s}
+.act:hover{background:var(--accent-dark);color:#fff;text-decoration:none}
+.act.live{background:var(--ok)}
+.act.live:hover{background:#0b6246}
+.act.auto{width:auto}
+
+/* Revision */
+.rev{padding:24px 26px;margin-bottom:12px;border-radius:8px;color:#fff;background:var(--navy)}
+.rev:last-child{margin-bottom:0}
+.rev h3{margin:0 0 6px;font-size:19px;font-weight:600;color:#fff}
+.rev p{margin:0 0 16px;max-width:520px;color:#c3cde3}
+.rev .act{background:#fff;color:var(--navy)}
+.rev .act:hover{background:#e6ebf6;color:var(--navy)}
+
+/* Empty + notice */
+.empty{grid-column:1/-1;padding:30px 20px;text-align:center;border:1px dashed #cfd7e3;border-radius:8px;background:#fafbfd}
+.empty h3{margin:0 0 4px;font-size:15px;font-weight:600}
+.empty p{margin:0;font-size:14px;color:var(--muted)}
+.notice{padding:16px 18px;border-left:3px solid #c28a14;border-radius:0 8px 8px 0;background:#fdf8ec}
+.notice h3{margin:0 0 2px;font-size:15px;font-weight:600;color:#6b4a07}
+.notice p{margin:0;font-size:14px;color:#80600f}
+.foot{padding:8px 0 28px;text-align:center;font-size:13px;color:var(--muted)}
+
+/* Responsive */
+@media (max-width:960px){
+    .dash{display:block;padding:16px 14px 4px}
+    .side{position:sticky;top:64px;z-index:30;width:auto;display:flex;gap:2px;overflow-x:auto;margin:0 -14px 16px;padding:0 14px;background:var(--white);border-bottom:1px solid var(--line)}
+    .side a{flex-shrink:0;margin:0;padding:12px 12px;border-left:0;border-bottom:2px solid transparent;white-space:nowrap}
+    .side a.active{border-left:0;border-bottom-color:var(--accent);background:transparent}
+    .panel{scroll-margin-top:130px}
+    .summary{grid-template-columns:1fr}
+    .kpi{border-left:0;border-top:1px solid var(--line);padding:16px 20px}
+    .kpi:first-child{border-top:0}
+    .profile,.report-grid{grid-template-columns:1fr}
+    .profile div:nth-last-child(2){border-bottom:1px solid var(--line)}
+    .panel-head,.panel-body{padding-left:18px;padding-right:18px}
+}
+@media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *{transition-duration:.01ms!important}
+}
+</style>
+</head>
+
+<body>
+
+<!-- ===== SITE HEADER ===== -->
+<header class="site-header">
+    <div class="container">
+        <div class="row align-items-center py-2">
+            <div class="col-6 col-lg-3">
+                <a class="navbar-brand" href="{% url 'home' %}">
+                    <img src="{% static 'website/img/logo/logo1.png' %}"
+                         alt="Tutorain" style="height: 45px;">
+                </a>
+            </div>
+
+            <div class="col-6 col-lg-9">
+                <nav class="navbar navbar-expand-lg navbar-light p-0">
+                    <button class="navbar-toggler" type="button"
+                            data-toggle="collapse" data-target="#mainNavbar"
+                            aria-controls="mainNavbar" aria-expanded="false"
+                            aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'home' %}">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'findsub' %}">Find Tutor</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'contact' %}">Contact Us</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">More</a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="{% url 'maca' %}">MACA</a>
+                                    <a class="dropdown-item" href="{% url 'comingsoon' %}">MAAI</a>
+                                    <a class="dropdown-item" href="{% url 'comingsoon' %}">Feedback</a>
+                                </div>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-outline-primary btn-sm m-1"
+                                   href="{% url 'findsub' %}">Join Tutorain</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-outline-primary btn-sm m-1"
+                                   href="{% url 'login' %}">Login</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="dash">
+
+    <!-- ===== SIDEBAR ===== -->
+    <nav class="side" aria-label="Student dashboard">
+        <p class="side-title">Dashboard</p>
+        <a href="#home" class="active">Home</a>
+        <a href="#profile">My profile</a>
+        <a href="#attendance">Attendance</a>
+        <a href="#reports">Class reports</a>
+        <a href="#classes">Live classes</a>
+        <a href="#recorded">Recorded classes</a>
+        <a href="#revision">Revision videos</a>
+        <a href="#payments">Payments</a>
+    </nav>
+
+    <main class="main" id="home">
+
+        <!-- ===== WELCOME ===== -->
+        <div class="page-head">
+            <div>
+                <h1>Welcome back, {{ student.name|default:"Student" }}</h1>
+                <p>Your classes, attendance and tutor feedback in one place.</p>
+            </div>
+        </div>
+
+        <!-- ===== STATS ===== -->
+        <div class="summary" id="attendance">
+            <div class="kpi">
+                <div class="kpi-label">Total classes</div>
+                <div class="kpi-num">{{ total_classes|default:0 }}</div>
+            </div>
+            <div class="kpi">
+                <div class="kpi-label">Classes attended</div>
+                <div class="kpi-num">{{ attended_classes|default:0 }}</div>
+            </div>
+            <div class="kpi">
+                <div class="kpi-label">Attendance rate</div>
+                <div class="kpi-num">{{ attendance_percentage|default:0 }}%</div>
+                <div class="bar"><span style="width: {{ attendance_percentage|default:0 }}%"></span></div>
+            </div>
+        </div>
+
+        <!-- ===== PROFILE ===== -->
+        <section class="panel" id="profile">
+            <div class="panel-head">
+                <h2>My profile</h2>
+                <p>Your personal and academic details</p>
+            </div><div class="panel-body">
+            <dl class="profile">
+                <div><dt>Student name</dt><dd>{{ student.name|default:"Not provided" }}</dd></div>
+                <div><dt>Class / grade</dt><dd>{{ student.student_class|default:"Not provided" }}</dd></div>
+                <div><dt>Subjects</dt><dd>{{ student.subjects|default:"Not provided" }}</dd></div>
+                <div><dt>Student email</dt><dd>{{ student.student_email|default:student.firebase_email|default:"Not provided" }}</dd></div>
+                <div><dt>Guardian name</dt><dd>{{ student.guardian_name|default:"Not provided" }}</dd></div>
+                <div><dt>Guardian email</dt><dd>{{ student.guardian_email|default:"Not provided" }}</dd></div>
+                <div><dt>Guardian phone</dt><dd>{{ student.guardian_phone|default:"Not provided" }}</dd></div>
+            </dl></div>
+        </section>
+
+        <!-- ===== CLASS REPORTS ===== -->
+        <section class="panel" id="reports">
+            <div class="panel-head">
+                <h2>Class reports</h2>
+                <p>Lesson summaries and tutor feedback</p>
+            </div><div class="panel-body">
+
+            <button type="button" class="toggle" id="reportToggle"
+                    aria-expanded="false" aria-controls="reportContent">
+                <span id="reportLabel">View class reports</span>
+                <span class="chev" aria-hidden="true">⌄</span>
+            </button>
+
+            <div id="reportContent" hidden>
+                {% for report in reports %}
+                    <div class="report">
+                        <div class="report-top">
+                            <h3>{{ report.subject|default:"Class" }}</h3>
+                            <span>{{ report.class_date|default:"Date not provided" }}</span>
+                        </div>
+                        <dl class="report-grid">
+                            <div>
+                                <dt>Attendance</dt>
+                                <dd>{{ report.attendance_status|default:"Not recorded" }}</dd>
+                            </div>
+                            <div>
+                                <dt>Topic taught</dt>
+                                <dd>{{ report.topic_taught|default:"Not provided" }}</dd>
+                            </div>
+                            <div class="wide">
+                                <dt>Tutor feedback</dt>
+                                <dd>{{ report.tutor_remarks|default:"No feedback provided" }}</dd>
+                            </div>
+                        </dl>
+                    </div>
+                {% empty %}
+                    <div class="empty">
+                        <h3>No class reports yet</h3>
+                        <p>Reports appear here after your tutor submits them.</p>
+                    </div>
+                {% endfor %}
+            </div></div>
+        </section>
+
+        <!-- ===== LIVE CLASSES ===== -->
+        <section class="panel" id="classes">
+            <div class="panel-head">
+                <h2>Live classes</h2>
+                <p>Join your scheduled online sessions</p>
+            </div><div class="panel-body">
+            <div class="grid">
+                {% for live_class in live_classes %}
+                    <div class="item live">
+                        <span class="badge-live">Online</span>
+                        <div>
+                            <h3>{{ live_class.title|default:"Live class" }}</h3>
+                            <p class="item-meta">{{ live_class.time|default:"Time not specified" }}</p>
+                        </div>
+                        <div class="spacer">
+                            {% if live_class.live_link %}
+                                <a href="{{ live_class.live_link }}" target="_blank" rel="noopener noreferrer" class="act live">Join class</a>
+                            {% else %}
+                                <span class="item-meta">The meeting link isn't available yet.</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="empty">
+                        <h3>No live classes scheduled</h3>
+                        <p>New classes show up here as soon as they're added to your account.</p>
+                    </div>
+                {% endfor %}
+            </div></div>
+        </section>
+
+        <!-- ===== RECORDED CLASSES ===== -->
+        <section class="panel" id="recorded">
+            <div class="panel-head">
+                <h2>Recorded classes</h2>
+                <p>Rewatch your previous lessons</p>
+            </div><div class="panel-body">
+            <div class="grid">
+                {% for video in recorded_classes %}
+                    <div class="item">
+                        <div>
+                            <h3>{{ video.title|default:"Recorded class" }}</h3>
+                            {% if video.class_date %}<p class="item-meta">{{ video.class_date }}</p>{% endif %}
+                            {% if video.tutor_name %}<p class="item-meta">{{ video.tutor_name }}</p>{% endif %}
+                        </div>
+                        <div class="spacer">
+                            <a class="act" href="{{ video.video_link }}" target="_blank" rel="noopener noreferrer">Watch recording</a>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="empty">
+                        <h3>No recordings yet</h3>
+                        <p>Recordings of your classes will be listed here.</p>
+                    </div>
+                {% endfor %}
+            </div></div>
+        </section>
+
+        <!-- ===== REVISION ===== -->
+        <section class="panel" id="revision">
+            <div class="panel-head">
+                <h2>Tutorain special revision</h2>
+                <p>Extra resources to prepare for exams</p>
+            </div><div class="panel-body">
+            {% for video in revision_videos %}
+                <div class="rev">
+                    <h3>{{ video.video_title|default:video.title|default:"Tutorain special revision video" }}</h3>
+                    <p>Revise key topics and strengthen your understanding before exams.</p>
+                    {% if video.link %}
+                        <a href="{{ video.link }}" target="_blank" rel="noopener noreferrer" class="act auto">Open revision resource</a>
+                    {% endif %}
+                </div>
+            {% empty %}
+                <div class="empty" style="grid-column:auto">
+                    <h3>No revision videos yet</h3>
+                    <p>Revision videos for your account will appear here when they're ready.</p>
+                </div>
+            {% endfor %}</div>
+        </section>
+
+        <!-- ===== PAYMENTS ===== -->
+        <section class="panel" id="payments">
+            <div class="panel-head">
+                <h2>Payments and fees</h2>
+                <p>Your tuition fee information</p>
+            </div><div class="panel-body">
+            <div class="notice">
+                <h3>Payment records coming soon</h3>
+                <p>Your fee details and payment history will appear here once payments are connected.</p>
+            </div></div>
+        </section>
+
+        <footer class="foot">© Tutorain</footer>
+    </main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    // Collapsible class reports
+    var toggle = document.getElementById("reportToggle");
+    var content = document.getElementById("reportContent");
+    var label = document.getElementById("reportLabel");
+
+    if (toggle && content) {
+        toggle.addEventListener("click", function () {
+            var open = toggle.getAttribute("aria-expanded") === "true";
+            toggle.setAttribute("aria-expanded", String(!open));
+            content.hidden = open;
+            label.textContent = open ? "View class reports" : "Hide class reports";
+        });
+    }
+
+    // Sidebar: smooth scroll + highlight current section
+    var links = document.querySelectorAll(".side a[href^='#']");
+
+    function setActive(id) {
+        links.forEach(function (l) {
+            l.classList.toggle("active", l.getAttribute("href") === id);
+        });
+    }
+
+    links.forEach(function (link) {
+        link.addEventListener("click", function (e) {
+            var id = this.getAttribute("href");
+            var target = document.querySelector(id);
+            if (!target) return;
+            e.preventDefault();
+            history.replaceState(null, "", id);
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+            setActive(id);
+        });
+    });
+
+    if ("IntersectionObserver" in window) {
+        var observer = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) setActive("#" + entry.target.id);
+            });
+        }, { rootMargin: "-20% 0px -70% 0px" });
+
+        links.forEach(function (l) {
+            var el = document.querySelector(l.getAttribute("href"));
+            if (el) observer.observe(el);
+        });
+    }
+});
+</script>
+
+</body>
+</html>

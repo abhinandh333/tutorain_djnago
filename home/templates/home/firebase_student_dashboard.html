@@ -228,6 +228,13 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
                 <h1>Welcome back, {{ student.name|default:"Student" }}</h1>
                 <p>Your classes, attendance and tutor feedback in one place.</p>
             </div>
+            <form method="post" action="{% url 'logout' %}" style="margin:0;flex-shrink:0;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-danger btn-sm"
+                        style="border-radius:8px;font-weight:600;padding:8px 14px;">
+                    Log Out
+                </button>
+            </form>
         </div>
 
         <!-- ===== STATS ===== -->
