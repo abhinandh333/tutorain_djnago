@@ -136,6 +136,69 @@
             cursor: not-allowed;
         }
 
+
+        /* Password visibility control */
+        .password-field {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .login-container .password-field input {
+            margin-bottom: 0;
+            padding-right: 78px;
+        }
+
+        .login-container .password-toggle {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            width: auto;
+            padding: 6px 8px;
+            background: transparent;
+            color: #2563eb;
+            font-size: 13px;
+            border: none;
+        }
+
+        .login-container .password-toggle:hover {
+            background: transparent;
+            color: #1d4ed8;
+        }
+
+        /* Sign-in loading indicator */
+        .login-loading {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 0 0 16px;
+            padding: 12px;
+            color: #1d4ed8;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .login-loading.active {
+            display: flex;
+        }
+
+        .loading-spinner {
+            width: 19px;
+            height: 19px;
+            border: 3px solid #bfdbfe;
+            border-top-color: #2563eb;
+            border-radius: 50%;
+            animation: tutorain-spin 0.8s linear infinite;
+            flex-shrink: 0;
+        }
+
+        @keyframes tutorain-spin {
+            to { transform: rotate(360deg); }
+        }
+
         .error-message {
             display: none;
             color: #b91c1c;
@@ -345,14 +408,28 @@
 
             <label for="password">Password</label>
 
-            <input
-                type="password"
-                id="password"
-                name="password"
-                placeholder="Enter your password"
-                autocomplete="current-password"
-                required
-            >
+            <div class="password-field">
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Enter your password"
+                    autocomplete="current-password"
+                    required
+                >
+                <button
+                    type="button"
+                    id="togglePassword"
+                    class="password-toggle"
+                    aria-label="Show password"
+                    aria-pressed="false"
+                >Show</button>
+            </div>
+
+            <div id="loginLoading" class="login-loading" role="status" aria-live="polite">
+                <span class="loading-spinner" aria-hidden="true"></span>
+                <span id="loadingText">Signing in securely... Please wait.</span>
+            </div>
 
             <button type="submit" id="loginButton">
                 Sign In
@@ -545,6 +622,17 @@
 
 
     // Handle login
+    // Show or hide the password without changing the entered value.
+    document.getElementById("togglePassword").addEventListener("click", function () {
+        const passwordInput = document.getElementById("password");
+        const isHidden = passwordInput.type === "password";
+
+        passwordInput.type = isHidden ? "text" : "password";
+        this.textContent = isHidden ? "Hide" : "Show";
+        this.setAttribute("aria-label", isHidden ? "Hide password" : "Show password");
+        this.setAttribute("aria-pressed", String(isHidden));
+    });
+
     document.getElementById("loginForm").addEventListener(
         "submit",
         async function(event) {
@@ -583,6 +671,7 @@
 
             button.disabled = true;
             button.textContent = "Signing in...";
+            document.getElementById("loginLoading").classList.add("active");
 
             try {
 
@@ -700,6 +789,7 @@
 
                 button.disabled = false;
                 button.textContent = "Sign In";
+                document.getElementById("loginLoading").classList.remove("active");
             }
         }
     );
