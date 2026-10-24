@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tutorain | Attendance & Class Report</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f4f7fb;color:#1e293b}
+header{background:#173b70;color:white;padding:18px 22px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+header a,.btn{display:inline-block;background:#0878e8;color:white;padding:11px 17px;border-radius:7px;text-decoration:none;border:0;font-weight:600;cursor:pointer}
+main{max-width:1100px;margin:25px auto;padding:0 16px}.panel{background:white;padding:22px;border-radius:12px;box-shadow:0 3px 12px #0000000d;margin-bottom:22px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:15px}.field{display:flex;flex-direction:column;gap:7px;margin-bottom:13px}
+label{font-weight:600;font-size:14px}input,select,textarea{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:7px;font:inherit;background:white}textarea{min-height:85px}
+h2{color:#173b70;margin-top:0}.section-title{margin:22px 0 12px;border-bottom:1px solid #e2e8f0;padding-bottom:8px}
+.messages{padding:0;list-style:none}.messages li{padding:12px;border-radius:7px;margin-bottom:8px;background:#eff6ff}.messages .error{background:#fee2e2}.messages .success{background:#dcfce7}
+.table-wrap{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:650px}th,td{text-align:left;padding:11px;border-bottom:1px solid #e2e8f0}th{background:#f1f5f9}
+.small{font-size:13px;color:#64748b}.video-link{color:#0878e8;font-weight:600}
+</style>
+</head>
+<body>
+<header><strong>Tutorain | Attendance & Class Reports</strong><a href="{% url 'tutor_panel:dashboard' %}">Back to Dashboard</a></header>
+<main>
+{% if messages %}<ul class="messages">{% for message in messages %}<li class="{{ message.tags }}">{{ message }}</li>{% endfor %}</ul>{% endif %}
+<section class="panel">
+<h2>Submit Class Evaluation</h2>
+<p class="small">Submit one report after each class. The recording link is optional. Use a YouTube link that the intended viewers are permitted to watch.</p>
+{% if not students %}<p>No active students are assigned to your account. Please contact the administrator.</p>{% else %}
+<form method="post">
+{% csrf_token %}
+<h3 class="section-title">A. Student and Class Details</h3>
+<div class="grid">
+<div class="field"><label for="student_id">Student *</label><select id="student_id" name="student_id" required><option value="">Choose a student</option>{% for student in students %}<option value="{{ student.student_id }}">{{ student.name }} — {{ student.student_class }}</option>{% endfor %}</select></div>
+<div class="field"><label for="subject">Subject *</label><input id="subject" name="subject" required placeholder="e.g. Mathematics"></div>
+<div class="field"><label for="class_date">Class date *</label><input id="class_date" name="class_date" type="date" value="{{ today }}" required></div>
+<div class="field"><label for="scheduled_time">Scheduled start time</label><input id="scheduled_time" name="scheduled_time" type="time"></div>
+<div class="field"><label for="actual_start_time">Actual start time</label><input id="actual_start_time" name="actual_start_time" type="time"></div>
+<div class="field"><label for="duration">Class duration (minutes)</label><input id="duration" name="duration" type="number" min="1" max="300" placeholder="e.g. 60"></div>
+</div>
+<h3 class="section-title">B. Attendance and Punctuality</h3>
+<div class="grid">
+<div class="field"><label>Attendance status *</label><select name="attendance_status" required><option value="">Choose</option><option>Present</option><option>Absent</option></select></div>
+<div class="field"><label>Joined on time?</label><select name="joined_on_time"><option value="">Choose</option><option>On time</option><option>Late</option><option>Not applicable</option></select></div>
+<div class="field"><label>Minutes late (if applicable)</label><input name="late_minutes" type="number" min="0" max="300"></div>
+<div class="field"><label>Completed full class?</label><select name="full_class"><option value="">Choose</option><option>Yes</option><option>No</option><option>Not applicable</option></select></div>
+</div>
+<h3 class="section-title">C. Homework</h3>
+<div class="grid">
+<div class="field"><label>Homework assigned?</label><select name="homework_assigned"><option value="">Choose</option><option>Yes</option><option>No</option></select></div>
+<div class="field"><label>Homework completion</label><select name="homework_status"><option value="">Choose</option><option>Fully completed</option><option>Partially completed</option><option>Not completed</option><option>Not applicable</option></select></div>
+<div class="field"><label>Homework quality</label><select name="homework_quality"><option value="">Choose</option><option>Excellent</option><option>Good</option><option>Needs improvement</option><option>Not checked</option><option>Not applicable</option></select></div>
+</div>
+<h3 class="section-title">D. Participation and Understanding</h3>
+<div class="grid">
+<div class="field"><label>Class participation</label><select name="participation"><option value="">Choose</option><option>Very active</option><option>Active</option><option>Average</option><option>Inactive</option><option>Not applicable</option></select></div>
+<div class="field"><label>Attention during class</label><select name="attention"><option value="">Choose</option><option>Always</option><option>Mostly</option><option>Sometimes</option><option>Rarely</option><option>Not applicable</option></select></div>
+<div class="field"><label>Answering questions</label><select name="question_answering"><option value="">Choose</option><option>Excellent</option><option>Good</option><option>Average</option><option>Needs improvement</option><option>Not applicable</option></select></div>
+<div class="field"><label>Topic understanding</label><select name="topic_understanding"><option value="">Choose</option><option>Fully understood</option><option>Partially understood</option><option>Needs revision</option><option>Not applicable</option></select></div>
+<div class="field"><label>Class activities</label><select name="activities_completed"><option value="">Choose</option><option>Fully</option><option>Partially</option><option>Not completed</option><option>Not applicable</option></select></div>
+<div class="field"><label>Revision required?</label><select name="revision_required"><option value="">Choose</option><option>Yes</option><option>No</option></select></div>
+</div>
+<h3 class="section-title">E. Learning and Recording</h3>
+<div class="grid">
+<div class="field"><label for="topic_taught">Topic taught</label><input id="topic_taught" name="topic_taught" placeholder="Topic covered in this class"></div>
+<div class="field"><label for="performance">Marks/performance (optional)</label><input id="performance" name="performance" placeholder="e.g. 8/10 or short note"></div>
+<div class="field"><label for="suggested_homework">Suggested homework</label><input id="suggested_homework" name="suggested_homework"></div>
+</div>
+<div class="field"><label for="recording_url">YouTube class recording link (optional)</label><input id="recording_url" name="recording_url" type="url" placeholder="https://www.youtube.com/watch?v=..." inputmode="url"><span class="small">Paste the recorded class URL. The system stores the link; it does not upload the video to YouTube.</span></div>
+<div class="field"><label for="tutor_remarks">Tutor's remarks / feedback</label><textarea id="tutor_remarks" name="tutor_remarks" placeholder="Progress, challenges, and next steps"></textarea></div>
+<button class="btn" type="submit">Save Class Report</button>
+</form>
+{% endif %}
+</section>
+<section class="panel">
+<h2>My Recent Class Reports</h2>
+{% if reports %}
+<div class="table-wrap"><table><thead><tr><th>Date</th><th>Student</th><th>Subject</th><th>Attendance</th><th>Homework</th><th>Recording</th></tr></thead><tbody>
+{% for report in reports %}<tr><td>{{ report.class_date }}</td><td>{{ report.student_name }}</td><td>{{ report.subject }}</td><td>{{ report.attendance_status }}</td><td>{{ report.homework_status|default:"—" }}</td><td>{% if report.recording_url %}<a class="video-link" href="{{ report.recording_url }}" target="_blank" rel="noopener noreferrer">Watch recording ↗</a>{% else %}—{% endif %}</td></tr>{% endfor %}
+</tbody></table></div>
+{% else %}<p>No class reports submitted yet.</p>{% endif %}
+</section>
+</main>
+</body>
+</html>

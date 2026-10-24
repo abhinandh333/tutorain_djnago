@@ -827,10 +827,8 @@ def _is_tutorain_admin(request):
 
 def manage_students(request):
     """Admin-only student registration, Firebase login creation and editing."""
-
     if not request.session.get("firebase_uid"):
         return redirect("tutor_panel:login")
-
     if not _is_tutorain_admin(request):
         return redirect("tutor_panel:admin_dashboard")
 
@@ -848,45 +846,34 @@ def manage_students(request):
             subjects = (request.POST.get("subjects") or "").strip()
             guardian_name = (request.POST.get("guardian_name") or "").strip()
             guardian_phone = (request.POST.get("guardian_phone") or "").strip()
-            guardian_email = (
-                request.POST.get("guardian_email") or ""
-            ).strip().lower()
-            tutor_email = (
-                request.POST.get("tutor_email") or ""
-            ).strip().lower()
+            guardian_email = (request.POST.get("guardian_email") or "").strip().lower()
+            tutor_email = (request.POST.get("tutor_email") or "").strip().lower()
             status = (request.POST.get("status") or "Active").strip().title()
+            student_email = (request.POST.get("student_email") or "").strip().lower()
+            student_password = request.POST.get("student_password") or ""
 
-            # Validate the required student details.
-            if not all([
-                name,
-                student_class,
-                guardian_name,
-                guardian_phone,
-                guardian_email,
-                tutor_email,
-            ]):
-                messages.error(
-                    request,
-                    "Please complete all required student fields."
-                )
+            if not all([name, student_class, guardian_name, guardian_phone, guardian_email, tutor_email]):
+                messages.error(request, "Please complete all required student fields.")
                 return redirect("tutor_panel:manage_students")
 
             if status not in {"Active", "Inactive"}:
                 status = "Active"
 
-            # Confirm that the selected tutor is approved.
+            from django.core.validators import validate_email
+            from django.core.exceptions import ValidationError
+            try:
+                validate_email(guardian_email)
+                validate_email(student_email)
+            except ValidationError:
+                messages.error(request, "Please enter valid parent and student login email addresses.")
+                return redirect("tutor_panel:manage_students")
+
             tutor_doc = db.collection("tutors").document(tutor_email).get()
             tutor_data = tutor_doc.to_dict() or {} if tutor_doc.exists else {}
-
-            if (
-                not tutor_doc.exists
-                or (tutor_data.get("status") or "").strip().lower()
-                != "approved"
-            ):
+            if not tutor_doc.exists or (tutor_data.get("status") or "").strip().lower() != "approved":
                 messages.error(request, "Please select an approved tutor.")
                 return redirect("tutor_panel:manage_students")
 
-            # Create the student profile data.
             record = {
                 "name": name,
                 "student_class": student_class,
@@ -900,26 +887,13 @@ def manage_students(request):
             }
 
             if action == "create":
-                student_email = (
-                    request.POST.get("student_email") or ""
-                ).strip().lower()
-                student_password = request.POST.get("student_password") or ""
-
                 if not student_email or not student_password:
-                    messages.error(
-                        request,
-                        "Student login email and password are required."
-                    )
+                    messages.error(request, "Student login email and password are required.")
                     return redirect("tutor_panel:manage_students")
-
                 if len(student_password) < 8:
-                    messages.error(
-                        request,
-                        "The student password must contain at least 8 characters."
-                    )
+                    messages.error(request, "The student password must contain at least 8 characters.")
                     return redirect("tutor_panel:manage_students")
 
-                # Create the Firebase Authentication account.
                 try:
                     firebase_user = auth.create_user(
                         email=student_email,
@@ -927,26 +901,15 @@ def manage_students(request):
                         display_name=name,
                         app=firebase_app,
                     )
-
                 except auth.EmailAlreadyExistsError:
-                    messages.error(
-                        request,
-                        "This email already has a Firebase account. "
-                        "Please use a different student login email."
-                    )
+                    messages.error(request, "This email already has a Firebase account. Please use a different student login email.")
+                    return redirect("tutor_panel:manage_students")
+                except Exception as exc:
+                    print("STUDENT FIREBASE CREATE ERROR:", repr(exc), flush=True)
+                    messages.error(request, "Firebase could not create the student account. Please check the configuration and try again.")
                     return redirect("tutor_panel:manage_students")
 
-                except Exception:
-                    messages.error(
-                        request,
-                        "Firebase could not create the student account. "
-                        "Please check your Firebase configuration and try again."
-                    )
-                    return redirect("tutor_panel:manage_students")
-
-                # Link the Firebase account to its Firestore student record.
                 new_ref = students_ref.document()
-
                 record.update({
                     "student_id": new_ref.id,
                     "student_email": student_email,
@@ -954,54 +917,115 @@ def manage_students(request):
                     "firebase_uid": firebase_user.uid,
                     "created_at": datetime.now(timezone.utc),
                 })
-
                 try:
                     new_ref.set(record)
-
-                except Exception:
-                    # Avoid leaving an unlinked Firebase account behind.
+                except Exception as exc:
+                    print("STUDENT FIRESTORE CREATE ERROR:", repr(exc), flush=True)
                     try:
-                        auth.delete_user(
-                            firebase_user.uid,
-                            app=firebase_app,
-                        )
-                    except Exception:
-                        pass
-
-                    messages.error(
-                        request,
-                        "The student record could not be saved. "
-                        "Please check Firestore and try again."
-                    )
+                        auth.delete_user(firebase_user.uid, app=firebase_app)
+                    except Exception as cleanup_error:
+                        print("STUDENT FIREBASE CLEANUP ERROR:", repr(cleanup_error), flush=True)
+                    messages.error(request, "The student record could not be saved. Please check Firestore and try again.")
                     return redirect("tutor_panel:manage_students")
 
-                messages.success(
-                    request,
-                    f"Student {name} added successfully. "
-                    f"Student ID: {new_ref.id}. "
-                    f"Login email: {student_email}. "
-                    "Give the student their password securely."
-                )
+                messages.success(request, f"Student {name} added successfully. Student ID: {new_ref.id}. Login email: {student_email}. Give the password to the student securely.")
 
             else:
-                # Editing an existing student does not create another account.
                 if not student_id:
                     messages.error(request, "Student ID is missing.")
                     return redirect("tutor_panel:manage_students")
 
                 student_ref = students_ref.document(student_id)
                 existing_doc = student_ref.get()
-
                 if not existing_doc.exists:
                     messages.error(request, "Student record was not found.")
                     return redirect("tutor_panel:manage_students")
 
-                student_ref.update(record)
+                existing = existing_doc.to_dict() or {}
+                uid = (existing.get("firebase_uid") or "").strip()
+                old_email = (existing.get("student_email") or existing.get("firebase_email") or "").strip().lower()
 
-                messages.success(
-                    request,
-                    f"Student {name} updated successfully."
-                )
+                # Keep legacy records editable, but only change login credentials when the
+                # Firebase UID is available to safely identify the existing account.
+                auth_user = None
+                if uid:
+                    try:
+                        auth_user = auth.get_user(uid, app=firebase_app)
+                        old_email = (auth_user.email or old_email).strip().lower()
+                    except Exception as exc:
+                        print("STUDENT FIREBASE LOOKUP ERROR:", repr(exc), flush=True)
+                        messages.error(request, "Could not find this student's Firebase account. Other details were not changed.")
+                        return redirect("tutor_panel:manage_students")
+
+                    if not student_email:
+                        messages.error(request, "Student login email is required.")
+                        return redirect("tutor_panel:manage_students")
+                    if student_password and len(student_password) < 8:
+                        messages.error(request, "A new student password must contain at least 8 characters.")
+                        return redirect("tutor_panel:manage_students")
+
+                    auth_updates = {}
+                    if student_email != old_email:
+                        auth_updates["email"] = student_email
+                    if student_password:
+                        auth_updates["password"] = student_password
+                    if name != (auth_user.display_name or ""):
+                        auth_updates["display_name"] = name
+
+                    if auth_updates:
+                        try:
+                            auth.update_user(uid, app=firebase_app, **auth_updates)
+                        except auth.EmailAlreadyExistsError:
+                            messages.error(request, "That login email is already used by another Firebase account.")
+                            return redirect("tutor_panel:manage_students")
+                        except Exception as exc:
+                            print("STUDENT FIREBASE UPDATE ERROR:", repr(exc), flush=True)
+                            messages.error(request, "Firebase could not update this student's login details. No student profile changes were saved.")
+                            return redirect("tutor_panel:manage_students")
+
+                    record.update({
+                        "student_id": student_id,
+                        "student_email": student_email,
+                        "firebase_email": student_email,
+                        "firebase_uid": uid,
+                    })
+                else:
+                    # Do not create a second Firebase user for an old student record.
+                    if student_email and student_email != old_email:
+                        messages.error(request, "This student record is not linked to a Firebase UID, so its login email cannot safely be changed. Please contact support to link the existing account first.")
+                        return redirect("tutor_panel:manage_students")
+                    if student_password:
+                        messages.error(request, "This student record is not linked to a Firebase UID, so its password cannot safely be reset here.")
+                        return redirect("tutor_panel:manage_students")
+                    if old_email:
+                        record.update({"student_email": old_email, "firebase_email": old_email})
+
+                try:
+                    student_ref.update(record)
+                except Exception as exc:
+                    print("STUDENT FIRESTORE UPDATE ERROR:", repr(exc), flush=True)
+                    # If Firebase credentials were changed but Firestore failed, attempt
+                    # to restore the previous credentials to avoid mismatched login data.
+                    if uid and auth_user is not None:
+                        rollback = {}
+                        if student_email != old_email:
+                            rollback["email"] = old_email
+                        if student_password:
+                            messages.warning(request, "The profile save failed after the password was updated. The new password may already be active; please test it before trying again.")
+                        if rollback:
+                            try:
+                                auth.update_user(uid, app=firebase_app, **rollback)
+                            except Exception as rollback_error:
+                                print("STUDENT FIREBASE ROLLBACK ERROR:", repr(rollback_error), flush=True)
+                    messages.error(request, "The student profile could not be saved. Please try again.")
+                    return redirect("tutor_panel:manage_students")
+
+                if student_password:
+                    messages.success(request, f"Student {name} updated. Login email saved and password reset requested successfully.")
+                elif student_email != old_email:
+                    messages.success(request, f"Student {name} updated and login email changed to {student_email}.")
+                else:
+                    messages.success(request, f"Student {name} updated successfully.")
 
             return redirect("tutor_panel:manage_students")
 
@@ -1009,84 +1033,58 @@ def manage_students(request):
             if not student_id:
                 messages.error(request, "Student ID is missing.")
                 return redirect("tutor_panel:manage_students")
-
             student_ref = students_ref.document(student_id)
             student_doc = student_ref.get()
-
             if not student_doc.exists:
                 messages.error(request, "Student record was not found.")
             else:
-                current = (
-                    student_doc.to_dict() or {}
-                ).get("status", "Active")
-
-                new_status = (
-                    "Inactive"
-                    if str(current).strip().lower() == "active"
-                    else "Active"
-                )
-
-                student_ref.update({
-                    "status": new_status,
-                    "updated_at": datetime.now(timezone.utc),
-                })
-
-                messages.success(
-                    request,
-                    f"Student status changed to {new_status}."
-                )
-
+                current = (student_doc.to_dict() or {}).get("status", "Active")
+                new_status = "Inactive" if str(current).strip().lower() == "active" else "Active"
+                student_ref.update({"status": new_status, "updated_at": datetime.now(timezone.utc)})
+                messages.success(request, f"Student status changed to {new_status}.")
             return redirect("tutor_panel:manage_students")
 
         messages.error(request, "Invalid student action.")
         return redirect("tutor_panel:manage_students")
 
-    # Load student records.
     students = []
-
     for document in students_ref.stream():
         student = document.to_dict() or {}
         student.setdefault("student_id", document.id)
         students.append(student)
-
     students.sort(key=lambda item: (item.get("name") or "").lower())
 
-    # Load approved tutors.
     tutors = []
-
     for document in db.collection("tutors").stream():
         tutor = document.to_dict() or {}
-
         if (tutor.get("status") or "").strip().lower() == "approved":
-            tutors.append({
-                "email": document.id,
-                "name": tutor.get("name") or document.id,
-            })
-
+            tutors.append({"email": document.id, "name": tutor.get("name") or document.id})
     tutors.sort(key=lambda item: item["name"].lower())
 
-    # Load a student for editing, if requested.
     edit_id = (request.GET.get("edit") or "").strip()
     edit_student = None
-
     if edit_id:
         edit_doc = students_ref.document(edit_id).get()
-
         if edit_doc.exists:
             edit_student = edit_doc.to_dict() or {}
             edit_student["student_id"] = edit_doc.id
+            edit_student["student_email"] = (
+                edit_student.get("student_email") or edit_student.get("firebase_email") or ""
+            )
+            # Older records may have the UID but not the email fields.
+            if not edit_student["student_email"] and edit_student.get("firebase_uid"):
+                try:
+                    edit_student["student_email"] = auth.get_user(
+                        edit_student["firebase_uid"], app=firebase_app
+                    ).email or ""
+                except Exception as exc:
+                    print("STUDENT EMAIL DISPLAY ERROR:", repr(exc), flush=True)
 
-    return render(
-        request,
-        "tutor_panel/manage_students.html",
-        {
-            "students": students,
-            "tutors": tutors,
-            "edit_student": edit_student,
-        },
-    )
-
-
+    return render(request, "tutor_panel/manage_students.html", {
+        "students": students,
+        "tutors": tutors,
+        "edit_student": edit_student,
+    })
 
 def tutor_students(request):
     """Tutors can see only records assigned to their signed-in email."""

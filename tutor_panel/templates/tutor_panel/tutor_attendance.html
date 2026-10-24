@@ -14,7 +14,7 @@ label{font-weight:600;font-size:14px}input,select,textarea{width:100%;padding:11
 h2{color:#173b70;margin-top:0}.section-title{margin:22px 0 12px;border-bottom:1px solid #e2e8f0;padding-bottom:8px}
 .messages{padding:0;list-style:none}.messages li{padding:12px;border-radius:7px;margin-bottom:8px;background:#eff6ff}.messages .error{background:#fee2e2}.messages .success{background:#dcfce7}
 .table-wrap{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:650px}th,td{text-align:left;padding:11px;border-bottom:1px solid #e2e8f0}th{background:#f1f5f9}
-.small{font-size:13px;color:#64748b}.video-link{color:#0878e8;font-weight:600}
+.small{font-size:13px;color:#64748b}.video-link{color:#0878e8;font-weight:600}.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}.stat{padding:17px;border:1px solid #e2e8f0;border-radius:10px;background:#f8fbff}.stat small{display:block;color:#64748b}.stat strong{display:block;font-size:23px;margin-top:8px;color:#173b70}.btn.danger{background:#b91c1c}.btn.secondary{background:#475569}.actions{display:flex;gap:7px;align-items:center}.inline-form{display:inline}.edit-banner{background:#fff7ed;border:1px solid #fed7aa;padding:12px;border-radius:8px;margin-bottom:14px}
 </style>
 </head>
 <body>
@@ -22,11 +22,31 @@ h2{color:#173b70;margin-top:0}.section-title{margin:22px 0 12px;border-bottom:1p
 <main>
 {% if messages %}<ul class="messages">{% for message in messages %}<li class="{{ message.tags }}">{{ message }}</li>{% endfor %}</ul>{% endif %}
 <section class="panel">
-<h2>Submit Class Evaluation</h2>
+<h2>💰 My Monthly Earnings</h2>
+<p class="small">Earnings are calculated from the per-student rates set by the admin. Only class reports marked <b>Present</b> count.</p>
+<form method="get" class="grid" style="align-items:end;grid-template-columns:minmax(180px,260px) auto;margin-bottom:16px">
+<div class="field"><label for="month">Payment month</label><input id="month" type="month" name="month" value="{{ payment_month }}" required></div>
+<div class="field"><button class="btn" type="submit">View Month</button></div>
+</form>
+<div class="stats">
+<div class="stat"><small>Present classes</small><strong>{{ present_classes_month }}</strong></div>
+<div class="stat"><small>Total earned</small><strong>₹{{ earned_month|floatformat:2 }}</strong></div>
+<div class="stat"><small>Amount paid</small><strong>₹{{ paid_month|floatformat:2 }}</strong></div>
+<div class="stat"><small>Remaining balance</small><strong>₹{{ balance_month|floatformat:2 }}</strong></div>
+</div>
+{% if payment_history %}<h3 class="section-title">Payments recorded by admin — {{ payment_month }}</h3>
+<div class="table-wrap"><table><thead><tr><th>Payment date</th><th>Amount</th><th>Note / reference</th></tr></thead><tbody>
+{% for payment in payment_history %}<tr><td>{{ payment.payment_date|default:"—" }}</td><td>₹{{ payment.amount|floatformat:2 }}</td><td>{{ payment.note|default:"—" }}</td></tr>{% endfor %}
+</tbody></table></div>{% else %}<p class="small">No payments have been recorded for {{ payment_month }}.</p>{% endif %}
+</section>
+<section class="panel">
+<h2>{% if edit_report %}Edit Class Report{% else %}Submit Class Evaluation{% endif %}</h2>
+{% if edit_report %}<div class="edit-banner">You are editing the report dated {{ edit_report.class_date }}. Save your changes or <a href="{% url 'tutor_panel:tutor_attendance' %}">cancel editing</a>.</div>{% endif %}
 <p class="small">Submit one report after each class. The recording link is optional. Use a YouTube link that the intended viewers are permitted to watch.</p>
 {% if not students %}<p>No active students are assigned to your account. Please contact the administrator.</p>{% else %}
-<form method="post">
+<form method="post" id="class-report-form">
 {% csrf_token %}
+{% if edit_report %}<input type="hidden" name="action" value="update_report"><input type="hidden" name="report_id" value="{{ edit_report.report_id }}">{% else %}<input type="hidden" name="action" value="create_report">{% endif %}
 <h3 class="section-title">A. Student and Class Details</h3>
 <div class="grid">
 <div class="field"><label for="student_id">Student *</label><select id="student_id" name="student_id" required><option value="">Choose a student</option>{% for student in students %}<option value="{{ student.student_id }}">{{ student.name }} — {{ student.student_class }}</option>{% endfor %}</select></div>
@@ -66,18 +86,37 @@ h2{color:#173b70;margin-top:0}.section-title{margin:22px 0 12px;border-bottom:1p
 </div>
 <div class="field"><label for="recording_url">YouTube class recording link (optional)</label><input id="recording_url" name="recording_url" type="url" placeholder="https://www.youtube.com/watch?v=..." inputmode="url"><span class="small">Paste the recorded class URL. The system stores the link; it does not upload the video to YouTube.</span></div>
 <div class="field"><label for="tutor_remarks">Tutor's remarks / feedback</label><textarea id="tutor_remarks" name="tutor_remarks" placeholder="Progress, challenges, and next steps"></textarea></div>
-<button class="btn" type="submit">Save Class Report</button>
+<button class="btn" type="submit">{% if edit_report %}Update Class Report{% else %}Save Class Report{% endif %}</button> {% if edit_report %}<a class="btn secondary" href="{% url 'tutor_panel:tutor_attendance' %}">Cancel</a>{% endif %}
 </form>
 {% endif %}
 </section>
 <section class="panel">
 <h2>My Recent Class Reports</h2>
 {% if reports %}
-<div class="table-wrap"><table><thead><tr><th>Date</th><th>Student</th><th>Subject</th><th>Attendance</th><th>Homework</th><th>Recording</th></tr></thead><tbody>
-{% for report in reports %}<tr><td>{{ report.class_date }}</td><td>{{ report.student_name }}</td><td>{{ report.subject }}</td><td>{{ report.attendance_status }}</td><td>{{ report.homework_status|default:"—" }}</td><td>{% if report.recording_url %}<a class="video-link" href="{{ report.recording_url }}" target="_blank" rel="noopener noreferrer">Watch recording ↗</a>{% else %}—{% endif %}</td></tr>{% endfor %}
+<div class="table-wrap"><table><thead><tr><th>Date</th><th>Student</th><th>Subject</th><th>Attendance</th><th>Homework</th><th>Recording</th><th>Actions</th></tr></thead><tbody>
+{% for report in reports %}<tr><td>{{ report.class_date }}</td><td>{{ report.student_name }}</td><td>{{ report.subject }}</td><td>{{ report.attendance_status }}</td><td>{{ report.homework_status|default:"—" }}</td><td>{% if report.recording_url %}<a class="video-link" href="{{ report.recording_url }}" target="_blank" rel="noopener noreferrer">Watch recording ↗</a>{% else %}—{% endif %}</td>
+<td><div class="actions"><a class="btn secondary" href="?edit={{ report.report_id }}&month={{ payment_month }}#class-report-form">Edit</a>
+<form method="post" class="inline-form" onsubmit="return confirm('Delete this class report? This may change your monthly earnings.');">{% csrf_token %}<input type="hidden" name="action" value="delete_report"><input type="hidden" name="report_id" value="{{ report.report_id }}"><button class="btn danger" type="submit">Delete</button></form></div></td></tr>{% endfor %}
 </tbody></table></div>
 {% else %}<p>No class reports submitted yet.</p>{% endif %}
 </section>
 </main>
+{% if edit_report %}{{ edit_report|json_script:"edit-report-data" }}
+<script>
+(function(){
+  const dataNode = document.getElementById('edit-report-data');
+  const form = document.getElementById('class-report-form');
+  if (!dataNode || !form) return;
+  const report = JSON.parse(dataNode.textContent);
+  const mapping = {duration_minutes: 'duration'};
+  Object.entries(report).forEach(([key, value]) => {
+    const fieldName = mapping[key] || key;
+    const field = form.elements.namedItem(fieldName);
+    if (field && typeof value !== 'object' && value !== null) field.value = String(value);
+  });
+  const student = form.elements.namedItem('student_id');
+  if (student && report.student_id) student.value = report.student_id;
+})();
+</script>{% endif %}
 </body>
 </html>

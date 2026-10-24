@@ -1114,7 +1114,10 @@ def tutor_students(request):
 # CLASS ATTENDANCE AND STUDENT EVALUATION
 # ------------------------------------------------------------
 def tutor_attendance(request):
-    """Allow an approved tutor to submit evaluations only for assigned students."""
+    """Tutor class reports with ownership-checked edit/delete and monthly earnings."""
+    from datetime import date
+    from decimal import Decimal
+
     if not request.session.get("firebase_uid"):
         return redirect("tutor_panel:login")
     if request.session.get("user_role") != "tutor":
@@ -1122,7 +1125,6 @@ def tutor_attendance(request):
 
     email = (request.session.get("firebase_email") or "").strip().lower()
     db = firestore.client(app=get_app())
-
     tutor_doc = db.collection("tutors").document(email).get()
     tutor_data = tutor_doc.to_dict() or {} if tutor_doc.exists else {}
     if not tutor_doc.exists or (tutor_data.get("status") or "").strip().lower() != "approved":
@@ -1131,19 +1133,45 @@ def tutor_attendance(request):
 
     students_ref = db.collection("students")
     assigned_students = []
+    student_by_id = {}
     for doc in students_ref.where("tutor_email", "==", email).stream():
         student = doc.to_dict() or {}
         student.setdefault("student_id", doc.id)
         if (student.get("status") or "Active").strip().lower() == "active":
             assigned_students.append(student)
+            student_by_id[doc.id] = student
     assigned_students.sort(key=lambda item: (item.get("name") or "").lower())
 
+    # The earnings month is independent of the report being edited.
+    today = date.today()
+    payment_month = (request.GET.get("month") or today.strftime("%Y-%m")).strip()
+    try:
+        payment_month = date.fromisoformat(payment_month + "-01").strftime("%Y-%m")
+    except ValueError:
+        payment_month = today.strftime("%Y-%m")
+
+    reports_ref = db.collection("class_reports")
+
     if request.method == "POST":
+        action = (request.POST.get("action") or "create_report").strip().lower()
+        report_id = (request.POST.get("report_id") or "").strip()
+
+        # Verify report ownership before any edit or deletion.
+        if action in {"delete_report", "update_report"}:
+            report_ref = reports_ref.document(report_id) if report_id else None
+            report_doc = report_ref.get() if report_ref else None
+            existing = report_doc.to_dict() or {} if report_doc and report_doc.exists else {}
+            if not report_doc or not report_doc.exists or (existing.get("tutor_email") or "").strip().lower() != email:
+                messages.error(request, "That class report was not found or does not belong to your account.")
+                return redirect("tutor_panel:tutor_attendance")
+            if action == "delete_report":
+                report_ref.delete()
+                messages.success(request, "Your class report was deleted.")
+                return redirect("tutor_panel:tutor_attendance")
+
         student_id = (request.POST.get("student_id") or "").strip()
         student_doc = students_ref.document(student_id).get() if student_id else None
         student = student_doc.to_dict() or {} if student_doc and student_doc.exists else {}
-
-        # Always verify assignment on the server; never trust the selected student alone.
         if not student_doc or not student_doc.exists or (student.get("tutor_email") or "").strip().lower() != email:
             messages.error(request, "Please select a student assigned to your account.")
             return redirect("tutor_panel:tutor_attendance")
@@ -1175,18 +1203,16 @@ def tutor_attendance(request):
         recording_url = (request.POST.get("recording_url") or "").strip()
         tutor_remarks = (request.POST.get("tutor_remarks") or "").strip()
 
-        required = {
-            "Class date": class_date,
-            "Subject": subject,
-            "Attendance status": attendance_status,
-        }
-        missing = [label for label, value in required.items() if not value]
-        if missing:
-            messages.error(request, "Please complete required fields: " + ", ".join(missing))
+        try:
+            date.fromisoformat(class_date)
+        except ValueError:
+            messages.error(request, "Please enter a valid class date.")
+            return redirect("tutor_panel:tutor_attendance")
+        if not subject or attendance_status not in {"Present", "Absent"}:
+            messages.error(request, "Please provide a subject and valid attendance status.")
             return redirect("tutor_panel:tutor_attendance")
 
         allowed = {
-            "attendance_status": {"Present", "Absent"},
             "joined_on_time": {"On time", "Late", "Not applicable"},
             "full_class": {"Yes", "No", "Not applicable"},
             "homework_assigned": {"Yes", "No"},
@@ -1199,83 +1225,117 @@ def tutor_attendance(request):
             "activities_completed": {"Fully", "Partially", "Not completed", "Not applicable"},
             "revision_required": {"Yes", "No"},
         }
-        submitted_values = {
-            "attendance_status": attendance_status,
-            "joined_on_time": joined_on_time,
-            "full_class": full_class,
-            "homework_assigned": homework_assigned,
-            "homework_status": homework_status,
-            "homework_quality": homework_quality,
-            "participation": participation,
-            "attention": attention,
-            "question_answering": question_answering,
-            "topic_understanding": topic_understanding,
-            "activities_completed": activities_completed,
+        optional_values = {
+            "joined_on_time": joined_on_time, "full_class": full_class,
+            "homework_assigned": homework_assigned, "homework_status": homework_status,
+            "homework_quality": homework_quality, "participation": participation,
+            "attention": attention, "question_answering": question_answering,
+            "topic_understanding": topic_understanding, "activities_completed": activities_completed,
             "revision_required": revision_required,
         }
-        for field, value in submitted_values.items():
+        for field, value in optional_values.items():
             if value and value not in allowed[field]:
                 messages.error(request, "An invalid option was submitted. Please try again.")
                 return redirect("tutor_panel:tutor_attendance")
 
-        # Allow standard YouTube watch, short, and embed URLs only.
         if recording_url:
-            from urllib.parse import urlparse, parse_qs
+            from urllib.parse import urlparse
             parsed = urlparse(recording_url)
             host = (parsed.hostname or "").lower()
-            valid_youtube_host = host in {"youtube.com", "www.youtube.com", "m.youtube.com", "youtu.be", "www.youtube-nocookie.com"}
-            if parsed.scheme != "https" or not valid_youtube_host:
+            valid_hosts = {"youtube.com", "www.youtube.com", "m.youtube.com", "youtu.be", "www.youtube-nocookie.com"}
+            if parsed.scheme != "https" or host not in valid_hosts:
                 messages.error(request, "Please enter a valid HTTPS YouTube recording link.")
                 return redirect("tutor_panel:tutor_attendance")
 
         report = {
-            "student_id": student_id,
-            "student_name": student.get("name", ""),
-            "student_class": student.get("student_class", ""),
-            "tutor_email": email,
-            "subject": subject,
-            "class_date": class_date,
-            "scheduled_time": scheduled_time,
-            "actual_start_time": actual_start_time,
-            "duration_minutes": duration,
-            "attendance_status": attendance_status,
-            "joined_on_time": joined_on_time,
-            "late_minutes": late_minutes if joined_on_time == "Late" else "",
-            "full_class": full_class,
-            "homework_assigned": homework_assigned,
-            "homework_status": homework_status,
-            "homework_quality": homework_quality,
-            "participation": participation,
-            "attention": attention,
-            "question_answering": question_answering,
-            "topic_understanding": topic_understanding,
-            "activities_completed": activities_completed,
-            "topic_taught": topic_taught,
-            "performance": performance,
-            "revision_required": revision_required,
-            "suggested_homework": suggested_homework,
-            "recording_url": recording_url,
-            "tutor_remarks": tutor_remarks,
-            "created_at": datetime.now(timezone.utc),
+            "student_id": student_id, "student_name": student.get("name", ""),
+            "student_class": student.get("student_class", ""), "tutor_email": email,
+            "subject": subject, "class_date": class_date, "scheduled_time": scheduled_time,
+            "actual_start_time": actual_start_time, "duration_minutes": duration,
+            "attendance_status": attendance_status, "joined_on_time": joined_on_time,
+            "late_minutes": late_minutes if joined_on_time == "Late" else "", "full_class": full_class,
+            "homework_assigned": homework_assigned, "homework_status": homework_status,
+            "homework_quality": homework_quality, "participation": participation,
+            "attention": attention, "question_answering": question_answering,
+            "topic_understanding": topic_understanding, "activities_completed": activities_completed,
+            "topic_taught": topic_taught, "performance": performance,
+            "revision_required": revision_required, "suggested_homework": suggested_homework,
+            "recording_url": recording_url, "tutor_remarks": tutor_remarks,
         }
-        db.collection("class_reports").add(report)
-        messages.success(request, f"Class report saved for {student.get('name', 'student')}.")
+        if action == "update_report":
+            report_ref.update(report)
+            messages.success(request, "Your class report was updated. Monthly earnings will reflect the revised attendance.")
+        else:
+            report["created_at"] = datetime.now(timezone.utc)
+            reports_ref.add(report)
+            messages.success(request, f"Class report saved for {student.get('name', 'student')}.")
         return redirect("tutor_panel:tutor_attendance")
 
     reports = []
-    for doc in db.collection("class_reports").where("tutor_email", "==", email).stream():
+    for doc in reports_ref.where("tutor_email", "==", email).stream():
         item = doc.to_dict() or {}
         item["report_id"] = doc.id
         reports.append(item)
     reports.sort(key=lambda item: item.get("class_date", ""), reverse=True)
 
-    return render(request, "tutor_panel/tutor_attendance.html", {
-        "students": assigned_students,
-        "reports": reports[:50],
-        "today": datetime.now().date().isoformat(),
-        "tutor_email": email,
-    })
+    edit_report = None
+    edit_id = (request.GET.get("edit") or "").strip()
+    if edit_id:
+        candidate = reports_ref.document(edit_id).get()
+        candidate_data = candidate.to_dict() or {} if candidate.exists else {}
+        if candidate.exists and (candidate_data.get("tutor_email") or "").strip().lower() == email:
+            edit_report = {key: value for key, value in candidate_data.items() if key != "created_at"}
+            edit_report["report_id"] = candidate.id
+        else:
+            messages.error(request, "That class report was not found or does not belong to your account.")
 
+    # Match the admin payment page exactly: per-student rates, Present reports, and recorded payments.
+    earnings = {}
+    for student_doc in students_ref.where("tutor_email", "==", email).stream():
+        student_data = student_doc.to_dict() or {}
+        if str(student_data.get("status") or "active").strip().lower() not in ("active", "approved", ""):
+            continue
+        try:
+            student_rate = float(student_data.get("tutor_rate_per_class") or 0)
+        except (TypeError, ValueError):
+            student_rate = 0.0
+        earnings[student_doc.id] = {"name": student_data.get("name") or student_doc.id,
+                                    "rate": student_rate, "classes": 0, "earned": 0.0}
+    for doc in reports_ref.where("tutor_email", "==", email).stream():
+        item = doc.to_dict() or {}
+        if str(item.get("class_date") or "")[:7] != payment_month or str(item.get("attendance_status") or "").strip().lower() != "present":
+            continue
+        sid = str(item.get("student_id") or "").strip()
+        if sid not in earnings and item.get("student_name"):
+            matches = [key for key, value in earnings.items() if value["name"] == item.get("student_name")]
+            if len(matches) == 1:
+                sid = matches[0]
+        if sid in earnings:
+            earnings[sid]["classes"] += 1
+            earnings[sid]["earned"] = round(earnings[sid]["classes"] * earnings[sid]["rate"], 2)
+    earned_total = round(sum(row["earned"] for row in earnings.values()), 2)
+    present_total = sum(row["classes"] for row in earnings.values())
+    paid_total = 0.0
+    payment_history = []
+    for doc in db.collection("tutor_payments").where("month", "==", payment_month).stream():
+        payment = doc.to_dict() or {}
+        if (payment.get("tutor_email") or "").strip().lower() == email:
+            try:
+                paid_total += float(payment.get("amount") or 0)
+            except (TypeError, ValueError):
+                pass
+            payment["payment_id"] = doc.id
+            payment_history.append(payment)
+    paid_total = round(paid_total, 2)
+    payment_history.sort(key=lambda row: str(row.get("payment_date") or ""), reverse=True)
+
+    return render(request, "tutor_panel/tutor_attendance.html", {
+        "students": assigned_students, "reports": reports[:50],
+        "today": today.isoformat(), "tutor_email": email, "edit_report": edit_report,
+        "payment_month": payment_month, "present_classes_month": present_total,
+        "earned_month": earned_total, "paid_month": paid_total,
+        "balance_month": round(earned_total - paid_total, 2), "payment_history": payment_history,
+    })
 
 # ------------------------------------------------------------
 # ADMIN WEEKLY STUDENT PROGRESS REPORTS
