@@ -819,7 +819,7 @@
                 const idToken = await result.user.getIdToken();
 
                 // Actual operation 3: send the token to Django and wait for session creation.
-                setTutorainLoadingStatus("Verifying with Tutorain...", "Django is verifying your account and creating your session");
+                setTutorainLoadingStatus("Verifying with Tutorain...", "MAAI is verifying your account and creating your session");
                 const csrfToken =
                     getCookie("csrftoken") ||
                     document.querySelector('input[name="csrfmiddlewaretoken"]')?.value ||
