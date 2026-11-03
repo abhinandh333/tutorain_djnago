@@ -272,6 +272,121 @@
                 padding: 25px 15px;
             }
         }
+
+
+
+.tutorain-loading {
+    display: none;
+    text-align: center;
+    padding: 25px 15px;
+    animation: loadingAppear 0.4s ease;
+}
+
+.loading-icon {
+    width: 75px;
+    height: 75px;
+    margin: 0 auto 20px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading-ring {
+    position: absolute;
+    inset: 0;
+    border: 4px solid #e5e7eb;
+    border-top: 4px solid #2563eb;
+    border-right: 4px solid #60a5fa;
+    border-radius: 50%;
+    animation: loadingRotate 1s linear infinite;
+}
+
+.loading-inner {
+    width: 48px;
+    height: 48px;
+    background: #2563eb;
+    color: white;
+    border-radius: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 23px;
+    font-weight: 800;
+    animation: logoPulse 1.5s ease-in-out infinite;
+}
+
+.tutorain-loading h3 {
+    font-size: 19px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 8px;
+}
+
+.tutorain-loading p {
+    color: #64748b;
+    font-size: 13px;
+    margin-bottom: 20px;
+    min-height: 20px;
+}
+
+.loading-progress {
+    width: 100%;
+    max-width: 300px;
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: 20px;
+    margin: 0 auto 15px;
+    overflow: hidden;
+}
+
+.loading-progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #2563eb, #60a5fa);
+    border-radius: 20px;
+    transition: width 0.5s ease;
+}
+
+.loading-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #64748b;
+    font-size: 12px;
+}
+
+.loading-spinner {
+    width: 13px;
+    height: 13px;
+    border: 2px solid #bfdbfe;
+    border-top-color: #2563eb;
+    border-radius: 50%;
+    animation: loadingRotate 0.7s linear infinite;
+}
+
+@keyframes loadingRotate {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes logoPulse {
+    50% { transform: scale(0.92); }
+}
+
+@keyframes loadingAppear {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+
     </style>
 </head>
 
@@ -426,10 +541,28 @@
                 >Show</button>
             </div>
 
-            <div id="loginLoading" class="login-loading" role="status" aria-live="polite">
-                <span class="loading-spinner" aria-hidden="true"></span>
-                <span id="loadingText">Signing in securely... Please wait.</span>
-            </div>
+<div class="tutorain-loading" id="tutorainLoading">
+    <div class="loading-icon">
+        <div class="loading-ring"></div>
+        <div class="loading-inner">T</div>
+    </div>
+
+    <h3>Securing Your Account</h3>
+
+    <p id="loadingText">Connecting to Tutorain securely...</p>
+
+    <div class="loading-progress">
+        <div class="loading-progress-bar" id="loadingProgressBar"></div>
+    </div>
+
+    <div class="loading-status">
+        <span class="loading-spinner"></span>
+        <span id="loadingStatusText">Verifying your credentials</span>
+    </div>
+</div>
+
+
+
 
             <button type="submit" id="loginButton">
                 Sign In
@@ -671,7 +804,9 @@
 
             button.disabled = true;
             button.textContent = "Signing in...";
-            document.getElementById("loginLoading").classList.add("active");
+
+            // Show the actual Tutorain loading panel before Firebase authentication.
+            startTutorainLoading();
 
             try {
 
@@ -789,10 +924,67 @@
 
                 button.disabled = false;
                 button.textContent = "Sign In";
-                document.getElementById("loginLoading").classList.remove("active");
+                stopTutorainLoading();
             }
         }
     );
+
+
+// Loading stages are visual feedback only. Authentication remains controlled
+// by Firebase and the Django response above.
+let tutorainLoadingTimers = [];
+
+function startTutorainLoading() {
+    const loading = document.getElementById("tutorainLoading");
+    const loadingText = document.getElementById("loadingText");
+    const statusText = document.getElementById("loadingStatusText");
+    const progressBar = document.getElementById("loadingProgressBar");
+
+    if (!loading || !loadingText || !statusText || !progressBar) {
+        console.error("Tutorain loading elements are missing from the page.");
+        return;
+    }
+
+    tutorainLoadingTimers.forEach(clearTimeout);
+    tutorainLoadingTimers = [];
+
+    loading.style.display = "block";
+    loading.setAttribute("aria-live", "polite");
+    progressBar.style.width = "8%";
+    loadingText.textContent = "Connecting to Tutorain securely...";
+    statusText.textContent = "Establishing secure connection";
+
+    const stages = [
+        { delay: 650, progress: 30, title: "Verifying your credentials...", status: "Checking your Firebase account" },
+        { delay: 1400, progress: 58, title: "Authenticating your account...", status: "Confirming your identity" },
+        { delay: 2300, progress: 82, title: "Securing your session...", status: "Connecting securely to Tutorain" },
+        { delay: 3400, progress: 92, title: "Preparing your dashboard...", status: "Waiting for account verification" }
+    ];
+
+    stages.forEach((stage) => {
+        const timer = setTimeout(() => {
+            if (loading.style.display === "none") return;
+            loadingText.textContent = stage.title;
+            statusText.textContent = stage.status;
+            progressBar.style.width = stage.progress + "%";
+        }, stage.delay);
+
+        tutorainLoadingTimers.push(timer);
+    });
+}
+
+function stopTutorainLoading() {
+    tutorainLoadingTimers.forEach(clearTimeout);
+    tutorainLoadingTimers = [];
+
+    const loading = document.getElementById("tutorainLoading");
+    const progressBar = document.getElementById("loadingProgressBar");
+
+    if (loading) loading.style.display = "none";
+    if (progressBar) progressBar.style.width = "0%";
+}
+
+
 
 </script>
 
