@@ -277,9 +277,22 @@
 
 .tutorain-loading {
     display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    width: 100%;
+    min-height: 100vh;
+    padding: 25px;
+    background: rgba(243, 246, 252, 0.97);
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
     text-align: center;
-    padding: 25px 15px;
-    animation: loadingAppear 0.4s ease;
+    animation: loadingAppear 0.2s ease;
+}
+
+.tutorain-loading.visible {
+    display: flex;
 }
 
 .loading-icon {
@@ -342,10 +355,15 @@
 
 .loading-progress-bar {
     height: 100%;
-    width: 0%;
+    width: 38%;
     background: linear-gradient(90deg, #2563eb, #60a5fa);
     border-radius: 20px;
-    transition: width 0.5s ease;
+    animation: tutorain-progress 1.15s ease-in-out infinite;
+}
+
+@keyframes tutorain-progress {
+    0% { transform: translateX(-115%); }
+    100% { transform: translateX(270%); }
 }
 
 .loading-status {
@@ -769,129 +787,88 @@
     document.getElementById("loginForm").addEventListener(
         "submit",
         async function(event) {
-
             event.preventDefault();
 
             const email = document.getElementById("email").value.trim();
-
             const password = document.getElementById("password").value;
-
             const button = document.getElementById("loginButton");
-
             const errorBox = document.getElementById("errorMessage");
+            let redirecting = false;
 
-            // Reset previous messages
             errorBox.style.display = "none";
+            document.getElementById("pendingApprovalSection").style.display = "none";
 
-            document.getElementById(
-                "pendingApprovalSection"
-            ).style.display = "none";
-
-            const notificationMessage = document.getElementById(
-                "notificationMessage"
-            );
-
+            const notificationMessage = document.getElementById("notificationMessage");
             notificationMessage.style.display = "none";
 
-            const notifyButton = document.getElementById(
-                "notifyAdminButton"
-            );
-
+            const notifyButton = document.getElementById("notifyAdminButton");
             notifyButton.disabled = false;
-
             notifyButton.textContent = "Notify Admin — I'm Waiting";
-
 
             button.disabled = true;
             button.textContent = "Signing in...";
-
-            // Show the actual Tutorain loading panel before Firebase authentication.
             startTutorainLoading();
+            setTutorainLoadingStatus("Connecting to Firebase...", "Authenticating your email and password");
 
             try {
+                // Actual operation 1: Firebase authentication.
+                const result = await signInWithEmailAndPassword(auth, email, password);
 
-                // Step 1: Authenticate with Firebase
-                const result = await signInWithEmailAndPassword(
-                    auth,
-                    email,
-                    password
-                );
-
-                // Step 2: Get Firebase ID token
+                // Actual operation 2: obtain the verified Firebase ID token.
+                setTutorainLoadingStatus("Securing your account...", "Obtaining your secure authentication token");
                 const idToken = await result.user.getIdToken();
 
-                // Step 3: Get Django CSRF token
+                // Actual operation 3: send the token to Django and wait for session creation.
+                setTutorainLoadingStatus("Verifying with Tutorain...", "Django is verifying your account and creating your session");
                 const csrfToken =
                     getCookie("csrftoken") ||
-                    document.querySelector(
-                        'input[name="csrfmiddlewaretoken"]'
-                    )?.value ||
+                    document.querySelector('input[name="csrfmiddlewaretoken"]')?.value ||
                     "";
 
                 if (!csrfToken) {
-                    throw new Error(
-                        "Security token is missing. Please refresh the page and try again."
-                    );
+                    throw new Error("Security token is missing. Please refresh the page and try again.");
                 }
 
-                // Step 4: Send token to Django
-                const response = await fetch(
-                    "/tutor_panel/firebase-login/",
-                    {
-                        method: "POST",
+                const response = await fetch("/tutor_panel/firebase-login/", {
+                    method: "POST",
+                    credentials: "same-origin",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": csrfToken
+                    },
+                    body: JSON.stringify({ idToken: idToken })
+                });
 
-                        credentials: "same-origin",
-
-                        headers: {
-                            "Content-Type": "application/json",
-                            "X-CSRFToken": csrfToken
-                        },
-
-                        body: JSON.stringify({
-                            idToken: idToken
-                        })
-                    }
-                );
-
-                // Step 5: Read Django response
-                const data = await response.json();
+                let data;
+                try {
+                    data = await response.json();
+                } catch (_) {
+                    throw new Error("The server returned an unexpected response. Please try again.");
+                }
 
                 if (!response.ok || !data.success) {
-
-                    const errorMessage = data.error || "Login failed.";
-
-                    // Show notification option for pending accounts
-                    if (
-                        errorMessage.toLowerCase().includes("pending")
-                    ) {
-
-                        showError(errorMessage);
+                    const serverMessage = data.error || "Login failed.";
+                    if (serverMessage.toLowerCase().includes("pending")) {
+                        showError(serverMessage);
                         showPendingApproval();
-
-                        // Keep the Firebase user authenticated so the
-                        // notification button can retrieve their token.
                         return;
                     }
-
-                    throw new Error(errorMessage);
+                    throw new Error(serverMessage);
                 }
 
-                // Step 6: Redirect after successful login
-                if (data.redirect_url) {
-
-                    window.location.href = data.redirect_url;
-
-                } else {
-
-                    throw new Error(
-                        "Login succeeded, but the redirect address is missing."
-                    );
+                if (!data.redirect_url) {
+                    throw new Error("Login succeeded, but the redirect address is missing.");
                 }
+
+                // Keep the loading overlay visible during navigation. Do not hide it
+                // in finally; the destination page replaces this document immediately.
+                setTutorainLoadingStatus("Login successful!", "Opening your Tutorain dashboard...");
+                redirecting = true;
+                window.location.replace(data.redirect_url);
+                return;
 
             } catch (error) {
-
                 console.error("Tutorain login error:", error);
-
                 let message = error.message || "Login failed.";
 
                 if (
@@ -899,89 +876,55 @@
                     error.code === "auth/wrong-password" ||
                     error.code === "auth/user-not-found"
                 ) {
-
-                    message =
-                        "Invalid email or password. Please check your credentials.";
-
-                } else if (
-                    error.code === "auth/too-many-requests"
-                ) {
-
-                    message =
-                        "Too many login attempts. Please wait and try again.";
-
-                } else if (
-                    error.code === "auth/network-request-failed"
-                ) {
-
-                    message =
-                        "Network error. Please check your internet connection.";
+                    message = "Invalid email or password. Please check your credentials.";
+                } else if (error.code === "auth/too-many-requests") {
+                    message = "Too many login attempts. Please wait and try again.";
+                } else if (error.code === "auth/network-request-failed") {
+                    message = "Network error. Please check your internet connection.";
                 }
 
                 showError(message);
-
             } finally {
-
-                button.disabled = false;
-                button.textContent = "Sign In";
-                stopTutorainLoading();
+                if (!redirecting) {
+                    button.disabled = false;
+                    button.textContent = "Sign In";
+                    stopTutorainLoading();
+                }
             }
         }
     );
 
 
-// Loading stages are visual feedback only. Authentication remains controlled
-// by Firebase and the Django response above.
-let tutorainLoadingTimers = [];
-
+// The indicator stays active for the real Firebase/Django requests.
+// It does not pretend to show a percentage that the services do not provide.
 function startTutorainLoading() {
+    const loading = document.getElementById("tutorainLoading");
+    if (!loading) return;
+
+    loading.classList.add("visible");
+    loading.setAttribute("aria-live", "polite");
+    document.body.style.overflow = "hidden";
+    setTutorainLoadingStatus(
+        "Connecting to Tutorain securely...",
+        "Starting secure sign-in"
+    );
+}
+
+function setTutorainLoadingStatus(title, status) {
     const loading = document.getElementById("tutorainLoading");
     const loadingText = document.getElementById("loadingText");
     const statusText = document.getElementById("loadingStatusText");
-    const progressBar = document.getElementById("loadingProgressBar");
 
-    if (!loading || !loadingText || !statusText || !progressBar) {
-        console.error("Tutorain loading elements are missing from the page.");
-        return;
+    if (loading && loadingText && statusText) {
+        loadingText.textContent = title;
+        statusText.textContent = status;
     }
-
-    tutorainLoadingTimers.forEach(clearTimeout);
-    tutorainLoadingTimers = [];
-
-    loading.style.display = "block";
-    loading.setAttribute("aria-live", "polite");
-    progressBar.style.width = "8%";
-    loadingText.textContent = "Connecting to Tutorain securely...";
-    statusText.textContent = "Establishing secure connection";
-
-    const stages = [
-        { delay: 650, progress: 30, title: "Verifying your credentials...", status: "Checking your Firebase account" },
-        { delay: 1400, progress: 58, title: "Authenticating your account...", status: "Confirming your identity" },
-        { delay: 2300, progress: 82, title: "Securing your session...", status: "Connecting securely to Tutorain" },
-        { delay: 3400, progress: 92, title: "Preparing your dashboard...", status: "Waiting for account verification" }
-    ];
-
-    stages.forEach((stage) => {
-        const timer = setTimeout(() => {
-            if (loading.style.display === "none") return;
-            loadingText.textContent = stage.title;
-            statusText.textContent = stage.status;
-            progressBar.style.width = stage.progress + "%";
-        }, stage.delay);
-
-        tutorainLoadingTimers.push(timer);
-    });
 }
 
 function stopTutorainLoading() {
-    tutorainLoadingTimers.forEach(clearTimeout);
-    tutorainLoadingTimers = [];
-
     const loading = document.getElementById("tutorainLoading");
-    const progressBar = document.getElementById("loadingProgressBar");
-
-    if (loading) loading.style.display = "none";
-    if (progressBar) progressBar.style.width = "0%";
+    if (loading) loading.classList.remove("visible");
+    document.body.style.overflow = "";
 }
 
 
