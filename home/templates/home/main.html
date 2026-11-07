@@ -2702,10 +2702,11 @@ html[data-theme="dark"]
 
 <a
     class="btn btn-primary btn-sm tutorain-login-btn"
-    href="https://www.tutorain.com/tutor_panel/"
+    href="{% url 'tutor_panel:login' %}" class="btn head-btn2"
 >
     👤 Login
 </a>
+
 
             </div>
 
@@ -6603,4 +6604,4 @@ document.addEventListener("DOMContentLoaded", function () {
 </body>
 
 </html>
-```
+
