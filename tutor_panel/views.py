@@ -217,6 +217,394 @@ def firebase_login(request):
             )
         }, status=401)
 
+
+@csrf_exempt
+@require_POST
+def electron_login(request):
+    """
+    Dedicated Firebase login endpoint for the Tutorain Electron app.
+    Creates a persistent Django session after verifying the Firebase user.
+    """
+    stage = "starting"
+
+    try:
+        stage = "reading request"
+        data = json.loads(request.body)
+        id_token = data.get("idToken")
+
+        if not id_token:
+            return JsonResponse({
+                "success": False,
+                "error": "Missing login token."
+            }, status=400)
+
+        stage = "verifying Firebase token"
+
+        decoded_token = auth.verify_id_token(
+            id_token,
+            app=get_app()
+        )
+
+        uid = decoded_token["uid"]
+        email = (decoded_token.get("email") or "").strip().lower()
+
+        if not email:
+            return JsonResponse({
+                "success": False,
+                "error": "Email address not found."
+            }, status=401)
+
+        # 1. Check admin
+        admin_emails = getattr(settings, "ADMIN_EMAILS", [])
+
+        if isinstance(admin_emails, str):
+            admin_emails = [admin_emails]
+
+        admin_emails = [
+            address.strip().lower()
+            for address in admin_emails
+            if address and address.strip()
+        ]
+
+        if email in admin_emails:
+            role = "admin"
+            redirect_url = "/tutor_panel/admin/"
+
+        else:
+            stage = "connecting to Firestore"
+            db = firestore.client(app=get_app())
+
+            # 2. Check student
+            stage = "checking student account"
+
+            student_query = (
+                db.collection("students")
+                .where("firebase_uid", "==", uid)
+                .limit(1)
+                .stream()
+            )
+
+            student_doc = next(student_query, None)
+
+            if student_doc is not None:
+                student_data = student_doc.to_dict() or {}
+                student_status = str(
+                    student_data.get("status") or ""
+                ).strip().lower()
+
+                if student_status != "active":
+                    return JsonResponse({
+                        "success": False,
+                        "error": "Your student account is inactive. Please contact the administrator."
+                    }, status=403)
+
+                role = "student"
+                redirect_url = "/firebase-student-dashboard/"
+
+            else:
+                # 3. Check tutor
+                stage = "checking tutor account"
+
+                tutor_doc = (
+                    db.collection("tutors")
+                    .document(email)
+                    .get()
+                )
+
+                if tutor_doc.exists:
+                    tutor_data = tutor_doc.to_dict() or {}
+                    tutor_status = str(
+                        tutor_data.get("status") or ""
+                    ).strip().lower()
+
+                    if tutor_status != "approved":
+                        return JsonResponse({
+                            "success": False,
+                            "error": "Your account is pending approval. Please contact the administrator."
+                        }, status=403)
+
+                    role = "tutor"
+                    redirect_url = "/tutor_panel/dashboard/"
+
+                else:
+                    # 4. Check parent
+                    stage = "checking parent account"
+
+                    parent_matches = (
+                        db.collection("students")
+                        .where("guardian_email", "==", email)
+                        .stream()
+                    )
+
+                    active_parent_found = False
+
+                    for doc in parent_matches:
+                        parent_data = doc.to_dict() or {}
+                        parent_status = str(
+                            parent_data.get("status") or "Active"
+                        ).strip().lower()
+
+                        if parent_status == "active":
+                            active_parent_found = True
+                            break
+
+                    if not active_parent_found:
+                        return JsonResponse({
+                            "success": False,
+                            "error": (
+                                "Your tutor or parent account was not found. "
+                                "Ask Tutorain administration to add your email "
+                                "to the student record."
+                            )
+                        }, status=403)
+
+                    role = "parent"
+                    redirect_url = "/tutor_panel/parent/"
+
+        # 5. Create a fresh Django session
+        stage = "creating Django session"
+
+        request.session.flush()
+
+        request.session["firebase_uid"] = uid
+        request.session["firebase_email"] = email
+        request.session["user_role"] = role
+
+        if role == "student":
+            request.session["student_doc_id"] = student_doc.id
+
+        request.session.set_expiry(settings.SESSION_COOKIE_AGE)
+
+        return JsonResponse({
+            "success": True,
+            "role": role,
+            "redirect_url": redirect_url
+        })
+
+    except json.JSONDecodeError:
+        return JsonResponse({
+            "success": False,
+            "error": "Invalid request data."
+        }, status=400)
+
+    except Exception as e:
+        print(
+            f"ELECTRON FIREBASE LOGIN ERROR at stage '{stage}': "
+            f"{type(e).__name__}: {e}",
+            flush=True
+        )
+
+        return JsonResponse({
+            "success": False,
+            "error": "Login failed. Please try again or contact the administrator."
+        }, status=401)
+
+
+
+
+def electron_session(request):
+    """Validate an existing Electron Django session and account status."""
+
+    if request.method != "GET":
+        return JsonResponse({
+            "success": False,
+            "error": "GET method required."
+        }, status=405)
+
+    uid = request.session.get("firebase_uid")
+    email = (request.session.get("firebase_email") or "").strip().lower()
+    role = request.session.get("user_role")
+
+    if not uid or not email or not role:
+        request.session.flush()
+        return JsonResponse({
+            "success": False,
+            "authenticated": False
+        }, status=401)
+
+    dashboard_urls = {
+        "admin": "/tutor_panel/admin/",
+        "tutor": "/tutor_panel/dashboard/",
+        "student": "/firebase-student-dashboard/",
+        "parent": "/tutor_panel/parent/"
+    }
+
+    redirect_url = dashboard_urls.get(role)
+
+    if not redirect_url:
+        request.session.flush()
+        return JsonResponse({
+            "success": False,
+            "authenticated": False
+        }, status=401)
+
+    try:
+        # 1. Verify Firebase account still exists and is enabled.
+        firebase_user = auth.get_user(uid, app=get_app())
+
+        if (
+            firebase_user.disabled or
+            (firebase_user.email or "").strip().lower() != email
+        ):
+            request.session.flush()
+            return JsonResponse({
+                "success": False,
+                "authenticated": False
+            }, status=401)
+
+        # 2. Check role authorization.
+        if role == "admin":
+
+            admin_emails = getattr(settings, "ADMIN_EMAILS", [])
+
+            if isinstance(admin_emails, str):
+                admin_emails = [admin_emails]
+
+            admin_emails = [
+                address.strip().lower()
+                for address in admin_emails
+                if address and address.strip()
+            ]
+
+            if email not in admin_emails:
+                request.session.flush()
+                return JsonResponse({
+                    "success": False,
+                    "authenticated": False
+                }, status=401)
+
+        else:
+            db = firestore.client(app=get_app())
+
+            if role == "student":
+
+                student_doc_id = request.session.get("student_doc_id")
+
+                if not student_doc_id:
+                    request.session.flush()
+                    return JsonResponse({
+                        "success": False,
+                        "authenticated": False
+                    }, status=401)
+
+                student_doc = (
+                    db.collection("students")
+                    .document(student_doc_id)
+                    .get()
+                )
+
+                if not student_doc.exists:
+                    request.session.flush()
+                    return JsonResponse({
+                        "success": False,
+                        "authenticated": False
+                    }, status=401)
+
+                student_data = student_doc.to_dict() or {}
+
+                if (
+                    str(student_data.get("firebase_uid") or "") != uid or
+                    str(student_data.get("status") or "").strip().lower() != "active"
+                ):
+                    request.session.flush()
+                    return JsonResponse({
+                        "success": False,
+                        "authenticated": False
+                    }, status=401)
+
+            elif role == "tutor":
+
+                tutor_doc = (
+                    db.collection("tutors")
+                    .document(email)
+                    .get()
+                )
+
+                if not tutor_doc.exists:
+                    request.session.flush()
+                    return JsonResponse({
+                        "success": False,
+                        "authenticated": False
+                    }, status=401)
+
+                tutor_data = tutor_doc.to_dict() or {}
+
+                if str(tutor_data.get("status") or "").strip().lower() != "approved":
+                    request.session.flush()
+                    return JsonResponse({
+                        "success": False,
+                        "authenticated": False
+                    }, status=401)
+
+            elif role == "parent":
+
+                parent_matches = (
+                    db.collection("students")
+                    .where("guardian_email", "==", email)
+                    .stream()
+                )
+
+                active_parent_found = False
+
+                for doc in parent_matches:
+                    parent_data = doc.to_dict() or {}
+
+                    parent_status = str(
+                        parent_data.get("status") or "Active"
+                    ).strip().lower()
+
+                    if parent_status == "active":
+                        active_parent_found = True
+                        break
+
+                if not active_parent_found:
+                    request.session.flush()
+                    return JsonResponse({
+                        "success": False,
+                        "authenticated": False
+                    }, status=401)
+
+        # 3. Account is valid. Restore the correct dashboard.
+        return JsonResponse({
+            "success": True,
+            "authenticated": True,
+            "role": role,
+            "redirect_url": redirect_url
+        })
+
+    except Exception as e:
+
+        # Keep the session if Firebase/Firestore is temporarily unavailable.
+        print(
+            f"ELECTRON SESSION VALIDATION ERROR: {type(e).__name__}: {e}",
+            flush=True
+        )
+
+        return JsonResponse({
+            "success": False,
+            "authenticated": False,
+            "error": "Unable to verify your account. Please try again."
+        }, status=503)
+
+
+
+
+@csrf_exempt
+@require_POST
+def electron_logout(request):
+    """
+    Clear the Django session used by the Electron application.
+    """
+
+    request.session.flush()
+
+    return JsonResponse({
+        "success": True,
+        "message": "Logged out successfully."
+    })
+
+
+
 def dashboard(request):
     if not request.session.get("firebase_uid"):
         return redirect("tutor_panel:login")

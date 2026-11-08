@@ -6,6 +6,9 @@ app_name = "tutor_panel"
 urlpatterns = [
     path("", views.login_page, name="login"),
     path("firebase-login/", views.firebase_login, name="firebase_login"),
+    path("electron-login/", views.electron_login, name="electron_login"),
+    path("electron-session/", views.electron_session, name="electron_session"),
+    path("electron-logout/", views.electron_logout, name="electron_logout"),
     path("dashboard/", views.dashboard, name="dashboard"),
     path("logout/", views.logout_page, name="logout"),
     path("admin/", views.admin_dashboard, name="admin_dashboard"),
@@ -46,6 +49,8 @@ urlpatterns = [
     views.class_report_verification,
     name="class_report_verification"
     ),
+
+    #path("electron-login/", views.electron_login, name="electron_login"),
 
     
 ]

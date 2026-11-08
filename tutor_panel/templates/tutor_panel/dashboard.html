@@ -189,11 +189,56 @@
     </div>
 </header>
 
+
 <!-- EXISTING TUTOR DASHBOARD HEADER -->
 <header class="dashboard-header">
     <h2>Tutorain Tutor Portal</h2>
-    <a class="logout" href="{% url 'tutor_panel:logout' %}">Logout</a>
+
+    <a
+        class="logout"
+        href="{% url 'tutor_panel:logout' %}"
+        id="tutorainLogout"
+    >
+        Logout
+    </a>
 </header>
+
+<script>
+document.getElementById("tutorainLogout").addEventListener("click", async function(event) {
+
+    // Normal website: allow the existing Django logout link.
+    if (!window.electronAPI || !window.electronAPI.logout) {
+        return;
+    }
+
+    // Electron: use the dedicated logout endpoint.
+    event.preventDefault();
+
+    this.style.pointerEvents = "none";
+    this.textContent = "Logging out...";
+
+    try {
+
+        const result = await window.electronAPI.logout();
+
+        if (!result.success) {
+            throw new Error(result.error || "Logout failed.");
+        }
+
+    } catch (error) {
+
+        console.error("Electron logout error:", error);
+
+        this.textContent = "Logout";
+        this.style.pointerEvents = "auto";
+
+        alert("Unable to log out. Please try again.");
+
+    }
+
+});
+</script>
+
 
 <!-- EXISTING DASHBOARD CONTENT -->
 <main>

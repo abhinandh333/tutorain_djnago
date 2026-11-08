@@ -22,29 +22,61 @@ def index(request):
     return render(request, 'home/main.html') 
 
 
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 @csrf_exempt
 def student_login(request):
-    mobile = request.data.get('mobile')
+    email = (request.data.get('email') or '').strip()
+    mobile = (request.data.get('mobile') or '').strip()
     password = request.data.get('password')
 
-    if not mobile or not password:
-        return Response({'error': 'Mobile and password required'}, status=400)
+    if not password or (not email and not mobile):
+        return Response(
+            {'error': 'Email and password required'},
+            status=400
+        )
 
     try:
-        student = User.objects.get(mobile=mobile, is_student=True)
+        if email:
+            student = User.objects.get(
+                email__iexact=email,
+                is_student=True
+            )
+        else:
+            # Keep existing mobile login working
+            student = User.objects.get(
+                mobile=mobile,
+                is_student=True
+            )
+
         if not student.check_password(password):
-            return Response({'error': 'Invalid credentials'}, status=401)
+            return Response(
+                {'error': 'Invalid credentials'},
+                status=401
+            )
+
     except User.DoesNotExist:
-        return Response({'error': 'Invalid credentials'}, status=401)
+        return Response(
+            {'error': 'Invalid credentials'},
+            status=401
+        )
+
+    except User.MultipleObjectsReturned:
+        return Response(
+            {'error': 'Multiple accounts found. Contact support.'},
+            status=409
+        )
 
     token, _ = Token.objects.get_or_create(user=student)
 
     return Response({
+        'email': student.email,
         'mobile': student.mobile,
-        'token': token.key
+        'token': token.key,
+        'message': 'Login successful'
     })
+
 
 
 @api_view(['GET'])
