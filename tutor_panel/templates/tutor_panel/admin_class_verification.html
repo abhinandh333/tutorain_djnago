@@ -87,10 +87,23 @@ th{background:#f8fafc;color:#475569}
         <p>Only Present + Verified classes count towards tutor earnings.</p>
     </div>
 
-    <form method="get" class="month-form">
-        <input type="month" name="month" value="{{ month }}" required>
-        <button class="btn primary" type="submit">Load Month</button>
-    </form>
+<form method="get" class="month-form">
+    <input type="month" name="month" value="{{ month }}" required>
+
+    <select name="tutor"
+            style="padding:10px;border:1px solid #cbd5e1;border-radius:7px;">
+        <option value="">All Tutors</option>
+
+        {% for tutor in tutors %}
+        <option value="{{ tutor.email }}"
+            {% if selected_tutor == tutor.email %}selected{% endif %}>
+            {{ tutor.email }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <button class="btn primary" type="submit">Apply Filter</button>
+</form>
 </section>
 
 <section class="stats">

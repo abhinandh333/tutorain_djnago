@@ -1524,6 +1524,11 @@ def tutor_attendance(request):
             
 
 
+
+
+
+
+
     # Calculate student-wise amounts
     for row in earnings.values():
 
@@ -1610,11 +1615,41 @@ def tutor_attendance(request):
     # --------------------------------------------------
 
     # Estimated earnings = Verified + Pending
-    # Rejected classes are excluded.
+    # --------------------------------------------------
+    # MONTHLY EARNINGS INCLUDING POLICY SESSION SHARES
+    # --------------------------------------------------
 
-    earned_month = round(estimated_earned_total, 2)
+    policy_share_month = 0.0
 
-    verified_earned_month = round(verified_earned_total, 2)
+    for session_doc in db.collection("student_policy_sessions").where(
+        "tutor_email", "==", email
+    ).stream():
+
+        session = session_doc.to_dict() or {}
+        created_at = session.get("created_at")
+
+        if not created_at:
+            continue
+
+        # Include only policy sessions generated in the selected month.
+        try:
+            session_month = created_at.strftime("%Y-%m")
+        except AttributeError:
+            continue
+
+        if session_month == payment_month:
+            policy_share_month += float(session.get("tutor_share") or 0)
+
+    policy_share_month = round(policy_share_month, 2)
+
+    # Policy-session shares are earned immediately when generated.
+    earned_month = round(
+        estimated_earned_total + policy_share_month, 2
+    )
+
+    verified_earned_month = round(
+        verified_earned_total + policy_share_month, 2
+    )
 
     pending_earned_month = round(pending_earned_total, 2)
 
@@ -1648,6 +1683,7 @@ def tutor_attendance(request):
         "earned_month": earned_month,
         "verified_earned_month": verified_earned_month,
         "pending_earned_month": pending_earned_month,
+        "policy_share_month": policy_share_month,
 
         # Payments
         "paid_month": paid_total,
@@ -1686,6 +1722,13 @@ def class_report_verification(request):
         else request.GET.get("month")
     ) or today.strftime("%Y-%m")
 
+    selected_tutor = (
+        request.POST.get("tutor")
+        if request.method == "POST"
+        else request.GET.get("tutor")
+    ) or ""
+    selected_tutor = selected_tutor.strip().lower()
+
     try:
         month = date.fromisoformat(month + "-01").strftime("%Y-%m")
     except ValueError:
@@ -1698,8 +1741,14 @@ def class_report_verification(request):
         request.session.get("firebase_email") or ""
     ).strip().lower()
 
+    from urllib.parse import urlencode
+
+    redirect_params = {"month": month}
+    if selected_tutor:
+        redirect_params["tutor"] = selected_tutor
     redirect_url = (
-        f"/tutor_panel/class-report-verification/?month={month}"
+        "/tutor_panel/class-report-verification/?"
+        + urlencode(redirect_params)
     )
 
     # --------------------------------------------------
@@ -2163,6 +2212,18 @@ def class_report_verification(request):
 
     reports = []
 
+    # Load tutors for the filter dropdown. Tutor documents are keyed by email.
+    tutors = []
+    for tutor_doc in db.collection("tutors").stream():
+        tutor_data = tutor_doc.to_dict() or {}
+        tutor_email = (
+            tutor_data.get("email") or tutor_doc.id or ""
+        ).strip().lower()
+        if tutor_email:
+            tutors.append({"email": tutor_email})
+
+    tutors.sort(key=lambda item: item["email"])
+
     totals = {
         "submitted": 0,
         "pending": 0,
@@ -2178,6 +2239,13 @@ def class_report_verification(request):
         item = doc.to_dict() or {}
 
         if str(item.get("class_date") or "")[:7] != month:
+            continue
+
+        report_tutor_email = (
+            item.get("tutor_email") or ""
+        ).strip().lower()
+
+        if selected_tutor and report_tutor_email != selected_tutor:
             continue
 
         item["report_id"] = doc.id
@@ -2257,6 +2325,8 @@ def class_report_verification(request):
         "tutor_panel/admin_class_verification.html",
         {
             "month": month,
+            "tutors": tutors,
+            "selected_tutor": selected_tutor,
             "reports": reports,
             "students": students,
             "totals": totals,
@@ -2631,7 +2701,43 @@ def tutor_payments(request):
         email = (report.get("tutor_email") or "").strip().lower()
         if report_month == month and email in earnings and str(report.get("attendance_status") or "").strip().lower() == "present":
             earnings[email]["present_classes"] += 1
+    # --------------------------------------------------
+    # ADD AUTOMATIC POLICY-SESSION TUTOR SHARES
+    # --------------------------------------------------
 
+    for session_doc in db.collection("student_policy_sessions").stream():
+
+        session = session_doc.to_dict() or {}
+
+        tutor_email = (
+            session.get("tutor_email") or ""
+        ).strip().lower()
+
+        if tutor_email not in tutors:
+            continue
+
+        created_at = session.get("created_at")
+
+        if not created_at:
+            continue
+
+        try:
+            session_month = created_at.strftime("%Y-%m")
+        except AttributeError:
+            continue
+
+        if session_month != month:
+            continue
+
+        try:
+            tutor_share = float(session.get("tutor_share") or 0)
+        except (TypeError, ValueError):
+            tutor_share = 0.0
+
+        # Add only the tutor's 50% share, not the full session amount.
+        tutors[tutor_email]["earned"] += tutor_share
+
+        
     payments = []
     for doc in payments_ref.where("month", "==", month).stream():
         item = doc.to_dict() or {}
@@ -2786,27 +2892,93 @@ def tutor_payments(request):
         student_by_id[doc.id] = row
     students.sort(key=lambda x: (x["tutor_name"].lower(), x["name"].lower()))
 
-    # Reports are matched to the student document ID. Only Present attendance is payable.
+    # Reports are matched to the student document ID.
+    # A report is payable only when BOTH attendance is Present and admin verification is Verified.
     for doc in db.collection("class_reports").stream():
         report = doc.to_dict() or {}
+
         if str(report.get("class_date") or "")[:7] != month:
             continue
-        # Pending and rejected reports are not payable
-        if str(report.get("verification_status") or "pending").strip().lower() != "verified":
+
+        attendance_status = str(
+            report.get("attendance_status") or ""
+        ).strip().lower()
+
+        if attendance_status != "present":
             continue
+
+        verification_status = str(
+            report.get("verification_status") or "pending"
+        ).strip().lower()
+
+        # Pending and rejected reports are not payable.
+        if verification_status != "verified":
+            continue
+
         student_id = str(report.get("student_id") or "").strip()
         row = student_by_id.get(student_id)
-        # Fallback for older reports where the student ID may be absent: match name + tutor.
+
+        # Fallback for older reports where the student ID may be absent:
+        # match student name together with tutor email.
         if row is None and report.get("student_name"):
-            report_tutor = (report.get("tutor_email") or "").strip().lower()
-            matches = [s for s in students if s["name"] == report.get("student_name") and s["tutor_email"] == report_tutor]
+            report_tutor = (
+                report.get("tutor_email") or ""
+            ).strip().lower()
+
+            matches = [
+                student_row
+                for student_row in students
+                if student_row["name"] == report.get("student_name")
+                and student_row["tutor_email"] == report_tutor
+            ]
+
             if len(matches) == 1:
                 row = matches[0]
+
         if row:
             row["present_classes"] += 1
-            row["earned"] = round(row["present_classes"] * row["rate_per_class"], 2)
+            row["earned"] = round(
+                row["present_classes"] * row["rate_per_class"], 2
+            )
+
             tutors[row["tutor_email"]]["present_classes"] += 1
             tutors[row["tutor_email"]]["earned"] += row["rate_per_class"]
+
+    # Add the tutor's 50% share of policy sessions generated in this month.
+    # Do not add the full policy-session amount or add it to a student class row.
+    for session_doc in db.collection("student_policy_sessions").stream():
+        session = session_doc.to_dict() or {}
+
+        tutor_email = (
+            session.get("tutor_email") or ""
+        ).strip().lower()
+
+        if tutor_email not in tutors:
+            continue
+
+        created_at = session.get("created_at")
+        if not created_at:
+            continue
+
+        try:
+            if isinstance(created_at, str):
+                session_month = datetime.fromisoformat(
+                    created_at.replace("Z", "+00:00")
+                ).strftime("%Y-%m")
+            else:
+                session_month = created_at.strftime("%Y-%m")
+        except (AttributeError, TypeError, ValueError):
+            continue
+
+        if session_month != month:
+            continue
+
+        try:
+            tutor_share = float(session.get("tutor_share") or 0)
+        except (TypeError, ValueError):
+            tutor_share = 0.0
+
+        tutors[tutor_email]["earned"] += tutor_share
 
     payments = []
     for doc in payments_ref.where("month", "==", month).stream():
