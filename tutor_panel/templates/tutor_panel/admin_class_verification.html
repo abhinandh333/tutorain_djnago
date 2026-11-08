@@ -1,0 +1,328 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Class Verification | Tutorain</title>
+
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f4f6fb;color:#202938;font-family:Arial,sans-serif}
+header{background:#172554;color:white;padding:22px 5%;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+header h1{margin:0 0 5px;font-size:23px}
+header p{margin:0;color:#dbeafe;font-size:13px}
+.back{background:white;color:#172554;padding:10px 15px;border-radius:8px;text-decoration:none;font-weight:bold}
+main{max-width:1450px;margin:auto;padding:25px 4%}
+.toolbar{display:flex;justify-content:space-between;align-items:end;gap:15px;flex-wrap:wrap}
+.toolbar h2{margin:0 0 6px}
+.toolbar p{margin:0;color:#64748b}
+.month-form{display:flex;gap:8px;align-items:center}
+input{padding:10px;border:1px solid #cbd5e1;border-radius:7px}
+.btn{border:0;border-radius:7px;padding:10px 14px;font-weight:bold;cursor:pointer}
+.primary{background:#172554;color:white}
+.approve{background:#dcfce7;color:#166534}
+.reject{background:#fee2e2;color:#991b1b}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;margin:20px 0}
+.stat,.panel,.report{background:white;border:1px solid #e5e7eb;border-radius:12px;padding:16px}
+.stat span{display:block;color:#64748b;font-size:13px}
+.stat strong{font-size:25px;display:block;margin-top:7px}
+.panel{margin:18px 0;overflow:hidden}
+.panel h3{margin:0 0 14px;color:#172554}
+.table-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:750px}
+th,td{text-align:left;padding:11px;border-bottom:1px solid #e5e7eb;font-size:13px}
+th{background:#f8fafc;color:#475569}
+.report-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px}
+.report h4{margin:0 0 5px;color:#172554}
+.meta{font-size:13px;color:#64748b;line-height:1.7}
+.detail{font-size:13px;line-height:1.7;margin:12px 0;overflow-wrap:anywhere}
+.status{display:inline-block;padding:5px 9px;border-radius:20px;font-size:11px;font-weight:bold;text-transform:capitalize}
+.pending{background:#fef3c7;color:#92400e}
+.verified{background:#dcfce7;color:#166534}
+.rejected{background:#fee2e2;color:#991b1b}
+.actions form{display:flex;gap:8px;flex-wrap:wrap}
+.remark{width:100%;margin-bottom:5px}
+.locked{color:#166534;font-weight:bold;font-size:13px;margin-top:12px}
+.messages{padding:0;list-style:none}
+.messages li{padding:11px;background:white;border-left:4px solid #2563eb;margin:8px 0}
+.empty{text-align:center;padding:25px;color:#64748b}
+@media(max-width:600px){
+ main{padding:18px 12px}
+ header{padding:18px 14px}
+ .toolbar{align-items:stretch}
+ .month-form{width:100%}
+ .month-form input{flex:1;min-width:0}
+ .report-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div>
+        <h1>Class Report Verification</h1>
+        <p>Administrator: {{ admin_email }}</p>
+    </div>
+
+    <a class="back" href="{% url 'tutor_panel:admin_dashboard' %}">
+        ← Admin Dashboard
+    </a>
+</header>
+
+<main>
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<section class="toolbar">
+    <div>
+        <h2>Monthly Verification</h2>
+        <p>Only Present + Verified classes count towards tutor earnings.</p>
+    </div>
+
+    <form method="get" class="month-form">
+        <input type="month" name="month" value="{{ month }}" required>
+        <button class="btn primary" type="submit">Load Month</button>
+    </form>
+</section>
+
+<section class="stats">
+    <div class="stat">
+        <span>Submitted Reports</span>
+        <strong>{{ totals.submitted }}</strong>
+    </div>
+
+    <div class="stat">
+        <span>Pending</span>
+        <strong>{{ totals.pending }}</strong>
+    </div>
+
+    <div class="stat">
+        <span>Verified</span>
+        <strong>{{ totals.verified }}</strong>
+    </div>
+
+    <div class="stat">
+        <span>Rejected</span>
+        <strong>{{ totals.rejected }}</strong>
+    </div>
+
+    <div class="stat">
+        <span>Payable Classes</span>
+        <strong>{{ totals.payable }}</strong>
+    </div>
+</section>
+
+<section class="panel">
+    <h3>Student-wise Monthly Summary</h3>
+
+    {% if students %}
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Tutor</th>
+                    <th>Submitted</th>
+                    <th>Pending</th>
+                    <th>Verified</th>
+                    <th>Rejected</th>
+                    <th>Payable</th>
+                </tr>
+            </thead>
+
+            <tbody>
+            {% for student in students %}
+                <tr>
+                    <td>
+                        <strong>{{ student.student_name }}</strong><br>
+                        {{ student.student_class }}
+                    </td>
+                    <td>{{ student.tutor_email }}</td>
+                    <td>{{ student.submitted }}</td>
+                    <td>{{ student.pending }}</td>
+                    <td>{{ student.verified }}</td>
+                    <td>{{ student.rejected }}</td>
+                    <td><strong>{{ student.payable }}</strong></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <div class="empty">No reports submitted for this month.</div>
+    {% endif %}
+</section>
+
+<section class="panel">
+    <h3>Individual Class Reports</h3>
+
+    {% if reports %}
+    <div class="report-grid">
+
+        {% for report in reports %}
+        <article class="report">
+
+            <div style="display:flex;justify-content:space-between;gap:10px">
+                <div>
+                    <h4>{{ report.student_name|default:"Student" }}</h4>
+                    <div class="meta">
+                        {{ report.class_date }} · {{ report.subject|default:"—" }}
+                    </div>
+                </div>
+
+                <span class="status {{ report.verification_status }}">
+                    {{ report.verification_status }}
+                </span>
+            </div>
+
+            <div class="detail">
+                <strong>Tutor:</strong> {{ report.tutor_email|default:"—" }}<br>
+                <strong>Class:</strong> {{ report.student_class|default:"—" }}<br>
+                <strong>Scheduled time:</strong> {{ report.scheduled_time|default:"—" }}<br>
+                <strong>Actual start:</strong> {{ report.actual_start_time|default:"—" }}<br>
+                <strong>Duration:</strong> {{ report.duration_minutes|default:"—" }} minutes<br>
+                <strong>Attendance:</strong> {{ report.attendance_status|default:"—" }}<br>
+                <strong>Topic taught:</strong> {{ report.topic_taught|default:"—" }}<br>
+                <strong>Tutor remarks:</strong> {{ report.tutor_remarks|default:"—" }}<br>
+                {% if report.consideration_request %}
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;
+                border-radius:9px;padding:13px;margin:12px 0;">
+
+        <strong style="color:#1e40af;">
+            Parent's Absence Consideration Request
+        </strong>
+
+        <p style="margin:10px 0 5px;">
+            <strong>Parent:</strong>
+            {{ report.consideration_request.parent_name|default:"—" }}
+        </p>
+
+        <p style="margin:5px 0;">
+            <strong>Reason given by parent:</strong>
+        </p>
+
+        <p style="margin:5px 0;white-space:pre-wrap;">
+            {{ report.consideration_request.reason }}
+        </p>
+
+        <p style="margin:8px 0 0;">
+            <strong>Request status:</strong>
+            {{ report.consideration_request.status|default:"pending" }}
+        </p>
+
+    </div>
+{% endif %}
+
+                {% if report.recording_url %}
+                    <strong>Recording:</strong>
+                    <a href="{{ report.recording_url }}" target="_blank" rel="noopener">
+                        View Recording
+                    </a><br>
+                {% endif %}
+
+                {% if report.admin_remark %}
+                    <strong>Admin remark:</strong> {{ report.admin_remark }}
+                {% endif %}
+            </div>
+
+
+{% if report.verification_status == "verified" or report.verification_status == "rejected" %}
+
+    <div class="locked">
+        {% if report.verification_status == "verified" %}
+            ✓ Reviewed — tutor cannot edit or delete this report.
+        {% else %}
+            ✕ Rejected — tutor cannot edit or delete this report.
+        {% endif %}
+
+        {% if report.absence_policy_status == "counted" %}
+            <p>Absence decision: Approved unexcused absence. Counted toward the five-absence policy.</p>
+        {% elif report.absence_policy_status == "exempt" %}
+            <p>Absence decision: Approved exempt leave. Not counted toward the five-absence policy.</p>
+        {% endif %}
+    </div>
+
+{% else %}
+
+    <div class="actions">
+        <form method="post">
+            {% csrf_token %}
+
+            <input type="hidden" name="month" value="{{ month }}">
+            <input type="hidden" name="report_id" value="{{ report.report_id }}">
+
+            <input
+                type="text"
+                name="admin_remark"
+                class="remark"
+                maxlength="500"
+                placeholder="Reason or optional administrator remark"
+            >
+
+            {% if report.attendance_status|lower == "present" %}
+
+                <button
+                    class="btn approve"
+                    type="submit"
+                    name="action"
+                    value="verify"
+                >
+                    ✓ Verify Present Class
+                </button>
+
+            {% elif report.attendance_status|lower == "absent" %}
+
+                <button
+                    class="btn approve"
+                    type="submit"
+                    name="action"
+                    value="verify_absence"
+                >
+                    ✓ Approve Unexcused Absence
+                </button>
+
+                <button
+                    class="btn"
+                    style="background:#dbeafe;color:#1e40af"
+                    type="submit"
+                    name="action"
+                    value="exempt_absence"
+                >
+                    Approve Exempt Leave
+                </button>
+
+            {% endif %}
+
+            <button
+                class="btn reject"
+                type="submit"
+                name="action"
+                value="reject"
+            >
+                Reject Report
+            </button>
+        </form>
+    </div>
+
+{% endif %}
+
+        </article>
+        {% endfor %}
+
+    </div>
+    {% else %}
+        <div class="empty">No class reports found for {{ month }}.</div>
+    {% endif %}
+</section>
+
+</main>
+</body>
+</html>

@@ -15,6 +15,92 @@ h2{color:#173b70;margin-top:0}.section-title{margin:22px 0 12px;border-bottom:1p
 .messages{padding:0;list-style:none}.messages li{padding:12px;border-radius:7px;margin-bottom:8px;background:#eff6ff}.messages .error{background:#fee2e2}.messages .success{background:#dcfce7}
 .table-wrap{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:650px}th,td{text-align:left;padding:11px;border-bottom:1px solid #e2e8f0}th{background:#f1f5f9}
 .small{font-size:13px;color:#64748b}.video-link{color:#0878e8;font-weight:600}.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}.stat{padding:17px;border:1px solid #e2e8f0;border-radius:10px;background:#f8fbff}.stat small{display:block;color:#64748b}.stat strong{display:block;font-size:23px;margin-top:8px;color:#173b70}.btn.danger{background:#b91c1c}.btn.secondary{background:#475569}.actions{display:flex;gap:7px;align-items:center}.inline-form{display:inline}.edit-banner{background:#fff7ed;border:1px solid #fed7aa;padding:12px;border-radius:8px;margin-bottom:14px}
+.student-summary-note{padding:12px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;color:#475569;font-size:13px;margin:12px 0}
+.status-present{color:#15803d;font-weight:700}.status-absent{color:#b91c1c;font-weight:700}
+.student-table{min-width:820px}.student-table td strong{color:#173b70}
+
+.verification-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.status-verified {
+    color: #15803d;
+    background: #dcfce7;
+}
+
+.status-pending {
+    color: #b45309;
+    background: #fef3c7;
+}
+
+.status-rejected {
+    color: #b91c1c;
+    background: #fee2e2;
+}
+
+
+
+.policy-card {
+    border: 1px solid #dbeafe;
+    background: #f8fbff;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 14px;
+}
+
+.policy-card h3 {
+    margin: 0 0 10px;
+    color: #173b70;
+}
+
+.policy-progress {
+    height: 9px;
+    background: #e2e8f0;
+    border-radius: 20px;
+    overflow: hidden;
+    margin: 10px 0;
+}
+
+.policy-progress span {
+    display: block;
+    height: 100%;
+    background: #0878e8;
+    border-radius: 20px;
+}
+
+.policy-numbers {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.policy-number {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 11px;
+}
+
+.policy-number small {
+    display: block;
+    color: #64748b;
+}
+
+.policy-number strong {
+    display: block;
+    color: #173b70;
+    font-size: 19px;
+    margin-top: 5px;
+}
+
 </style>
 </head>
 <body>
@@ -28,17 +114,189 @@ h2{color:#173b70;margin-top:0}.section-title{margin:22px 0 12px;border-bottom:1p
 <div class="field"><label for="month">Payment month</label><input id="month" type="month" name="month" value="{{ payment_month }}" required></div>
 <div class="field"><button class="btn" type="submit">View Month</button></div>
 </form>
+
 <div class="stats">
-<div class="stat"><small>Present classes</small><strong>{{ present_classes_month }}</strong></div>
-<div class="stat"><small>Total earned</small><strong>₹{{ earned_month|floatformat:2 }}</strong></div>
-<div class="stat"><small>Amount paid</small><strong>₹{{ paid_month|floatformat:2 }}</strong></div>
-<div class="stat"><small>Remaining balance</small><strong>₹{{ balance_month|floatformat:2 }}</strong></div>
+
+    <div class="stat">
+        <small>Estimated Total Earnings</small>
+        <strong>₹{{ earned_month|floatformat:2 }}</strong>
+        <small>Verified + Pending</small>
+    </div>
+
+    <div class="stat">
+        <small>Verified Earnings</small>
+        <strong>₹{{ verified_earned_month|floatformat:2 }}</strong>
+        <small>{{ verified_present_classes_month }} approved classes</small>
+    </div>
+
+    <div class="stat">
+        <small>Pending Earnings</small>
+        <strong>₹{{ pending_earned_month|floatformat:2 }}</strong>
+        <small>{{ pending_present_classes_month }} classes awaiting approval</small>
+    </div>
+
+    <div class="stat">
+        <small>Amount Paid</small>
+        <strong>₹{{ paid_month|floatformat:2 }}</strong>
+    </div>
+
+    <div class="stat">
+        <small>Verified Remaining Balance</small>
+        <strong>₹{{ balance_month|floatformat:2 }}</strong>
+    </div>
+
 </div>
+
 {% if payment_history %}<h3 class="section-title">Payments recorded by admin — {{ payment_month }}</h3>
 <div class="table-wrap"><table><thead><tr><th>Payment date</th><th>Amount</th><th>Note / reference</th></tr></thead><tbody>
 {% for payment in payment_history %}<tr><td>{{ payment.payment_date|default:"—" }}</td><td>₹{{ payment.amount|floatformat:2 }}</td><td>{{ payment.note|default:"—" }}</td></tr>{% endfor %}
 </tbody></table></div>{% else %}<p class="small">No payments have been recorded for {{ payment_month }}.</p>{% endif %}
 </section>
+
+
+
+<section class="panel">
+
+    <h2>📊 Lifetime Absence Policy</h2>
+
+    <p class="small">
+        This counter continues throughout each student's entire enrolment.
+        Every five administrator-approved unexcused absences generate one
+        policy session. Approved exempt leave and rejected reports do not count.
+    </p>
+
+    {% if policy_summaries %}
+
+        {% for policy in policy_summaries %}
+
+            <div class="policy-card">
+
+                <h3>{{ policy.student_name }}</h3>
+
+                <p>
+                    <strong>
+                        {{ policy.current_cycle }} / 5
+                    </strong>
+                    unexcused absences toward the next policy session
+                </p>
+
+                <div class="policy-progress">
+                    <span style="width:{% widthratio policy.current_cycle 5 100 %}%"></span>
+                </div>
+
+                <div class="policy-numbers">
+
+                    <div class="policy-number">
+                        <small>Lifetime absences</small>
+                        <strong>{{ policy.lifetime_absences }}</strong>
+                    </div>
+
+                    <div class="policy-number">
+                        <small>Remaining for next session</small>
+                        <strong>{{ policy.absences_remaining }}</strong>
+                    </div>
+
+                    <div class="policy-number">
+                        <small>Policy sessions generated</small>
+                        <strong>{{ policy.sessions_generated }}</strong>
+                    </div>
+
+                    <div class="policy-number">
+                        <small>Your generated sessions</small>
+                        <strong>{{ policy.tutor_sessions_generated }}</strong>
+                    </div>
+
+                    <div class="policy-number">
+                        <small>Your policy-session share</small>
+                        <strong>₹{{ policy.tutor_policy_share|floatformat:2 }}</strong>
+                    </div>
+
+                </div>
+
+                {% if policy.sessions %}
+                    <h4>Policy session history</h4>
+
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Session</th>
+                                    <th>Session amount</th>
+                                    <th>Your 50% share</th>
+                                    <th>Payment status</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {% for session in policy.sessions %}
+                                    <tr>
+                                        <td>{{ session.cycle_number }}</td>
+                                        <td>
+                                            ₹{{ session.policy_session_amount|floatformat:2 }}
+                                        </td>
+                                        <td>
+                                            ₹{{ session.tutor_share|floatformat:2 }}
+                                        </td>
+                                        <td>
+                                            {{ session.payment_status|default:"pending"|title }}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+        <p class="small">No active students are assigned to your account.</p>
+    {% endif %}
+
+</section>
+
+
+
+<section class="panel">
+<h2>👨‍🎓 Student-wise Attendance & Earnings</h2>
+<p class="small">Attendance and earnings for each assigned student during {{ payment_month }}. Only Present classes are included in earnings.</p>
+{% if student_summaries %}
+<div class="table-wrap">
+<table class="student-table">
+<thead>
+<tr>
+<th>Student</th>
+<th>Total classes</th>
+<th>Present</th>
+<th>Absent</th>
+<th>Rate / class</th>
+<th>Earned this month</th>
+</tr>
+</thead>
+<tbody>
+{% for row in student_summaries %}
+<tr>
+<td><strong>{{ row.name }}</strong></td>
+<td>{{ row.total }}</td>
+<td class="status-present">{{ row.classes }}</td>
+<td class="status-absent">{{ row.absent }}</td>
+<td>₹{{ row.rate|floatformat:2 }}</td>
+<td><strong>₹{{ row.earned|floatformat:2 }}</strong></td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+{% else %}
+<p class="small">No student attendance or earnings data is available for this month.</p>
+{% endif %}
+<p class="student-summary-note">
+<strong>Payment clarification:</strong> The amount earned is calculated separately for each student using that student's admin-set rate. Actual payments are currently recorded against the tutor for the month, not against individual students. Therefore, the total paid and remaining balance above are tutor-level figures and cannot be accurately split student by student.
+</p>
+</section>
+
 <section class="panel">
 <h2>{% if edit_report %}Edit Class Report{% else %}Submit Class Evaluation{% endif %}</h2>
 {% if edit_report %}<div class="edit-banner">You are editing the report dated {{ edit_report.class_date }}. Save your changes or <a href="{% url 'tutor_panel:tutor_attendance' %}">cancel editing</a>.</div>{% endif %}
@@ -91,14 +349,116 @@ h2{color:#173b70;margin-top:0}.section-title{margin:22px 0 12px;border-bottom:1p
 {% endif %}
 </section>
 <section class="panel">
+
 <h2>My Recent Class Reports</h2>
+
 {% if reports %}
-<div class="table-wrap"><table><thead><tr><th>Date</th><th>Student</th><th>Subject</th><th>Attendance</th><th>Homework</th><th>Recording</th><th>Actions</th></tr></thead><tbody>
-{% for report in reports %}<tr><td>{{ report.class_date }}</td><td>{{ report.student_name }}</td><td>{{ report.subject }}</td><td>{{ report.attendance_status }}</td><td>{{ report.homework_status|default:"—" }}</td><td>{% if report.recording_url %}<a class="video-link" href="{{ report.recording_url }}" target="_blank" rel="noopener noreferrer">Watch recording ↗</a>{% else %}—{% endif %}</td>
-<td><div class="actions"><a class="btn secondary" href="?edit={{ report.report_id }}&month={{ payment_month }}#class-report-form">Edit</a>
-<form method="post" class="inline-form" onsubmit="return confirm('Delete this class report? This may change your monthly earnings.');">{% csrf_token %}<input type="hidden" name="action" value="delete_report"><input type="hidden" name="report_id" value="{{ report.report_id }}"><button class="btn danger" type="submit">Delete</button></form></div></td></tr>{% endfor %}
-</tbody></table></div>
-{% else %}<p>No class reports submitted yet.</p>{% endif %}
+
+<div class="table-wrap">
+<table>
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Student</th>
+            <th>Subject</th>
+            <th>Attendance</th>
+            <th>Verification Status</th>
+            <th>Homework</th>
+            <th>Recording</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for report in reports %}
+        <tr>
+            <td>{{ report.class_date }}</td>
+
+            <td>{{ report.student_name }}</td>
+
+            <td>{{ report.subject }}</td>
+
+            <td>{{ report.attendance_status }}</td>
+
+            <td>
+                {% with status=report.verification_status|default:"pending" %}
+                    {% if status == "verified" %}
+                        <span class="verification-status status-verified">
+                            ✓ Verified
+                        </span>
+
+                    {% elif status == "rejected" %}
+                        <span class="verification-status status-rejected">
+                            ✕ Rejected
+                        </span>
+
+                    {% else %}
+                        <span class="verification-status status-pending">
+                            ◷ Pending
+                        </span>
+                    {% endif %}
+                {% endwith %}
+            </td>
+
+            <td>
+                {{ report.homework_status|default:"—" }}
+            </td>
+
+            <td>
+                {% if report.recording_url %}
+                    <a class="video-link"
+                       href="{{ report.recording_url }}"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        Watch recording ↗
+                    </a>
+                {% else %}
+                    —
+                {% endif %}
+            </td>
+
+            <td>
+                <div class="actions">
+
+                    {% if report.verification_status != "verified" and report.verification_status != "rejected" %}
+                        <a class="btn secondary"
+                           href="?edit={{ report.report_id }}&month={{ payment_month }}#class-report-form">
+                            Edit
+                        </a>
+
+                        <form method="post"
+                              class="inline-form"
+                              onsubmit="return confirm('Delete this class report? This may change your monthly earnings.');">
+
+                            {% csrf_token %}
+
+                            <input type="hidden"
+                                   name="action"
+                                   value="delete_report">
+
+                            <input type="hidden"
+                                   name="report_id"
+                                   value="{{ report.report_id }}">
+
+                            <button class="btn danger" type="submit">
+                                Delete
+                            </button>
+                        </form>
+                    {% else %}
+                        <span class="small">Verified report locked</span>
+                    {% endif %}
+
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+
+{% else %}
+    <p>No class reports submitted yet.</p>
+{% endif %}
 </section>
 </main>
 {% if edit_report %}{{ edit_report|json_script:"edit-report-data" }}

@@ -41,5 +41,11 @@ urlpatterns = [
         name="student_complete_registration",
     ),
 
+    path(
+    "class-report-verification/",
+    views.class_report_verification,
+    name="class_report_verification"
+    ),
+
     
 ]

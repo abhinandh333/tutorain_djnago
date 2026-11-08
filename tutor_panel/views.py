@@ -21,7 +21,7 @@ import hashlib
 import time
 
 from django.utils.crypto import constant_time_compare
-
+import math
 
 
 @ensure_csrf_cookie
@@ -1142,6 +1142,82 @@ def tutor_attendance(request):
             student_by_id[doc.id] = student
     assigned_students.sort(key=lambda item: (item.get("name") or "").lower())
 
+    
+    # --------------------------------------------------
+    # LIFETIME ABSENCE POLICY SUMMARY FOR THIS TUTOR
+    # --------------------------------------------------
+
+    policy_summaries = []
+
+    for student in assigned_students:
+
+        student_id = student["student_id"]
+
+        policy_doc = db.collection(
+            "student_absence_policy"
+        ).document(student_id).get()
+
+        policy_data = (
+            policy_doc.to_dict() or {}
+            if policy_doc.exists
+            else {}
+        )
+
+        lifetime_absences = int(
+            policy_data.get("lifetime_unexcused_absences", 0) or 0
+        )
+
+        current_cycle = int(
+            policy_data.get("current_cycle_absences", 0) or 0
+        )
+
+        sessions_generated = int(
+            policy_data.get("policy_sessions_generated", 0) or 0
+        )
+
+        # Only show policy sessions generated under this tutor's account.
+        tutor_policy_sessions = []
+
+        for session_doc in db.collection(
+            "student_policy_sessions"
+        ).where("student_id", "==", student_id).stream():
+
+            session = session_doc.to_dict() or {}
+
+            if (
+                (session.get("tutor_email") or "").strip().lower()
+                != email
+            ):
+                continue
+
+            session["session_id"] = session_doc.id
+            tutor_policy_sessions.append(session)
+
+        tutor_policy_sessions.sort(
+            key=lambda item: int(item.get("cycle_number", 0))
+        )
+
+        tutor_policy_share = round(
+            sum(
+                float(item.get("tutor_share") or 0)
+                for item in tutor_policy_sessions
+            ),
+            2
+        )
+
+        policy_summaries.append({
+            "student_id": student_id,
+            "student_name": student.get("name") or "Student",
+            "lifetime_absences": lifetime_absences,
+            "current_cycle": current_cycle,
+            "absences_remaining": 5 - current_cycle,
+            "sessions_generated": sessions_generated,
+            "tutor_sessions_generated": len(tutor_policy_sessions),
+            "tutor_policy_share": tutor_policy_share,
+            "sessions": tutor_policy_sessions,
+        })
+
+
     # The earnings month is independent of the report being edited.
     today = date.today()
     payment_month = (request.GET.get("month") or today.strftime("%Y-%m")).strip()
@@ -1164,6 +1240,20 @@ def tutor_attendance(request):
             if not report_doc or not report_doc.exists or (existing.get("tutor_email") or "").strip().lower() != email:
                 messages.error(request, "That class report was not found or does not belong to your account.")
                 return redirect("tutor_panel:tutor_attendance")
+
+
+            # Prevent tutors from changing reports already verified by admin
+            verification_status = str(
+                existing.get("verification_status") or "pending"
+            ).strip().lower()
+
+            if verification_status in {"verified", "rejected"}:
+                messages.error(
+                    request,
+                    "This class report has already been verified by the administrator and cannot be edited or deleted."
+                )
+                return redirect("tutor_panel:tutor_attendance")
+
             if action == "delete_report":
                 report_ref.delete()
                 messages.success(request, "Your class report was deleted.")
@@ -1263,12 +1353,39 @@ def tutor_attendance(request):
             "recording_url": recording_url, "tutor_remarks": tutor_remarks,
         }
         if action == "update_report":
+
+            # Any edited report must be verified again by admin
+            report.update({
+                "verification_status": "pending",
+                "verified_by": "",
+                "verified_at": None,
+                "admin_remark": "",
+            })
+
             report_ref.update(report)
-            messages.success(request, "Your class report was updated. Monthly earnings will reflect the revised attendance.")
+
+            messages.success(
+                request,
+                "Class report updated and submitted for administrator verification."
+            )
+
         else:
-            report["created_at"] = datetime.now(timezone.utc)
+
+            # New reports always start as pending
+            report.update({
+                "created_at": datetime.now(timezone.utc),
+                "verification_status": "pending",
+                "verified_by": "",
+                "verified_at": None,
+                "admin_remark": "",
+            })
+
             reports_ref.add(report)
-            messages.success(request, f"Class report saved for {student.get('name', 'student')}.")
+
+            messages.success(
+                request,
+                f"Class report saved for {student.get('name', 'student')} and submitted for verification."
+            )
         return redirect("tutor_panel:tutor_attendance")
 
     reports = []
@@ -1284,60 +1401,871 @@ def tutor_attendance(request):
         candidate = reports_ref.document(edit_id).get()
         candidate_data = candidate.to_dict() or {} if candidate.exists else {}
         if candidate.exists and (candidate_data.get("tutor_email") or "").strip().lower() == email:
-            edit_report = {key: value for key, value in candidate_data.items() if key != "created_at"}
-            edit_report["report_id"] = candidate.id
+
+            verification_status = str(
+                candidate_data.get("verification_status") or "pending"
+            ).strip().lower()
+
+            if verification_status in {"verified", "rejected"}:
+                messages.error(
+                    request,
+                    "This report has already been reviewed and cannot be edited."
+                )
+            else:
+                edit_report = {
+                    key: value
+                    for key, value in candidate_data.items()
+                    if key != "created_at"
+                }
+                edit_report["report_id"] = candidate.id
         else:
             messages.error(request, "That class report was not found or does not belong to your account.")
 
-    # Match the admin payment page exactly: per-student rates, Present reports, and recorded payments.
+    # Student-wise attendance and earnings for the selected month.
+
+# --------------------------------------------------
+# STUDENT-WISE MONTHLY EARNINGS
+# --------------------------------------------------
+
     earnings = {}
+
     for student_doc in students_ref.where("tutor_email", "==", email).stream():
+
         student_data = student_doc.to_dict() or {}
-        if str(student_data.get("status") or "active").strip().lower() not in ("active", "approved", ""):
+
+        if str(student_data.get("status") or "active").strip().lower() not in (
+            "active", "approved", ""
+        ):
             continue
+
         try:
-            student_rate = float(student_data.get("tutor_rate_per_class") or 0)
+            student_rate = float(
+                student_data.get("tutor_rate_per_class") or 0
+            )
         except (TypeError, ValueError):
             student_rate = 0.0
-        earnings[student_doc.id] = {"name": student_data.get("name") or student_doc.id,
-                                    "rate": student_rate, "classes": 0, "earned": 0.0}
+
+        earnings[student_doc.id] = {
+            "student_id": student_doc.id,
+            "name": student_data.get("name") or student_doc.id,
+            "student_class": student_data.get("student_class") or "",
+            "rate": student_rate,
+
+            "total": 0,
+            "absent": 0,
+
+            "classes": 0,           # All Present classes
+            "pending_classes": 0,
+            "verified_classes": 0,
+            "rejected_classes": 0,
+
+            "earned": 0.0,          # Estimated earnings
+            "pending_earned": 0.0,
+            "verified_earned": 0.0,
+        }
+
+
+    # Read tutor's class reports for the selected month
     for doc in reports_ref.where("tutor_email", "==", email).stream():
+
         item = doc.to_dict() or {}
-        if str(item.get("class_date") or "")[:7] != payment_month or str(item.get("attendance_status") or "").strip().lower() != "present":
+
+        if str(item.get("class_date") or "")[:7] != payment_month:
             continue
+
+        attendance = str(
+            item.get("attendance_status") or ""
+        ).strip().lower()
+
+        if attendance not in {"present", "absent"}:
+            continue
+
         sid = str(item.get("student_id") or "").strip()
+
+        # Support older reports with student_name only
         if sid not in earnings and item.get("student_name"):
-            matches = [key for key, value in earnings.items() if value["name"] == item.get("student_name")]
+
+            matches = [
+                key for key, value in earnings.items()
+                if value["name"] == item.get("student_name")
+            ]
+
             if len(matches) == 1:
                 sid = matches[0]
-        if sid in earnings:
-            earnings[sid]["classes"] += 1
-            earnings[sid]["earned"] = round(earnings[sid]["classes"] * earnings[sid]["rate"], 2)
-    earned_total = round(sum(row["earned"] for row in earnings.values()), 2)
-    present_total = sum(row["classes"] for row in earnings.values())
+
+        if sid not in earnings:
+            continue
+
+        row = earnings[sid]
+
+        row["total"] += 1
+
+        if attendance == "absent":
+            row["absent"] += 1
+            continue
+
+        # Present class
+        row["classes"] += 1
+
+        verification = str(
+            item.get("verification_status") or "pending"
+        ).strip().lower()
+
+        if verification == "verified":
+            row["verified_classes"] += 1
+
+        elif verification == "rejected":
+            row["rejected_classes"] += 1
+
+        else:
+            # Missing or pending status is treated as pending
+            row["pending_classes"] += 1
+
+            
+
+
+    # Calculate student-wise amounts
+    for row in earnings.values():
+
+        row["verified_earned"] = round(
+            row["verified_classes"] * row["rate"], 2
+        )
+
+        row["pending_earned"] = round(
+            row["pending_classes"] * row["rate"], 2
+        )
+
+        # Estimated earnings = verified + pending
+        row["earned"] = round(
+            row["verified_earned"] + row["pending_earned"], 2
+        )
+
+
+    student_summaries = sorted(
+        earnings.values(),
+        key=lambda row: row["name"].lower()
+    )
+
+
+    # Monthly totals
+    present_total = sum(
+        row["classes"] for row in earnings.values()
+    )
+
+    verified_present_total = sum(
+        row["verified_classes"] for row in earnings.values()
+    )
+
+    pending_present_total = sum(
+        row["pending_classes"] for row in earnings.values()
+    )
+
+    estimated_earned_total = round(
+        sum(row["earned"] for row in earnings.values()), 2
+    )
+
+    verified_earned_total = round(
+        sum(row["verified_earned"] for row in earnings.values()), 2
+    )
+
+    pending_earned_total = round(
+        sum(row["pending_earned"] for row in earnings.values()), 2
+    )
+
+
+    # Existing payment records are tutor-level, not student-level.
+    # --------------------------------------------------
+    # TUTOR MONTHLY PAYMENT HISTORY
+    # --------------------------------------------------
+
     paid_total = 0.0
     payment_history = []
-    for doc in db.collection("tutor_payments").where("month", "==", payment_month).stream():
+
+    for doc in db.collection("tutor_payments").where(
+        "month", "==", payment_month
+    ).stream():
+
         payment = doc.to_dict() or {}
+
         if (payment.get("tutor_email") or "").strip().lower() == email:
+
             try:
                 paid_total += float(payment.get("amount") or 0)
             except (TypeError, ValueError):
                 pass
+
             payment["payment_id"] = doc.id
             payment_history.append(payment)
+
     paid_total = round(paid_total, 2)
-    payment_history.sort(key=lambda row: str(row.get("payment_date") or ""), reverse=True)
+
+    payment_history.sort(
+        key=lambda row: str(row.get("payment_date") or ""),
+        reverse=True
+    )
+
+
+    # --------------------------------------------------
+    # MONTHLY EARNINGS TOTALS
+    # --------------------------------------------------
+
+    # Estimated earnings = Verified + Pending
+    # Rejected classes are excluded.
+
+    earned_month = round(estimated_earned_total, 2)
+
+    verified_earned_month = round(verified_earned_total, 2)
+
+    pending_earned_month = round(pending_earned_total, 2)
+
+    balance_month = round(
+        verified_earned_month - paid_total, 2
+    )
+
+
+    # --------------------------------------------------
+    # RETURN TEMPLATE
+    # --------------------------------------------------
 
     return render(request, "tutor_panel/tutor_attendance.html", {
-        "students": assigned_students, "reports": reports[:50],
-        "today": today.isoformat(), "tutor_email": email, "edit_report": edit_report,
-        "payment_month": payment_month, "present_classes_month": present_total,
-        "earned_month": earned_total, "paid_month": paid_total,
-        "balance_month": round(earned_total - paid_total, 2), "payment_history": payment_history,
+
+        "students": assigned_students,
+        "reports": reports[:50],
+
+        "today": today.isoformat(),
+        "tutor_email": email,
+        "edit_report": edit_report,
+
+        # Selected month
+        "payment_month": payment_month,
+
+        # Class counts
+        "present_classes_month": present_total,
+        "verified_present_classes_month": verified_present_total,
+        "pending_present_classes_month": pending_present_total,
+
+        # Earnings
+        "earned_month": earned_month,
+        "verified_earned_month": verified_earned_month,
+        "pending_earned_month": pending_earned_month,
+
+        # Payments
+        "paid_month": paid_total,
+        "balance_month": balance_month,
+        "payment_history": payment_history,
+
+        # Student-wise earnings
+        "student_summaries": student_summaries,
+
+        "policy_summaries": policy_summaries,
     })
 
 # ------------------------------------------------------------
+
+
+# ------------------------------------------------------------
+# ADMIN CLASS REPORT VERIFICATION
+# ------------------------------------------------------------
+
+
+def class_report_verification(request):
+    from datetime import date
+    from google.cloud.firestore_v1 import transactional
+
+    if not request.session.get("firebase_uid"):
+        return redirect("tutor_panel:login")
+
+    if not _is_tutorain_admin(request):
+        return redirect("tutor_panel:admin_dashboard")
+
+    today = date.today()
+
+    month = (
+        request.POST.get("month")
+        if request.method == "POST"
+        else request.GET.get("month")
+    ) or today.strftime("%Y-%m")
+
+    try:
+        month = date.fromisoformat(month + "-01").strftime("%Y-%m")
+    except ValueError:
+        month = today.strftime("%Y-%m")
+
+    db = firestore.client(app=get_app())
+    reports_ref = db.collection("class_reports")
+
+    admin_email = (
+        request.session.get("firebase_email") or ""
+    ).strip().lower()
+
+    redirect_url = (
+        f"/tutor_panel/class-report-verification/?month={month}"
+    )
+
+    # --------------------------------------------------
+    # ADMIN REVIEW
+    # --------------------------------------------------
+
+    if request.method == "POST":
+
+        action = (
+            request.POST.get("action") or ""
+        ).strip().lower()
+
+        report_id = (
+            request.POST.get("report_id") or ""
+        ).strip()
+
+        remark = (
+            request.POST.get("admin_remark") or ""
+        ).strip()[:500]
+
+        allowed_actions = {
+            "verify",
+            "verify_absence",
+            "exempt_absence",
+            "reject",
+        }
+
+        if action not in allowed_actions or not report_id:
+            messages.error(request, "Invalid verification request.")
+            return redirect(redirect_url)
+
+        report_ref = reports_ref.document(report_id)
+        report_doc = report_ref.get()
+
+        if not report_doc.exists:
+            messages.error(request, "Class report not found.")
+            return redirect(redirect_url)
+
+        report = report_doc.to_dict() or {}
+
+        if str(report.get("class_date") or "")[:7] != month:
+            messages.error(request, "Report does not belong to this month.")
+            return redirect(redirect_url)
+
+        attendance = str(
+            report.get("attendance_status") or ""
+        ).strip().lower()
+
+        # Validate the selected decision against attendance.
+        if action == "verify" and attendance != "present":
+            messages.error(
+                request,
+                "Only Present reports can be verified as payable classes."
+            )
+            return redirect(redirect_url)
+
+        if action in {"verify_absence", "exempt_absence"} and attendance != "absent":
+            messages.error(
+                request,
+                "Absence decisions can only be used for Absent reports."
+            )
+            return redirect(redirect_url)
+
+        student_id = str(report.get("student_id") or "").strip()
+
+        if action in {"verify_absence", "exempt_absence"} and not student_id:
+            messages.error(
+                request,
+                "This report has no student ID. Please correct the student record before reviewing it."
+            )
+            return redirect(redirect_url)
+
+        # Deterministic IDs prevent duplicate processing.
+        audit_ref = db.collection(
+            "class_report_admin_audit"
+        ).document(report_id)
+
+        event_ref = db.collection(
+            "student_absence_events"
+        ).document(report_id)
+
+        consideration_ref = db.collection(
+            "absence_consideration_requests"
+        ).document(report_id)
+
+        student_ref = (
+            db.collection("students").document(student_id)
+            if student_id else None
+        )
+
+        policy_ref = (
+            db.collection("student_absence_policy").document(student_id)
+            if student_id else None
+        )
+
+        try:
+
+            @transactional
+            def apply_admin_review(transaction):
+
+                # READS FIRST: Firestore transactions require this
+                # before any writes are made.
+
+                fresh_report = report_ref.get(
+                    transaction=transaction
+                )
+
+                if not fresh_report.exists:
+                    return {"ok": False, "message": "Class report not found."}
+
+                fresh_data = fresh_report.to_dict() or {}
+
+                if str(fresh_data.get("class_date") or "")[:7] != month:
+                    return {
+                        "ok": False,
+                        "message": "Report does not belong to this month."
+                    }
+
+                current_status = str(
+                    fresh_data.get("verification_status") or "pending"
+                ).strip().lower()
+
+                if current_status in {"verified", "rejected"}:
+                    return {
+                        "ok": False,
+                        "message": "This report has already been reviewed and is locked."
+                    }
+
+                fresh_attendance = str(
+                    fresh_data.get("attendance_status") or ""
+                ).strip().lower()
+
+                if action == "verify" and fresh_attendance != "present":
+                    return {
+                        "ok": False,
+                        "message": "Only Present reports can be verified."
+                    }
+
+                if action in {"verify_absence", "exempt_absence"} and fresh_attendance != "absent":
+                    return {
+                        "ok": False,
+                        "message": "This is not an Absent report."
+                    }
+
+                audit_snapshot = audit_ref.get(
+                    transaction=transaction
+                )
+
+                if audit_snapshot.exists:
+                    return {
+                        "ok": False,
+                        "message": "An audit record already exists for this report."
+                    }
+
+                event_snapshot = None
+                student_snapshot = None
+                policy_snapshot = None
+
+                if fresh_attendance == "absent":
+                    event_snapshot = event_ref.get(
+                        transaction=transaction
+                    )
+
+                    if event_snapshot.exists:
+                        return {
+                            "ok": False,
+                            "message": "This absence has already been processed."
+                        }
+                    # Read the parent's consideration request, if one exists.
+                    consideration_snapshot = consideration_ref.get(
+                        transaction=transaction
+                    )
+
+                if action in {"verify_absence", "exempt_absence"}:
+
+                    student_snapshot = student_ref.get(
+                        transaction=transaction
+                    )
+
+                    if not student_snapshot.exists:
+                        return {
+                            "ok": False,
+                            "message": "Student record not found."
+                        }
+
+                    policy_snapshot = policy_ref.get(
+                        transaction=transaction
+                    )
+
+                    student_data = student_snapshot.to_dict() or {}
+
+                    try:
+                        tutor_rate = float(
+                            student_data.get("tutor_rate_per_class") or 0
+                        )
+                    except (TypeError, ValueError):
+                        return {
+                            "ok": False,
+                            "message": "Student tutor_rate_per_class is invalid."
+                        }
+
+                    if not math.isfinite(tutor_rate) or tutor_rate < 0:
+                        return {
+                            "ok": False,
+                            "message": "Student tutor_rate_per_class must be a valid non-negative amount."
+                        }
+
+                else:
+                    tutor_rate = 0.0
+                    student_data = {}
+                    policy_data = {}
+
+                if action in {"verify_absence", "exempt_absence"}:
+                    policy_data = (
+                        policy_snapshot.to_dict() or {}
+                        if policy_snapshot and policy_snapshot.exists
+                        else {}
+                    )
+
+                # Work out the new lifetime counter.
+                new_lifetime = int(
+                    policy_data.get("lifetime_unexcused_absences", 0)
+                ) if action == "verify_absence" else 0
+
+                new_cycle = int(
+                    policy_data.get("current_cycle_absences", 0)
+                ) if action == "verify_absence" else 0
+
+                session_count = int(
+                    policy_data.get("policy_sessions_generated", 0)
+                ) if action == "verify_absence" else 0
+
+                tutor_total = float(
+                    policy_data.get("total_tutor_share", 0)
+                ) if action == "verify_absence" else 0.0
+
+                company_total = float(
+                    policy_data.get("total_company_share", 0)
+                ) if action == "verify_absence" else 0.0
+
+                new_session_ref = None
+                new_session_data = None
+
+                if action == "verify_absence":
+
+                    new_lifetime += 1
+                    new_cycle += 1
+
+                    # Every five eligible absences create one policy session.
+                    if new_cycle >= 5:
+
+                        session_count += 1
+                        new_cycle = 0
+
+                        amount = round(tutor_rate, 2)
+                        tutor_share = round(amount * 0.50, 2)
+                        company_share = round(amount - tutor_share, 2)
+
+                        new_session_ref = db.collection(
+                            "student_policy_sessions"
+                        ).document(
+                            f"{student_id}_{session_count:05d}"
+                        )
+
+                        # Read the deterministic session document before writes.
+                        existing_session = new_session_ref.get(
+                            transaction=transaction
+                        )
+
+                        if existing_session.exists:
+                            return {
+                                "ok": False,
+                                "message": "This policy session already exists. Please contact the administrator."
+                            }
+
+                        tutor_total += tutor_share
+                        company_total += company_share
+
+                        new_session_data = {
+                            "student_id": student_id,
+                            "student_name": (
+                                student_data.get("name")
+                                or fresh_data.get("student_name")
+                                or ""
+                            ),
+                            "tutor_email": (
+                                fresh_data.get("tutor_email") or ""
+                            ).strip().lower(),
+                            "cycle_number": session_count,
+                            "absence_count": 5,
+                            "policy_session_amount": amount,
+                            "tutor_rate_per_class_snapshot": amount,
+                            "tutor_share": tutor_share,
+                            "company_share": company_share,
+                            "payment_status": "pending",
+                            "created_at": firestore.SERVER_TIMESTAMP,
+                        }
+
+                # ALL REQUIRED READS ARE NOW COMPLETE.
+                now = datetime.now(timezone.utc)
+
+                if action == "reject":
+                    new_status = "rejected"
+                    absence_policy_status = "rejected"
+                else:
+                    new_status = "verified"
+
+                    if action == "verify_absence":
+                        absence_policy_status = "counted"
+                    elif action == "exempt_absence":
+                        absence_policy_status = "exempt"
+                    else:
+                        absence_policy_status = "not_applicable"
+
+                report_update = {
+                    "verification_status": new_status,
+                    "verified_by": admin_email,
+                    "verified_at": now,
+                    "admin_remark": remark,
+                    "admin_action": action,
+                }
+
+                if fresh_attendance == "absent":
+                    report_update["absence_policy_status"] = (
+                        absence_policy_status
+                    )
+
+                transaction.update(report_ref, report_update)
+
+                # Update the parent's request using the administrator's decision.
+                if consideration_snapshot.exists:
+
+                    if action == "exempt_absence":
+                        parent_request_status = "approved_exempt"
+
+                    elif action == "verify_absence":
+                        parent_request_status = "confirmed_absence"
+
+                    elif action == "reject":
+                        parent_request_status = "report_rejected"
+
+                    else:
+                        parent_request_status = None
+
+                    if parent_request_status:
+                        transaction.update(consideration_ref, {
+                            "status": parent_request_status,
+                            "admin_remark": remark,
+                            "reviewed_by": admin_email,
+                            "reviewed_at": firestore.SERVER_TIMESTAMP,
+                            "updated_at": firestore.SERVER_TIMESTAMP,
+                        })
+
+                # Keep a permanent audit record for every admin decision.
+                transaction.set(audit_ref, {
+                    "report_id": report_id,
+                    "student_id": student_id,
+                    "student_name": (
+                        fresh_data.get("student_name") or ""
+                    ),
+                    "tutor_email": (
+                        fresh_data.get("tutor_email") or ""
+                    ).strip().lower(),
+                    "attendance_status": fresh_data.get(
+                        "attendance_status"
+                    ),
+                    "admin_action": action,
+                    "admin_email": admin_email,
+                    "admin_remark": remark,
+                    "created_at": firestore.SERVER_TIMESTAMP,
+                })
+
+                if fresh_attendance == "absent":
+                    transaction.set(event_ref, {
+                        "report_id": report_id,
+                        "student_id": student_id,
+                        "tutor_email": (
+                            fresh_data.get("tutor_email") or ""
+                        ).strip().lower(),
+                        "absence_policy_status": absence_policy_status,
+                        "admin_action": action,
+                        "admin_email": admin_email,
+                        "created_at": firestore.SERVER_TIMESTAMP,
+                    })
+
+                if action == "verify_absence":
+
+                    transaction.set(policy_ref, {
+                        "student_id": student_id,
+                        "tutor_email": (
+                            fresh_data.get("tutor_email") or ""
+                        ).strip().lower(),
+                        "lifetime_unexcused_absences": new_lifetime,
+                        "current_cycle_absences": new_cycle,
+                        "policy_sessions_generated": session_count,
+                        "total_tutor_share": round(tutor_total, 2),
+                        "total_company_share": round(company_total, 2),
+                        "updated_at": firestore.SERVER_TIMESTAMP,
+                    }, merge=True)
+
+                    if new_session_ref and new_session_data:
+                        transaction.set(
+                            new_session_ref,
+                            new_session_data
+                        )
+
+                return {
+                    "ok": True,
+                    "action": action,
+                    "session_created": bool(new_session_data),
+                }
+
+            transaction = db.transaction()
+            result = apply_admin_review(transaction)
+
+            if not result.get("ok"):
+                messages.error(
+                    request,
+                    result.get("message") or "Unable to review this report."
+                )
+            else:
+                if result["action"] == "verify":
+                    messages.success(
+                        request,
+                        "Present class successfully verified."
+                    )
+                elif result["action"] == "verify_absence":
+                    if result["session_created"]:
+                        messages.success(
+                            request,
+                            "Absence approved. The fifth absence has generated a policy session."
+                        )
+                    else:
+                        messages.success(
+                            request,
+                            "Unexcused absence approved and added to the student's lifetime policy count."
+                        )
+                elif result["action"] == "exempt_absence":
+                    messages.success(
+                        request,
+                        "Absence approved as exempt leave. It will not count toward the five-absence policy."
+                    )
+                else:
+                    messages.success(
+                        request,
+                        "Class report rejected. It will not count toward the absence policy."
+                    )
+
+        except Exception as exc:
+            print("CLASS REPORT REVIEW ERROR:", str(exc))
+            messages.error(
+                request,
+                "Something went wrong while reviewing this report. Please check the server log."
+            )
+
+        return redirect(redirect_url)
+
+    # --------------------------------------------------
+    # LOAD MONTHLY REPORTS
+    # --------------------------------------------------
+
+    reports = []
+
+    totals = {
+        "submitted": 0,
+        "pending": 0,
+        "verified": 0,
+        "rejected": 0,
+        "payable": 0,
+    }
+
+    student_stats = {}
+
+    for doc in reports_ref.stream():
+
+        item = doc.to_dict() or {}
+
+        if str(item.get("class_date") or "")[:7] != month:
+            continue
+
+        item["report_id"] = doc.id
+        consideration_doc = db.collection(
+            "absence_consideration_requests"
+        ).document(doc.id).get()
+
+        item["consideration_request"] = (
+            consideration_doc.to_dict()
+            if consideration_doc.exists
+            else None
+        )
+
+        status = str(
+            item.get("verification_status") or "pending"
+        ).strip().lower()
+
+        if status not in ["pending", "verified", "rejected"]:
+            status = "pending"
+
+        item["verification_status"] = status
+        item["attendance_status"] = (
+            item.get("attendance_status") or ""
+        )
+
+        attendance = str(
+            item["attendance_status"]
+        ).strip().lower()
+
+        reports.append(item)
+
+        totals["submitted"] += 1
+        totals[status] += 1
+
+        payable = attendance == "present" and status == "verified"
+
+        if payable:
+            totals["payable"] += 1
+
+        student_id = str(
+            item.get("student_id")
+            or item.get("student_name")
+            or "unknown"
+        )
+
+        if student_id not in student_stats:
+            student_stats[student_id] = {
+                "student_name": item.get("student_name") or "Unknown",
+                "student_class": item.get("student_class") or "",
+                "tutor_email": item.get("tutor_email") or "",
+                "submitted": 0,
+                "pending": 0,
+                "verified": 0,
+                "rejected": 0,
+                "payable": 0,
+            }
+
+        student = student_stats[student_id]
+        student["submitted"] += 1
+        student[status] += 1
+
+        if payable:
+            student["payable"] += 1
+
+    reports.sort(
+        key=lambda x: str(x.get("class_date") or ""),
+        reverse=True
+    )
+
+    students = sorted(
+        student_stats.values(),
+        key=lambda x: x["student_name"].lower()
+    )
+
+    return render(
+        request,
+        "tutor_panel/admin_class_verification.html",
+        {
+            "month": month,
+            "reports": reports,
+            "students": students,
+            "totals": totals,
+            "admin_email": admin_email,
+        }
+    )
+
+
+
 # ADMIN WEEKLY STUDENT PROGRESS REPORTS
 # ------------------------------------------------------------
 def weekly_student_reports(request):
@@ -1365,6 +2293,35 @@ def weekly_student_reports(request):
     for doc in db.collection("students").stream():
         student = doc.to_dict() or {}
         student_id = student.get("student_id") or doc.id
+        
+        # Lifetime absence policy summary for this student.
+        policy_doc = db.collection(
+            "student_absence_policy"
+        ).document(student_id).get()
+
+        policy_data = (
+            policy_doc.to_dict() or {}
+            if policy_doc.exists
+            else {}
+        )
+
+        lifetime_absences = int(
+            policy_data.get("lifetime_unexcused_absences", 0) or 0
+        )
+
+        current_cycle = int(
+            policy_data.get("current_cycle_absences", 0) or 0
+        )
+
+        student["absence_policy"] = {
+            "lifetime_absences": lifetime_absences,
+            "current_cycle": current_cycle,
+            "absences_remaining": 5 - current_cycle,
+            "sessions_generated": int(
+                policy_data.get("policy_sessions_generated", 0) or 0
+            ),
+        }
+
         student["student_id"] = student_id
         student_map[student_id] = student
 
@@ -1467,6 +2424,49 @@ def parent_portal(request):
             report["report_id"] = report_doc.id
             reports.append(report)
         reports.sort(key=lambda item: str(item.get("class_date") or ""), reverse=True)
+        # Absences reported by the tutor, whether admin-verified or not.
+        # This gives parents a live view of submitted attendance reports.
+        tutor_reported_absences = sum(
+            1 for report in reports
+            if str(report.get("attendance_status") or "").strip().lower() == "absent"
+        )
+
+        # Count absence reports that are still awaiting admin review.
+        pending_absence_reports = sum(
+            1 for report in reports
+            if (
+                str(report.get("attendance_status") or "").strip().lower() == "absent"
+                and str(report.get("verification_status") or "").strip().lower()
+                not in {"verified", "rejected"}
+            )
+        )
+
+        # Admin-confirmed lifetime absence policy.
+        policy_doc = db.collection("student_absence_policy").document(student_id).get()
+        policy_data = policy_doc.to_dict() or {} if policy_doc.exists else {}
+
+        lifetime_absences = int(
+            policy_data.get("lifetime_unexcused_absences", 0) or 0
+        )
+        current_cycle = int(
+            policy_data.get("current_cycle_absences", 0) or 0
+        )
+        sessions_generated = int(
+            policy_data.get("policy_sessions_generated", 0) or 0
+        )
+
+        student["absence_policy"] = {
+            "tutor_reported_absences": tutor_reported_absences,
+            "pending_absence_reports": pending_absence_reports,
+            "lifetime_absences": lifetime_absences,
+            "current_cycle": current_cycle,
+            "absences_remaining": max(0, 5 - current_cycle),
+            "sessions_generated": sessions_generated,
+        }
+
+
+
+                
 
         # Resolve tutor name from the existing tutors collection.
         tutor_email = (student.get("tutor_email") or "").strip().lower()
@@ -1791,7 +2791,8 @@ def tutor_payments(request):
         report = doc.to_dict() or {}
         if str(report.get("class_date") or "")[:7] != month:
             continue
-        if str(report.get("attendance_status") or "").strip().lower() != "present":
+        # Pending and rejected reports are not payable
+        if str(report.get("verification_status") or "pending").strip().lower() != "verified":
             continue
         student_id = str(report.get("student_id") or "").strip()
         row = student_by_id.get(student_id)

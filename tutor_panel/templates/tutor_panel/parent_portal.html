@@ -337,7 +337,109 @@
             text-align: center;
             padding: 28px;
         }
+.absence-policy-card {
+    background: #f8fbff;
+    border: 1px solid #bfdbfe;
+    border-radius: 14px;
+    padding: 18px;
+    margin: 20px 0;
+}
 
+.absence-policy-card h4 {
+    color: var(--navy);
+    margin-bottom: 8px;
+}
+
+.absence-policy-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.absence-policy-stat {
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 13px;
+}
+
+.absence-policy-stat span {
+    display: block;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.absence-policy-stat strong {
+    display: block;
+    font-size: 23px;
+    margin-top: 5px;
+}
+
+.absence-progress {
+    height: 10px;
+    background: #e2e8f0;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-top: 12px;
+}
+
+.absence-progress-fill {
+    height: 100%;
+    background: var(--blue);
+    border-radius: 20px;
+}
+
+/* Parent absence consideration request */
+.absence-request-box {
+    background: #fffaf0;
+    border: 1px solid #fed7aa;
+    border-radius: 10px;
+    padding: 14px;
+    margin: 14px 0;
+}
+
+.absence-request-box h5 {
+    color: #9a3412;
+    font-size: 15px;
+    margin: 0 0 8px;
+}
+
+.absence-request-box textarea {
+    width: 100%;
+    min-height: 95px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 10px;
+    resize: vertical;
+}
+
+.absence-request-box button {
+    margin-top: 9px;
+}
+
+.absence-request-status {
+    display: inline-block;
+    border-radius: 20px;
+    padding: 5px 9px;
+    background: #e0f2fe;
+    color: #075985;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.absence-admin-remark {
+    background: #f0fdf4;
+    border-left: 3px solid #16a34a;
+    padding: 9px 11px;
+    border-radius: 5px;
+}
+
+@media (max-width: 700px) {
+    .absence-policy-grid {
+        grid-template-columns: 1fr;
+    }
+}
         @media (max-width: 991px) {
             .tutorain-main-header .navbar-nav {
                 align-items: stretch;
@@ -560,6 +662,100 @@
                 </p>
             </div>
 
+<!-- SIMPLE ATTENDANCE SUMMARY -->
+<div class="absence-policy-card">
+
+    <h4>My Child's Attendance</h4>
+
+    <p class="muted" style="margin-bottom:15px">
+        Here you can see how many classes your child has missed.
+    </p>
+
+    <div class="absence-policy-grid">
+
+        <div class="absence-policy-stat">
+            <span>Total classes missed</span>
+            <strong>{{ student.absence_policy.tutor_reported_absences }}</strong>
+            <small class="muted">As reported by the tutor</small>
+        </div>
+
+        <div class="absence-policy-stat">
+            <span>Waiting for confirmation</span>
+            <strong>{{ student.absence_policy.pending_absence_reports }}</strong>
+            <small class="muted">Not yet checked by Tutorain</small>
+        </div>
+
+        <div class="absence-policy-stat">
+            <span>Confirmed absences</span>
+            <strong>{{ student.absence_policy.lifetime_absences }}</strong>
+            <small class="muted">Counted by Tutorain</small>
+        </div>
+
+<!-- TUTOR REPORTED ABSENCES -->
+<div class="absence-policy-stat">
+    <span>Tutor-marked absences awaiting review</span>
+
+    <strong>
+        {{ student.absence_policy.pending_absence_reports }} of 5
+    </strong>
+
+    <div class="absence-progress">
+        <div
+            class="absence-progress-fill"
+            style="width:{% if student.absence_policy.pending_absence_reports >= 5 %}100{% else %}{% widthratio student.absence_policy.pending_absence_reports 5 100 %}{% endif %}%"
+        ></div>
+    </div>
+
+    <small class="muted">
+        Reports submitted by the tutor but not yet reviewed by Tutorain.
+    </small>
+</div>
+
+
+<!-- ADMIN CONFIRMED ABSENCES -->
+<div class="absence-policy-stat">
+    <span>Admin-confirmed absences</span>
+
+    <strong>
+        {{ student.absence_policy.current_cycle }} of 5
+    </strong>
+
+    <div class="absence-progress">
+        <div
+            class="absence-progress-fill"
+            style="width:{% widthratio student.absence_policy.current_cycle 5 100 %}%"
+        ></div>
+    </div>
+
+    <small class="muted">
+        Confirmed absences counted towards the next policy session.
+    </small>
+</div>
+
+        <div class="absence-policy-stat">
+            <span>More absences needed</span>
+            <strong>{{ student.absence_policy.absences_remaining }}</strong>
+            <small class="muted">To reach 5 confirmed absences</small>
+        </div>
+
+        <div class="absence-policy-stat">
+            <span>Extra classes added</span>
+            <strong>{{ student.absence_policy.sessions_generated }}</strong>
+            <small class="muted">Total during enrolment</small>
+        </div>
+
+    </div>
+
+    <p class="muted" style="font-size:13px;margin:15px 0 0">
+        <strong>Please note:</strong> Every 5 confirmed absences add 1 extra
+        class. Medical, hospital and emergency leave approved by Tutorain
+        will not be counted.
+    </p>
+
+</div>
+
+
+
             <h3 class="section-title">Progress at a glance</h3>
 
             <div class="stats">
@@ -770,6 +966,104 @@
                         {{ report.tutor_remarks|default:'—' }}
                     </p>
 
+                    {% if report.attendance_status == "absent" %}
+
+<div class="absence-request-box">
+
+    <h5>Request Consideration for This Absence</h5>
+
+    {% if report.consideration_request %}
+
+        <p style="margin:7px 0">
+            <strong>Request status:</strong>
+
+            <span class="absence-request-status">
+
+                {% if report.consideration_request.status == "pending" %}
+                    Under Tutorain Review
+
+                {% elif report.consideration_request.status == "approved_exempt" %}
+                    Approved — Not Counted
+
+                {% elif report.consideration_request.status == "confirmed_absence" %}
+                    Absence Confirmed
+
+                {% elif report.consideration_request.status == "report_rejected" %}
+                    Report Rejected
+
+                {% else %}
+                    {{ report.consideration_request.status|default:"Submitted" }}
+                {% endif %}
+
+            </span>
+        </p>
+
+        <p>
+            <strong>Your reason:</strong>
+            {{ report.consideration_request.reason }}
+        </p>
+
+        {% if report.consideration_request.admin_remark %}
+
+            <p class="absence-admin-remark">
+                <strong>Tutorain response:</strong>
+                {{ report.consideration_request.admin_remark }}
+            </p>
+
+        {% endif %}
+
+    {% elif report.verification_status != "verified" and report.verification_status != "rejected" %}
+
+        <p class="muted" style="font-size:13px">
+            If there was a medical, hospital, emergency, or other valid
+            reason for this absence, you can explain it to Tutorain here.
+        </p>
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <input
+                type="hidden"
+                name="action"
+                value="submit_absence_consideration"
+            >
+
+            <input
+                type="hidden"
+                name="report_id"
+                value="{{ report.report_id }}"
+            >
+
+            <textarea
+                name="reason"
+                minlength="10"
+                maxlength="1000"
+                required
+                placeholder="Please explain the reason for this absence..."
+            ></textarea>
+
+            <button
+                type="submit"
+                class="btn btn-primary btn-sm"
+            >
+                Submit Request to Tutorain
+            </button>
+
+        </form>
+
+    {% else %}
+
+        <p class="muted">
+            This absence has already been reviewed by Tutorain.
+        </p>
+
+    {% endif %}
+
+</div>
+
+{% endif %}
+
                     {% if report.suggested_homework %}
                         <p>
                             <strong>Suggested homework:</strong>
@@ -790,15 +1084,34 @@
                         </p>
                     {% endif %}
 
+                    <span class="tag">
+    Admin review:
+
+    {% if report.verification_status == "verified" %}
+        Verified
+
+    {% elif report.verification_status == "rejected" %}
+        Rejected
+
+    {% else %}
+        Awaiting review
+    {% endif %}
+</span>
+
                 </div>
 
             {% empty %}
+
+
 
                 <p class="no-reports">
                     No class reports have been submitted yet.
                 </p>
 
             {% endfor %}
+
+
+
 
         </section>
 
